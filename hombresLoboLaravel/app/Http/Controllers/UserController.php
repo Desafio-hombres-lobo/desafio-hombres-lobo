@@ -2,47 +2,60 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        //
+        $usuarios = User::all();
+        return $usuarios;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+
+    public function store(StoreUserRequest $request)
     {
-        //
+        $datos = $request->validated();
+
+        $user = User::create([
+            'name' => $datos['name'],
+            'email' => $datos['email'],
+            'nickname' => $datos['nickname'],
+            'password' => $datos['password']
+        ]);
+
+        return response()->json($user, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        return $user;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+    public function update(UpdateUserRequest $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $datos = $request->validated();
+
+        $user->update($datos);
+        return response()->json($user, 201);
+
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $userId = $user->id;
+        $user->delete();
+        return response()->json("Usuario $userId borrado con exito", 200);
     }
 }
