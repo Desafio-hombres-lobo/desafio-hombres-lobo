@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+
+  laravel:
+    build:
+      context: ./hombresLoboLaravel
+    container_name: laravel_app
+    ports:
+      - "${LARAVEL_PORT}:8000"
+    volumes:
+      - ./hombresLoboLaravel:/var/www/html
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_NAME}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    ports:
+      - "${DB_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+
+ 
+  frontend:
+    build:
+      context: ./hombreslobo-typescript
+    container_name: ts_frontend
+    ports:
+      - "${FRONT_PORT}:5173"
+    volumes:
+      - ./hombreslobo-typescript:/app
+    command: npm run dev
+    depends_on:
+      - laravel
+
+volumes:
+  db_data:
