@@ -13,6 +13,9 @@ return new class extends Migration {
         Schema::create('jugadores', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->foreignId('id_usuario')
+                ->constrained('users')
+                ->onDelete('cascade');
         });
     }
 
