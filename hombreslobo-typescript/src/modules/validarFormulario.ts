@@ -1,4 +1,7 @@
-export const formulario = document.querySelector<HTMLFormElement>("#formulario");
+import { enviarDatosBackend } from "../providers/enviarDatosRegistro";
+
+export const formulario =
+  document.querySelector<HTMLFormElement>("#formulario");
 
 if (!formulario) throw new Error("Formulario no encontrado");
 
@@ -50,6 +53,14 @@ export const camposFormulario = {
     mensajeError:
       "La contraseña debe contener al menos 8 caracteres, una letra (MAY o min), un número y un caracter especial (ej: !, @, #, $)",
   },
+
+  passwordConfirmar: {
+    input: formulario.querySelector<HTMLInputElement>(
+      'input[name="password-confirmar"]'
+    )!,
+    validar: (valor: string) => valor.length > 0,
+    mensajeError: "Debes confirmar tu contraseña.",
+  },
 };
 
 /**
@@ -80,6 +91,8 @@ const validarCamposFormulario = (e: SubmitEvent): void => {
   }
 
   if (!formularioValido) return;
+
+  enviarDatosBackend();
 };
 
 // Función para mostrar el mensaje de error
