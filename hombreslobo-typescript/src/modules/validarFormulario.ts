@@ -1,8 +1,8 @@
-const formulario = document.querySelector<HTMLFormElement>("#formulario");
+export const formulario = document.querySelector<HTMLFormElement>("#formulario");
 
 if (!formulario) throw new Error("Formulario no encontrado");
 
-const camposFormulario = {
+export const camposFormulario = {
   nombreUsuario: {
     input: formulario.querySelector<HTMLInputElement>(
       'input[name="nombre-usuario"]'
