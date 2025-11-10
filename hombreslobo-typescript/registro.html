@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro – Castronegro Online</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/registro.css">
+</head>
+<body>
+
+  <header class="cabecera">
+    <h1 class="titulo-sitio">Castronegro Online</h1>
+    <nav class="menu">
+      <a href="index.html">Inicio</a>
+      <a href="#">Reglas</a>
+      <a href="#">Comunidad</a>
+      <a href="#">Iniciar Sesión</a>
+    </nav>
+  </header>
+
+  <section class="registro">
+    <div class="contenedor-form">
+      <h2>Únete a la Aldea</h2>
+      <p>Crea tu cuenta y prepárate para descubrir quién es el verdadero lobo.</p>
+
+      <form id="formulario" method="POST" action="127.0.0.1:8000/api/registrar">
+        <div class="campo">
+          <label for="nombre-usuario"><i class="fas fa-user"></i> Nombre completo</label>
+          <input type="text" id="nombre-usuario" name="nombre-usuario" placeholder="Ej. Marta López" required>
+        </div>
+
+        <div class="campo">
+          <label for="email-usuario"><i class="fas fa-envelope"></i> Correo electrónico</label>
+          <input type="email" id="email-usuario" name="email-usuario" placeholder="tu@email.com" required>
+        </div>
+
+        <div class="campo">
+          <label for="nick-usuario"><i class="fas fa-hat-wizard"></i> Nombre de usuario</label>
+          <input type="text" id="nick-usuario" name="nick-usuario" placeholder="Ej. LoboAstuto" required>
+        </div>
+
+        <div class="campo">
+          <label for="password-usuario"><i class="fas fa-lock"></i> Contraseña</label>
+          <input type="password" id="password-usuario" name="password-usuario" placeholder="********" required>
+        </div>
+
+        <button type="submit" class="boton-principal">Registrarse</button>
+        <p class="enlace-login">¿Ya tienes cuenta? <a href="#">Inicia sesión</a></p>
+      </form>
+
+    </div>
+  </section>
+
+  <footer class="pie">
+    <p>© 2025 Hombres Lobo Online. Todos los derechos reservados.</p>
+  </footer>
+
+  <script type="module" src="./src/modules/validarFormulario.ts"></script>
+</body>
+</html>

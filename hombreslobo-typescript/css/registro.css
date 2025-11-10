@@ -1,0 +1,177 @@
+:root {
+  --morado: #8e44ad;
+  --rosa-claro: #d98fd4;
+  --fondo-oscuro: #1c1221;
+  --beige: #f4eae6;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  color: var(--beige);
+  background: linear-gradient(135deg, #2c222d, #3b1f2f, #5e2f5e);
+  min-height: 100vh;
+}
+
+/* === CABECERA === */
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 3rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.titulo-sitio {
+  font-family: "Merriweather", serif;
+  font-size: 1.8rem;
+  color: var(--rosa-claro);
+}
+
+.menu a {
+  color: var(--beige);
+  text-decoration: none;
+  margin: 0 1.2rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.menu a:hover {
+  color: var(--rosa-claro);
+}
+
+/* === SECCIÓN REGISTRO === */
+.registro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 150px);
+  padding: 2rem;
+  background: linear-gradient(180deg, rgba(28,18,33,0.9), rgba(40,22,50,0.95));
+}
+
+.contenedor-form {
+  background: rgba(45, 25, 55, 0.9);
+  padding: 3rem 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(217, 143, 212, 0.3);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 1s ease;
+}
+
+.contenedor-form h2 {
+  font-family: "Merriweather", serif;
+  color: var(--rosa-claro);
+  margin-bottom: 0.5rem;
+}
+
+.contenedor-form p {
+  color: #d8cdd9;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+/* === FORMULARIO === */
+#formulario .campo {
+  margin-bottom: 1.5rem;
+  text-align: left;
+  position: relative;
+}
+
+#formulario label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+  color: var(--beige);
+}
+
+#formulario input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #3d2a44;
+  border-radius: 10px;
+  background: #25182b;
+  color: #fff;
+  font-size: 1rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+#formulario input:focus {
+  outline: none;
+  border: 1px solid var(--rosa-claro);
+  box-shadow: 0 0 8px rgba(217, 143, 212, 0.4);
+}
+
+/* === ERRORES === */
+.error {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: #ff7675;
+  text-shadow: 0 0 3px rgba(255, 118, 117, 0.6);
+  animation: fadeError 0.3s ease;
+}
+
+@keyframes fadeError {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === BOTÓN === */
+.boton-principal {
+  background: linear-gradient(45deg, var(--morado), var(--rosa-claro));
+  color: var(--beige);
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(217, 143, 212, 0.4);
+  width: 100%;
+}
+
+.boton-principal:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(217, 143, 212, 0.6);
+}
+
+/* === ENLACE LOGIN === */
+.enlace-login {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #d8cdd9;
+}
+
+.enlace-login a {
+  color: var(--rosa-claro);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.enlace-login a:hover {
+  text-decoration: underline;
+}
+
+/* === PIE === */
+.pie {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.9rem;
+  color: #cbb9ca;
+  background: #120a18;
+}
+
+/* === ANIMACIONES === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
