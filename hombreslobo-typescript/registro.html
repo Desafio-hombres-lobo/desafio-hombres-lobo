@@ -3,11 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registro – Castronegro Online</title>
+    <title>Registro – Castronegro</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:wght@700&display=swap"
       rel="stylesheet"
     />
+    <link href="https://fonts.googleapis.com/css2?family=Bahiana&display=swap" rel="stylesheet">
+    <link rel="icon" href="src/imagenes/logoLobo.png" type="image/x-icon">
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -17,7 +19,10 @@
   </head>
   <body>
     <header class="cabecera">
-      <h1 class="titulo-sitio">Castronegro Online</h1>
+      <div class="nav-logo-titulo">
+      <a href="index.html"><img src="src/imagenes/logoLobo.png" class="logo" alt="Logo Castronegro"></a>
+        <h1 class="titulo-sitio">Castronegro</h1>
+      </div>
       <nav class="menu">
         <a href="index.html">Inicio</a>
         <a href="#">Reglas</a>
@@ -46,7 +51,7 @@
               type="text"
               id="nombre-usuario"
               name="nombre-usuario"
-              placeholder="Ej. Marta López"
+              placeholder="Ej. María Fernández"
               required
             />
           </div>
@@ -111,7 +116,7 @@
       </div>
     </section>
 
-    <footer class="pie">
+    <footer class="footer">
       <p>© 2025 Hombres Lobo Online. Todos los derechos reservados.</p>
     </footer>
 

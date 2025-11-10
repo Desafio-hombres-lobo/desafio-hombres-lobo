@@ -1,50 +1,46 @@
-:root {
-  --morado: #8e44ad;
-  --rosa-claro: #d98fd4;
-  --fondo-oscuro: #1c1221;
-  --beige: #f4eae6;
-}
-
 body {
   margin: 0;
-  font-family: "Inter", sans-serif;
+  font-family: var(--fuente-texto);
   color: var(--beige);
   background: linear-gradient(135deg, #2c222d, #3b1f2f, #5e2f5e);
   min-height: 100vh;
+  line-height: 1.6;
 }
 
-/* === CABECERA === */
 .cabecera {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.2rem 3rem;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
+  padding: 1rem 2rem;
+  background-color: var(--negro);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
 }
 
 .titulo-sitio {
-  font-family: "Merriweather", serif;
-  font-size: 1.8rem;
-  color: var(--rosa-claro);
+  font-family: var(--fuente-titulo);
+  font-size: 2rem;
+  letter-spacing: 3px;
+  font-weight: lighter;
+  color: var(--beige);
+  text-shadow: 1px 1px 5px var(--morado);
 }
 
 .menu a {
-  color: var(--beige);
+  margin-left: 1.5rem;
   text-decoration: none;
-  margin: 0 1.2rem;
+  color: var(--beige);
   font-weight: 500;
-  transition: color 0.3s ease;
+  transition: color 0.3s, text-shadow 0.3s;
 }
 
 .menu a:hover {
-  color: var(--rosa-claro);
+  color: var(--morado);
+  text-shadow: 0 0 8px var(--morado);
 }
 
-/* === SECCIÓN REGISTRO === */
+
 .registro {
   display: flex;
   justify-content: center;
@@ -62,22 +58,25 @@ body {
   max-width: 400px;
   width: 100%;
   text-align: center;
-  animation: fadeIn 1s ease;
+  animation: aparecer 1s ease;
 }
 
 .contenedor-form h2 {
-  font-family: "Merriweather", serif;
+  font-family: var(--fuente-titulo);
+  font-weight:lighter;
+  letter-spacing: 2px;
+  font-size:2.5rem;
   color: var(--rosa-claro);
   margin-bottom: 0.5rem;
 }
 
 .contenedor-form p {
-  color: #d8cdd9;
+  color: var(--beige);
   font-size: 0.95rem;
   margin-bottom: 2rem;
 }
 
-/* === FORMULARIO === */
+
 #formulario .campo {
   margin-bottom: 1.5rem;
   text-align: left;
@@ -108,22 +107,22 @@ body {
   box-shadow: 0 0 8px rgba(217, 143, 212, 0.4);
 }
 
-/* === ERRORES === */
+
 .error {
   display: block;
   margin-top: 0.4rem;
   font-size: 0.85rem;
-  color: #ff7675;
+  color:var(--error);
   text-shadow: 0 0 3px rgba(255, 118, 117, 0.6);
-  animation: fadeError 0.3s ease;
+  animation: mostrarError 0.3s ease;
 }
 
-@keyframes fadeError {
+@keyframes mostrarError {
   from { opacity: 0; transform: translateY(-3px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* === BOTÓN === */
+
 .boton-principal {
   background: linear-gradient(45deg, var(--morado), var(--rosa-claro));
   color: var(--beige);
@@ -143,11 +142,11 @@ body {
   box-shadow: 0 0 25px rgba(217, 143, 212, 0.6);
 }
 
-/* === ENLACE LOGIN === */
+
 .enlace-login {
   margin-top: 1.5rem;
   font-size: 0.9rem;
-  color: #d8cdd9;
+  color: var(--beige);
 }
 
 .enlace-login a {
@@ -160,18 +159,26 @@ body {
   text-decoration: underline;
 }
 
-/* === PIE === */
-.pie {
+
+footer {
+  background-color: var(--negro);
   text-align: center;
-  padding: 1.5rem;
-  font-size: 0.9rem;
-  color: #cbb9ca;
-  background: #120a18;
+  padding: 2rem;
+  color: var(--beige);
 }
 
-/* === ANIMACIONES === */
-@keyframes fadeIn {
+footer a {
+  color: var(--morado);
+  margin: 0 0.5rem;
+  transition: 0.3s;
+}
+
+footer a:hover {
+  color: var(--rosa-claro);
+}
+
+
+@keyframes aparecer {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
-

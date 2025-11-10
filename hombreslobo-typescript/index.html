@@ -3,60 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Castronegro Online – Hombres Lobo</title>
+    <title>Castronegro – Hombres Lobo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bahiana&display=swap" rel="stylesheet">
+    <link rel="icon" href="src/imagenes/logoLobo.png" type="image/x-icon">
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:wght@700&display=swap"
       rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
-
     <link rel="stylesheet" href="./css/base.css" />
-
     <link rel="stylesheet" href="./css/index.css" />
   </head>
   <body>
-    <!-- Cabecera -->
+
     <header class="cabecera">
-      <h1 class="titulo-sitio">Castronegro Online</h1>
+      <div class="nav-logo-titulo">
+        <a href="index.html"><img src="src/imagenes/logoLobo.png" class="logo" alt="Logo Castronegro"></a>
+        <h1 class="titulo-sitio">Castronegro</h1>
+      </div>
       <nav class="menu">
         <a href="#">Jugar</a>
         <a href="#">Reglas</a>
         <a href="#">Comunidad</a>
         <a href="#">Iniciar Sesión</a>
-        <a href="./registro.html">Registrate</a>
+        <a href="./registro.html">Regístrate</a>
       </nav>
     </header>
 
-    <section class="hero">
-      <div class="contenido-hero">
+    <section class="contenedor-principal">
+      <div class="descripcion">
         <h2>Hombres Lobo de Castronegro</h2>
         <p>
           El engaño, la sospecha y la supervivencia te esperan. ¿Tienes lo
           necesario para descubrir al lobo?
         </p>
-        <img src="src/imagenes/cartas-lobos.png" />
+        <img src="src/imagenes/cartas-lobos.png" alt="Cartas de Lobos">
         <button class="boton-principal">¡Jugar Ahora!</button>
       </div>
     </section>
 
-    <section class="misterio">
+    <section class="contenedor-secundario">
       <h2>Descubre el Misterio</h2>
       <p>
         Adéntrate en el oscuro pueblo de Castronegro y descubre quién se oculta
         entre tus vecinos.
       </p>
 
-      <div class="tarjetas">
-        <div class="tarjeta">
+      <div class="tarjetas-container">
+        <div class="tarjeta-item">
           <i class="fas fa-user-secret"></i>
           <h3>Roles Misteriosos</h3>
           <p>Asume distintos roles y descubre quién es amigo o enemigo.</p>
         </div>
-        <div class="tarjeta">
+        <div class="tarjeta-item">
           <i class="fas fa-users"></i>
           <h3>Partidas Dinámicas</h3>
           <p>Partidas cortas llenas de emoción y estrategia en cada turno.</p>
         </div>
-        <div class="tarjeta">
+        <div class="tarjeta-item">
           <i class="fas fa-globe"></i>
           <h3>Comunidad Global</h3>
           <p>Conéctate y juega con personas de todo el mundo.</p>
@@ -64,14 +67,13 @@
       </div>
     </section>
 
-    <section class="cta">
+    <section class="contenedor-final">
       <h2>¿Listo para el Desafío?</h2>
       <p>Únete a miles de jugadores y vive la experiencia de Castronegro.</p>
       <button class="boton-principal">¡Crea tu Cuenta Ahora!</button>
     </section>
 
-    <!-- Footer -->
-    <footer class="pie">
+    <footer class="footer">
       <p>© 2025 Hombres Lobo Online. Todos los derechos reservados.</p>
       <div class="redes">
         <a href="#"><i class="fab fa-facebook-f"></i></a>
