@@ -5,10 +5,10 @@
 }
 
 .contenedor-principal::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.55);
 }
 
 .descripcion {
@@ -59,7 +59,7 @@
 
 .tarjetas-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 2rem;
 }
 
@@ -70,7 +70,7 @@
   padding: 2.5rem;
   text-align: center;
   color: var(--beige);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
   transition: 0.3s all;
   position: relative;
   overflow: hidden;
@@ -83,10 +83,10 @@
 }
 
 .tarjeta-item::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   z-index: 0;
 }
 
@@ -100,9 +100,9 @@
 
 .tarjeta-item h3 {
   font-family: var(--fuente-titulo);
-  font-weight:lighter;
+  font-weight: lighter;
   letter-spacing: 3px;
-  font-size:1.5rem;
+  font-size: 1.5rem;
   color: var(--rosa-claro);
   text-shadow: 1px 1px 5px var(--morado);
   position: relative;
@@ -134,7 +134,11 @@
   margin-bottom: 2rem;
 }
 
-@media(max-width: 768px) {
+#boton-crear-cuenta {
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
   .descripcion h2 {
     font-size: 2rem;
   }
