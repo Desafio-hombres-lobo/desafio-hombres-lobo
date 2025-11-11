@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión – Castronegro</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bahiana&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/src/imagenes/logoLobo.png" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="base.css" />
+    <link rel="stylesheet" href="registro.css" />
+
+    <style>
+      .campo-opciones {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+      }
+      .campo-opciones .recordar-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--beige); /* Variable de base.css */
+        cursor: pointer;
+        font-weight: 500;
+      }
+      /* Sobrescribimos el 'width: 100%' que 
+        registro.css aplica a todos los inputs 
+      */
+      .campo-opciones input[type="checkbox"] {
+        width: auto;
+        margin-right: 5px;
+      }
+      .campo-opciones a {
+        color: var(--morado); /* Variable de base.css */
+        text-decoration: none;
+      }
+      .campo-opciones a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="cabecera">
+      <div class="nav-logo-titulo">
+        <a href="/index.html"
+          ><img
+            src="/src/imagenes/logoLobo.png"
+            class="logo"
+            alt="Logo Castronegro"
+        /></a>
+        <h1 class="titulo-sitio">Castronegro</h1>
+      </div>
+      <nav class="menu">
+        <a href="/index.html">Inicio</a>
+        <a href="#">Reglas</a>
+        <a href="#">Comunidad</a>
+        <a href="registro.html">Registrarse</a>
+      </nav>
+    </header>
+
+    <section class="registro">
+      <div class="contenedor-form">
+        <h2>Inicia Sesión</h2>
+        <p>Ingresa tus credenciales para unirte a la partida.</p>
+
+        <form
+          id="formulario-login"
+          method="POST"
+          action="127.0.0.1:8000/api/login"
+        >
+          <div class="campo">
+            <label for="usuario"
+              ><i class="fas fa-user"></i> Correo o Nickname</label
+            >
+            <input
+              type="text"
+              id="usuario"
+              name="usuario"
+              placeholder="Ej. tu@email.com o LoboAstuto"
+              required
+            />
+          </div>
+
+          <div class="campo">
+            <label for="password"><i class="fas fa-lock"></i> Contraseña</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="********"
+              required
+            />
+          </div>
+
+          <div class="campo-opciones">
+            <label class="recordar-label">
+              <input type="checkbox" id="recordarme" name="recordarme" />
+              Recordarme
+            </label>
+            <a href="#">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button type="submit" class="boton-registrar">Iniciar Sesión</button>
+
+          <p class="enlace-login">
+            ¿No tienes cuenta? <a href="registro.html">Regístrate</a>
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>© 2025 Hombres Lobo Online. Todos los derechos reservados.</p>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

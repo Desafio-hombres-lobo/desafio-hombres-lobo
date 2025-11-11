@@ -1,0 +1,59 @@
+.campo-opciones {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+.campo-opciones .recordar-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--beige); /* Variable de base.css */
+  cursor: pointer;
+  font-weight: 500;
+}
+/* Sobrescribimos el 'width: 100%' que 
+        registro.css aplica a todos los inputs 
+      */
+.campo-opciones input[type="checkbox"] {
+  width: auto;
+  margin-right: 5px;
+}
+.campo-opciones a {
+  color: var(--morado); /* Variable de base.css */
+  text-decoration: none;
+}
+.campo-opciones a:hover {
+  text-decoration: underline;
+}
+
+#formulario-login .campo {
+  margin-bottom: 1.5rem;
+  text-align: left;
+  position: relative;
+}
+
+#formulario-login label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+  color: var(--beige);
+}
+
+#formulario-login input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #3d2a44;
+  border-radius: 10px;
+  background: #25182b;
+  color: #fff;
+  font-size: 1rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+#formulario-login input:focus {
+  outline: none;
+  border: 1px solid var(--rosa-claro);
+  box-shadow: 0 0 8px rgba(217, 143, 212, 0.4);
+}
