@@ -87,8 +87,8 @@ export const validarFormulario = (formulario: HTMLFormElement): void => {
       name: camposFormulario.nombreUsuario.input.value,
       email: camposFormulario.emailUsuario.input.value,
       nickname: camposFormulario.nickUsuario.input.value,
-      password: camposFormulario.passwordUsuario,
-      password_confirmation: camposFormulario.passwordConfirmar,
+      password: camposFormulario.passwordUsuario.input.value,
+      password_confirmation: camposFormulario.passwordConfirmar.input.value,
     };
     enviarDatosBackend(datosUsuario);
   };
