@@ -26,7 +26,7 @@ class AuthController extends Controller
 
         return response()->json([
             'exito' => true,
-            'nombre de usuario' => $user->nickname,
+            'usuario' => $user->nickname,
         ]);
     }
     public function loguear(LoginRequest $request)

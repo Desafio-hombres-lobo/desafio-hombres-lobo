@@ -1,3 +1,5 @@
+import { enviarDatosLogin } from "./enviarDatosLogin";
+
 // Enviar objeto al backend
 export const enviarDatosBackend = async (datosUsuario: any) => {
   try {
@@ -18,6 +20,13 @@ export const enviarDatosBackend = async (datosUsuario: any) => {
     }
 
     const data = await response.json();
+    const usuario = data.usuario;
+    const password = datosUsuario.password;
+    const login = {
+      usuario: usuario,
+      password: password,
+    };
+    enviarDatosLogin(login);
   } catch (error) {
     console.error("Error en la solicitud. " + error);
   }

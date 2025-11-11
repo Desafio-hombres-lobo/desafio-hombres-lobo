@@ -41,8 +41,12 @@ const actualizarHeader = () => {
 
   if (token) {
     const nombreUsuario = sessionStorage.getItem(CLAVE_USUARIO);
-    const loginLink = menu.querySelector('a[href="/login.html"]');
-    const registerLink = menu.querySelector('a[href="/registro.html"]');
+    const loginLink = menu.querySelector(
+      'a[href="/src/autenticacion/htmls/login.html"]'
+    );
+    const registerLink = menu.querySelector(
+      'a[href="/src/autenticacion/htmls/registro.html"]'
+    );
 
     if (loginLink) {
       menu.removeChild(loginLink);
