@@ -37,7 +37,19 @@
   max-width: 100%;
   height: auto;
   margin: 2rem auto 0;
+  animation: girarCartas 40s linear infinite;
+  transform-origin: center; 
 }
+
+@keyframes girarCartas {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 
 .contenedor-secundario {
   padding: 4rem 2rem;
@@ -137,6 +149,207 @@
 #boton-crear-cuenta {
   text-decoration: none;
 }
+
+#modalJuego {
+  display: none; 
+  position: fixed; 
+  z-index: 100; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgba(0,0,0,0.5);
+  transition: opacity 0.3s ease;
+}
+
+
+.crear-unirse {
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 500px;
+  text-align: center;
+  position: relative;
+  background: linear-gradient(135deg, var(--negro), #5e365ef6, var(--negro));
+  background-size: 1000% 1000%;
+  animation: degradado 12s ease-in-out infinite;
+  filter: blur(0.5px) brightness(0.9);
+
+}
+
+@keyframes degradado {
+  0% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 50% 100%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  75% {
+    background-position: 50% 0%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.crear-unirse h3{
+  color:var(--beige);
+  text-shadow:1px 1px 5px var(--morado);
+  font-family:var(--fuente-titulo);
+  font-weight:lighter;
+  font-size: 2.5rem;
+}
+
+
+
+.crear-partida,
+.unirse-partida {
+  display: inline-block;
+  padding: 12px 24px;
+  margin: 10px;
+  font-family: 'Bahiana', cursive;
+  font-size: 1.5rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--morado), var(--rosa-claro));
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.crear-partida::before,
+.unirse-partida::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, var(--negro) 0%, transparent 70%);
+  opacity: 0.3;
+  transform: rotate(45deg);
+  transition: opacity 0.5s ease;
+  z-index: -1;
+}
+.crear-partida:hover,
+.unirse-partida:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+.crear-partida:hover::before,
+.unirse-partida:hover::before {
+  opacity: 0.5;
+}
+
+/* Modal secundario: Unirse a partida */
+#modalUnirse {
+  display: none; 
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+}
+
+
+.unirse-modal {
+  margin: 15% auto;
+  padding: 30px 20px;
+  border-radius: 12px;
+  width: 400px;
+  text-align: center;
+  position: relative;
+  color: white;
+  font-weight: b;
+  background: var(--negro);
+  filter: blur(0.5px) brightness(0.9);
+}
+
+
+.unirse-modal h3 {
+  font-family: var(--fuente-titulo);
+  font-weight: lighter;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-shadow: 1px 1px 5px var(--morado);
+}
+
+.unirse-modal .input-contenedor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px; 
+  margin: 1rem 0;
+}
+
+
+.unirse-modal input {
+  padding: 10px;
+  width: 80%;
+  margin: 1rem 0;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+}
+
+.unirse-modal button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background-color: var(--rosa-claro);
+  color: white;
+  transition: 0.3s;
+}
+
+.unirse-modal button:hover {
+  background-color:var(--morado);
+}
+
+
+.unirse-modal .close {
+  color: #fff;
+  float: right;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+
+@keyframes degradadoUnirse {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+#listaPartidas {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#listaPartidas li {
+  padding: 10px;
+  margin-bottom: 5px;
+  background-color: var(--morado);
+  border-radius: 6px;
+  color: white; 
+}
+
 
 @media (max-width: 768px) {
   .descripcion h2 {
