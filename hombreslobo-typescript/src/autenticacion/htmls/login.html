@@ -76,11 +76,7 @@
         <h2>Inicia Sesión</h2>
         <p>Ingresa tus credenciales para unirte a la partida.</p>
 
-        <form
-          id="formulario-login"
-          method="POST"
-          action="127.0.0.1:8000/api/login"
-        >
+        <form id="formulario-login">
           <div class="campo">
             <label for="usuario"
               ><i class="fas fa-user"></i> Correo o Nickname</label
@@ -116,7 +112,8 @@
           <button type="submit" class="boton-registrar">Iniciar Sesión</button>
 
           <p class="enlace-login">
-            ¿No tienes cuenta? <a href="registro.html">Regístrate</a>
+            ¿No tienes cuenta?
+            <a href="/src/autenticacion/htmls/registro.html">Regístrate</a>
           </p>
         </form>
       </div>
