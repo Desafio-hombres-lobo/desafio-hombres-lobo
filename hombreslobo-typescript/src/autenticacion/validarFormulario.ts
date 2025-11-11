@@ -1,4 +1,5 @@
 import { enviarDatosBackend } from "../providers/enviarDatosRegistro";
+import "./css/registro.css";
 
 export const formulario =
   document.querySelector<HTMLFormElement>("#formulario");
