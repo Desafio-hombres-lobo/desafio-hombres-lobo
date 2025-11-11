@@ -1,4 +1,7 @@
-import { camposFormulario, formulario } from "../modules/validarFormulario";
+import {
+  camposFormulario,
+  formulario,
+} from "../autenticacion/validarFormulario";
 
 // Enviar objeto al backend
 export const enviarDatosBackend = async () => {

@@ -40,14 +40,17 @@ body {
   text-shadow: 0 0 8px var(--morado);
 }
 
-
 .registro {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 150px);
   padding: 2rem;
-  background: linear-gradient(180deg, rgba(28,18,33,0.9), rgba(40,22,50,0.95));
+  background: linear-gradient(
+    180deg,
+    rgba(28, 18, 33, 0.9),
+    rgba(40, 22, 50, 0.95)
+  );
 }
 
 .contenedor-form {
@@ -63,9 +66,9 @@ body {
 
 .contenedor-form h2 {
   font-family: var(--fuente-titulo);
-  font-weight:lighter;
+  font-weight: lighter;
   letter-spacing: 2px;
-  font-size:2.5rem;
+  font-size: 2.5rem;
   color: var(--rosa-claro);
   margin-bottom: 0.5rem;
 }
@@ -75,7 +78,6 @@ body {
   font-size: 0.95rem;
   margin-bottom: 2rem;
 }
-
 
 #formulario .campo {
   margin-bottom: 1.5rem;
@@ -107,23 +109,27 @@ body {
   box-shadow: 0 0 8px rgba(217, 143, 212, 0.4);
 }
 
-
 .error {
   display: block;
   margin-top: 0.4rem;
   font-size: 0.85rem;
-  color:var(--error);
+  color: var(--error);
   text-shadow: 0 0 3px rgba(255, 118, 117, 0.6);
   animation: mostrarError 0.3s ease;
 }
 
 @keyframes mostrarError {
-  from { opacity: 0; transform: translateY(-3px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-
-.boton-principal {
+.boton-registrar {
   background: linear-gradient(45deg, var(--morado), var(--rosa-claro));
   color: var(--beige);
   border: none;
@@ -142,7 +148,6 @@ body {
   box-shadow: 0 0 25px rgba(217, 143, 212, 0.6);
 }
 
-
 .enlace-login {
   margin-top: 1.5rem;
   font-size: 0.9rem;
@@ -158,7 +163,6 @@ body {
 .enlace-login a:hover {
   text-decoration: underline;
 }
-
 
 footer {
   background-color: var(--negro);
@@ -177,8 +181,13 @@ footer a:hover {
   color: var(--rosa-claro);
 }
 
-
 @keyframes aparecer {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
