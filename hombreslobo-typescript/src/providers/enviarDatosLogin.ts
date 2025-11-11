@@ -19,11 +19,14 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
     const data = await response.json();
     const SESSIONSTORAGE = "auth_token";
     const LOCALSTORAGE = "credenciales";
+    const CLAVE_USUARIO = "auth_usuario";
+
     if (datosUsuario["recordarme"]) {
       localStorage.setItem(LOCALSTORAGE, datosUsuario["usuario"]);
     }
-    if (data.token) {
+    if (data.token && data.usuario) {
       sessionStorage.setItem(SESSIONSTORAGE, data.token);
+      sessionStorage.setItem(CLAVE_USUARIO, data.usuario);
       return true;
     }
   } catch (error) {
