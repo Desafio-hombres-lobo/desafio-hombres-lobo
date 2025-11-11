@@ -2,6 +2,7 @@
 
 namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Model;
 
 class Jugador extends Model
@@ -11,8 +12,16 @@ class Jugador extends Model
         'id_usuario',
         'nickname'
     ];
-    public function jugador(): BelongsTo
+
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'users');
+        return $this->belongsTo(User::class, 'id_usuario');
+    }
+
+    public function partidas(): BelongsToMany
+    {
+        return $this->belongsToMany(Partida::class, 'partidas_jugadores', 'id_jugador', 'id_partida')
+                    ->withPivot('ganadas', 'perdidas')
+                    ->withTimestamps();
     }
 }
