@@ -16,7 +16,6 @@ export const enviarDatosBackend = async () => {
     password_confirmation: passwordConfirmar,
   };
 
-  console.log("Datos obtenidos del form: " + JSON.stringify(datosUsuario)); // BORRAR LUEGO
   try {
     const response = await fetch("http://127.0.0.1:8000/api/registrar", {
       method: "POST",
@@ -27,8 +26,6 @@ export const enviarDatosBackend = async () => {
       body: JSON.stringify(datosUsuario),
     });
 
-    console.log("Datos enviados" + JSON.stringify(datosUsuario)); // BORRAR LUEGO
-
     // Verificar respuesta
     if (!response.ok) {
       const errorDatos = await response.json();
@@ -37,9 +34,6 @@ export const enviarDatosBackend = async () => {
     }
 
     const data = await response.json();
-    alert("Usuario registrado correctamente.");
-
-    // Guardar en session o local? -> JSON.stringify(data)
 
     formulario?.reset();
   } catch (error) {
