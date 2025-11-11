@@ -33,8 +33,8 @@ export const enviarDatosBackend = async () => {
       return;
     }
 
-    const dataJSON = await response.json();
-
+    const data = await response.json();
+    asdasdasdasd;
     formulario?.reset();
   } catch (error) {
     console.error("Error en la solicitud. " + error);
