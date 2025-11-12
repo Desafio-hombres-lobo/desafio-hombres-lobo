@@ -13,8 +13,7 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
     // Verificar respuesta
     if (!response.ok) {
       const errorDatos = await response.json();
-      alert("Error al intentar iniciar sesion. " + JSON.stringify(errorDatos));
-      return false;
+      throw errorDatos;
     }
 
     const data = await response.json();
@@ -31,7 +30,6 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
       return true;
     }
   } catch (error) {
-    console.error("Error en la solicitud. " + error);
     return false;
   } finally {
     document.body.style.cursor = "default";

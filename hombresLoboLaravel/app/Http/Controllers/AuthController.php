@@ -51,10 +51,20 @@ class AuthController extends Controller
                 'usuario' => $user->nickname
             ], 200);
         } else {
-            return response()->json([
-                'error' => true,
-                'mensaje' => 'Algo ha salido mal'
-            ]);
+            $user = User::where('email', $datos['usuario'])
+                ->orWhere('nickname', $datos['usuario'])
+                ->first();
+            if (!$user) {
+                return response()->json([
+                    'error' => 'usuario',
+                    'mensaje' => 'No se encontró ningún usuario con ese correo o apodo.'
+                ], 404);
+            } else {
+                return response()->json([
+                    'error' => 'password',
+                    'mensaje' => 'La contraseña es incorrecta.'
+                ], 401);
+            }
         }
     }
 }

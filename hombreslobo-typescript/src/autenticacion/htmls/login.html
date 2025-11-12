@@ -18,8 +18,6 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="base.css" />
-    <link rel="stylesheet" href="registro.css" />
   </head>
   <body>
     <header class="cabecera">
@@ -40,7 +38,7 @@
       </nav>
     </header>
 
-    <section class="registro">
+    <section class="login">
       <div class="contenedor-form">
         <h2>Inicia Sesión</h2>
         <p>Ingresa tus credenciales para unirte a la partida.</p>
@@ -57,6 +55,7 @@
               placeholder="Ej. tu@email.com o LoboAstuto"
               required
             />
+            <p class="error" id="error-usuario"></p>
           </div>
 
           <div class="campo">
@@ -68,13 +67,14 @@
               placeholder="********"
               required
             />
+            <p class="error" id="error-password"></p>
           </div>
 
           <div class="campo-opciones">
-            <label class="recordar-label">
+            <div class="recordar-label">
               <input type="checkbox" id="recordarme" name="recordarme" />
-              Recordarme
-            </label>
+              <label for="recordarme"> Recordarme </label>
+            </div>
             <a href="#">¿Olvidaste tu contraseña?</a>
           </div>
 

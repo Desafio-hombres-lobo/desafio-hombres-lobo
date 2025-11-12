@@ -22,9 +22,27 @@ export const validarLogin = (
       password: inputPassword?.value,
       recordarme: inputRecordarme?.checked,
     };
-    const exito = await enviarDatosLogin(datosUsuario);
-    if (exito) {
-      window.location.href = "/index.html";
+    try {
+      const exito = await enviarDatosLogin(datosUsuario);
+      if (exito) {
+        window.location.href = "/index.html";
+      }
+    } catch (error: any) {
+      const errorUsuario =
+        formularioLogin.querySelector<HTMLParagraphElement>("#error-usuario");
+      const errorPassword =
+        formularioLogin.querySelector<HTMLParagraphElement>("#error-password");
+      const errorData = await error.json();
+      if (errorData && errorData.error && errorUsuario && errorPassword) {
+        switch (errorData.error) {
+          case "usuario":
+            errorUsuario.textContent = errorData.mensaje;
+            break;
+          case "password":
+            errorPassword.textContent = errorData.mensaje;
+            break;
+        }
+      }
     }
   };
 

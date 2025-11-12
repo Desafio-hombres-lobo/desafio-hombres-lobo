@@ -32,7 +32,6 @@ export const enviarDatosBackend = async (datosUsuario: any) => {
       window.location.href = "/index.html";
     }
   } catch (error) {
-    console.error("Error en la solicitud. " + error);
   } finally {
     document.body.style.cursor = "default";
   }
