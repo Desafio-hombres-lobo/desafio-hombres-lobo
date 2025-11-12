@@ -1,5 +1,6 @@
 export const enviarDatosLogin = async (datosUsuario: any) => {
   try {
+    document.body.style.cursor = "wait";
     const response = await fetch("http://127.0.0.1:8000/api/login", {
       method: "POST",
       headers: {
@@ -32,5 +33,7 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
   } catch (error) {
     console.error("Error en la solicitud. " + error);
     return false;
+  } finally {
+    document.body.style.cursor = "default";
   }
 };
