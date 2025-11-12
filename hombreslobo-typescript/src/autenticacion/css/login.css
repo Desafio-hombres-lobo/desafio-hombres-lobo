@@ -57,3 +57,9 @@
   border: 1px solid var(--rosa-claro);
   box-shadow: 0 0 8px rgba(217, 143, 212, 0.4);
 }
+
+.div-sesion-iniciada {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
