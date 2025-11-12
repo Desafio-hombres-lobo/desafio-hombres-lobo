@@ -42,11 +42,8 @@ export const actualizarHeader = (sesion: string, clave: string) => {
       const cerrarSesionBoton = document.createElement("a");
       cerrarSesionBoton.href = "#";
       cerrarSesionBoton.id = "logout-button";
-      cerrarSesionBoton.innerHTML = `
-  <span class="material-symbols-outlined">
-    logout
-  </span>
-`;
+      cerrarSesionBoton.className = "material-symbols-outlined";
+      cerrarSesionBoton.innerHTML = "logout";
 
       // 4. Añadir el listener para el logout
       cerrarSesionBoton.addEventListener("click", (e) => {

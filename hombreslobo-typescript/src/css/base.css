@@ -59,10 +59,9 @@ body {
 .menu {
   display: flex;
   align-items: center;
+  gap: 2rem;
 }
 .menu a {
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
   text-decoration: none;
   color: var(--beige);
   text-shadow: 1px 1px 5px var(--morado);
@@ -73,6 +72,12 @@ body {
 .menu a:hover {
   color: var(--morado);
   text-shadow: 0 0 8px var(--morado);
+}
+.div-sesion-iniciada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .boton-principal {
