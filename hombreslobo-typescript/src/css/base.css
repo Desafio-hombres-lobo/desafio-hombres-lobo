@@ -6,32 +6,40 @@
   --rosa-claro: #d183d4;
   --verde: #86926e;
   --amarillo: #e1c87b;
-  --error:#ff7675;
+  --error: #ff7675;
 
   --fuente-titulo: "Bahiana", cursive;
   --fuente-texto: "Inter", sans-serif;
 }
 
-* { margin:0; padding:0; box-sizing:border-box; font-family:var(--fuente-texto); }
-
-body { 
-  background: linear-gradient(135deg, #2c222d, #3b1f2f, #5e2f5e); 
-  color: var(--beige); line-height:1.6;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--fuente-texto);
 }
 
+body {
+  background: linear-gradient(135deg, #2c222d, #3b1f2f, #5e2f5e);
+  color: var(--beige);
+  line-height: 1.6;
+}
 
 .cabecera {
-  display:flex; 
-  justify-content:space-between; 
-  align-items:center;
-  padding:1rem 2rem; background-color: var(--negro);
-  position:sticky; top:0; z-index:1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--negro);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .nav-logo-titulo {
   display: flex;
   align-items: center;
-  gap: 10px; 
+  gap: 10px;
 }
 
 .logo {
@@ -39,28 +47,37 @@ body {
 }
 
 .titulo-sitio {
-  font-family: var(--fuente-titulo); 
+  font-family: var(--fuente-titulo);
   font-size: 2rem;
   letter-spacing: 3px;
   font-weight: lighter;
   color: var(--beige);
   text-shadow: 1px 1px 5px var(--morado);
-  margin: 0; 
+  margin: 0;
 }
 
-
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
 .menu a {
-  margin-left:1.5rem; 
-  text-decoration:none; 
+  text-decoration: none;
   color: var(--beige);
   text-shadow: 1px 1px 5px var(--morado);
-  font-weight:500; 
+  font-weight: 500;
   transition: color 0.3s, text-shadow 0.3s;
 }
 
-.menu a:hover { 
-    color:var(--morado);
-    text-shadow:0 0 8px var(--morado); 
+.menu a:hover {
+  color: var(--morado);
+  text-shadow: 0 0 8px var(--morado);
+}
+.div-sesion-iniciada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .boton-principal {
@@ -77,25 +94,30 @@ body {
   box-shadow: 0 0 8px var(--morado);
   transition: 0.3s all;
 }
-
+#boton-jugar-ahora {
+  text-decoration: none;
+}
 .boton-principal:hover {
   transform: translateY(-3px);
   box-shadow: 0 0 20px var(--rosa-claro);
 }
 
-
 footer {
-  background-color:var(--negro); 
-  text-align:center; 
-  padding:2rem; 
-  color:var(--beige);
+  background-color: var(--negro);
+  text-align: center;
+  padding: 2rem;
+  color: var(--beige);
 }
-footer a { 
-    color:var(--morado);
-     margin:0 0.5rem; 
-     transition:0.3s; 
-    }
+footer a {
+  color: var(--morado);
+  margin: 0 0.5rem;
+  transition: 0.3s;
+}
 
-footer a:hover { 
-    color:var(--rosa-claro);
- }
+footer a:hover {
+  color: var(--rosa-claro);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}

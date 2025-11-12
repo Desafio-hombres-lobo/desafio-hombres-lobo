@@ -1,25 +1,9 @@
-import {
-  camposFormulario,
-  formulario,
-} from "../autenticacion/validarFormulario";
+import { enviarDatosLogin } from "./enviarDatosLogin";
 
 // Enviar objeto al backend
-export const enviarDatosBackend = async () => {
-  const nombre = camposFormulario.nombreUsuario.input.value;
-  const email = camposFormulario.emailUsuario.input.value;
-  const nickname = camposFormulario.nickUsuario.input.value;
-  const password = camposFormulario.passwordUsuario.input.value;
-  const passwordConfirmar = camposFormulario.passwordConfirmar.input.value;
-
-  const datosUsuario = {
-    name: nombre,
-    email: email,
-    nickname: nickname,
-    password: password,
-    password_confirmation: passwordConfirmar,
-  };
-
+export const enviarDatosBackend = async (datosUsuario: any) => {
   try {
+    document.body.style.cursor = "wait";
     const response = await fetch("http://127.0.0.1:8000/api/registrar", {
       method: "POST",
       headers: {
@@ -37,8 +21,19 @@ export const enviarDatosBackend = async () => {
     }
 
     const data = await response.json();
-    formulario?.reset();
+    const usuario = data.usuario;
+    const password = datosUsuario.password;
+    const login = {
+      usuario: usuario,
+      password: password,
+    };
+    const exito = await enviarDatosLogin(login);
+    if (exito) {
+      window.location.href = "/index.html";
+    }
   } catch (error) {
     console.error("Error en la solicitud. " + error);
+  } finally {
+    document.body.style.cursor = "default";
   }
 };
