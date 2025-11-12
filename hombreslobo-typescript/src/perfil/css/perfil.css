@@ -1,0 +1,321 @@
+/* --- Variables CSS según guía de Estilos  --- */
+:root {
+  --marron: #b89778;
+  --beige: #f3f2d5;
+  --negro: #2c222d;
+  --morado: #ab6fa0;
+  --rosa-claro: #d183d4;
+  --verde: #86926e;
+  --amarillo: #e1c87b;
+  --error: #ff7675;
+
+  --fuente-titulo: "Bahiana", cursive;
+  --fuente-texto: "Inter", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--fuente-texto);
+  background-color: var(--negro);
+  color: var(--beige);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-image: radial-gradient(
+      circle at top left,
+      rgba(171, 111, 160, 0.1),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(184, 151, 120, 0.1),
+      transparent 50%
+    );
+}
+
+a {
+  color: var(--morado);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--rosa-claro);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* --- Cabecera --- */
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--marron);
+}
+
+.titulo-sitio {
+  font-family: var(--fuente-titulo);
+  font-size: 2.5rem;
+  color: var(--beige);
+  text-decoration: none;
+}
+
+.menu a {
+  font-family: var(--fuente-titulo);
+  font-size: 1.5rem;
+  margin-left: 1.5rem;
+  color: var(--beige);
+}
+
+.menu a:hover {
+  color: var(--morado);
+}
+
+/* --- Pie de Página --- */
+.pie {
+  text-align: center;
+  padding: 2rem 1rem;
+  margin-top: auto;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid var(--marron);
+  font-size: 0.9rem;
+  color: var(--marron);
+}
+
+/* --- Contenedor Principal Perfil --- */
+.perfil-contenedor {
+  width: 90%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background: rgba(44, 34, 45, 0.7);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  border: 1px solid rgba(184, 151, 120, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  position: relative;
+  flex-grow: 1;
+}
+
+/* --- Botón de Volver --- */
+.back-arrow {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  font-size: 2rem;
+  color: var(--beige);
+}
+
+/* --- Título de la Sección --- */
+.titulo-seccion {
+  font-family: var(--fuente-titulo);
+  font-size: 3rem;
+  color: var(--morado);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* --- Grid Perfil --- */
+.perfil-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2.5rem;
+}
+
+/* --- Columna Izquierda: Estadísticas --- */
+.stats-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--marron);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  align-self: start;
+}
+
+.profile-pic {
+  font-size: 6rem;
+  color: var(--morado);
+  margin-bottom: 1rem;
+}
+
+.nickname {
+  font-family: var(--fuente-titulo);
+  font-size: 2.2rem;
+  color: var(--beige);
+  margin-bottom: 1.5rem;
+  word-wrap: break-word; /* Para nicks largos */
+}
+
+.stats-card h4 {
+  font-family: var(--fuente-titulo);
+  font-size: 1.7rem;
+  color: var(--amarillo);
+  border-bottom: 1px solid var(--marron);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.stats-card ul {
+  list-style: none;
+  text-align: left;
+}
+
+.stats-card li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(184, 151, 120, 0.2);
+}
+
+.stats-card li:last-child {
+  border-bottom: none;
+}
+
+.stats-card li span:first-child {
+  color: var(--beige);
+  opacity: 0.8;
+}
+
+.stats-card li span:last-child {
+  color: var(--amarillo);
+  font-weight: bold;
+}
+
+/* --- Columna Derecha: Ajustes --- */
+.settings-form {
+  padding: 0 1rem;
+}
+
+.settings-form h3 {
+  font-family: var(--fuente-titulo);
+  font-size: 2rem;
+  color: var(--rosa-claro);
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.settings-form h3:first-child {
+  margin-top: 0;
+}
+
+.settings-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: var(--fuente-titulo);
+  font-size: 1.3rem;
+  color: var(--beige);
+}
+
+/* Estilo input */
+.settings-form input[type="text"],
+.settings-form input[type="email"] {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--marron);
+  border-radius: 8px;
+  color: var(--beige);
+  font-family: var(--fuente-texto);
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Contenedor Input + Botón */
+.campo-con-boton {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.campo-con-boton input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Botón "Cambiar" o "Solicitar" */
+.boton-secundario {
+  font-family: var(--fuente-titulo);
+  font-size: 1.2rem;
+  background: var(--marron);
+  color: var(--negro);
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.boton-secundario:hover {
+  background: var(--amarillo);
+}
+
+.settings-form p {
+  color: var(--beige);
+  opacity: 0.7;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .perfil-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-card {
+    align-self: center;
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .cabecera {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .menu {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .perfil-contenedor {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .titulo-seccion {
+    font-size: 2.5rem;
+    margin-top: 1rem;
+  }
+
+  .back-arrow {
+    top: 1rem;
+    left: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .campo-con-boton {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .campo-con-boton button {
+    width: 100%;
+  }
+}

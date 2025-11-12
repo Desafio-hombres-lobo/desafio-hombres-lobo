@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil del Jugador - Castronegro</title>
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bahiana&family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome (para iconos) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <style></style>
+  </head>
+  <body>
+    <!-- Cabecera  -->
+    <header class="cabecera">
+      <a href="index.html" class="titulo-sitio">Castronegro</a>
+      <!-- <nav class="menu">
+        <a href="#">Jugar</a>
+        <a href="#">Reglas</a>
+        <a href="#">Comunidad</a>
+        <a href="#">Cerrar Sesión</a>
+      </nav> -->
+    </header>
+
+    <!-- Contenido Principal del Perfil -->
+    <main class="perfil-contenedor">
+      <!-- Botón de Volver del Wireframe -->
+      <a href="#" class="back-arrow" aria-label="Volver">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+
+      <h2 class="titulo-seccion">Perfil del Jugador</h2>
+
+      <div class="perfil-grid">
+        <aside class="stats-card">
+          <div class="profile-pic" aria-hidden="true">
+            <i class="fas fa-user-circle"></i>
+          </div>
+
+          <h3 class="nickname">LoboSolitario</h3>
+
+          <h4>Estadísticas</h4>
+          <ul>
+            <li>
+              <span>P. Jugadas</span>
+              <span>20</span>
+            </li>
+            <li>
+              <span>P. Ganadas</span>
+              <span>15</span>
+            </li>
+            <li>
+              <span>P. Perdidas</span>
+              <span>5</span>
+            </li>
+            <li>
+              <span>Muertes</span>
+              <span>4</span>
+            </li>
+            <li>
+              <span>Resurrecciones</span>
+              <span>2</span>
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Columna Derecha: Ajustes -->
+        <section class="settings-form">
+          <h3>Ajustes de la Cuenta</h3>
+
+          <!-- Formulario Cambiar Nickname -->
+          <form id="form-nickname">
+            <label for="nickname">Cambiar Nickname Jugador</label>
+            <div class="campo-con-boton">
+              <input
+                type="text"
+                id="nickname"
+                name="nickname"
+                placeholder="Nuevo nickname"
+              />
+              <button type="submit" class="boton-secundario">Cambiar</button>
+            </div>
+          </form>
+
+          <!-- Formulario Solicitar Contraseña -->
+          <form id="form-password" style="margin-top: 1.5rem">
+            <label for="email-password">Solicitar Nueva Contraseña</label>
+            <div class="campo-con-boton">
+              <input
+                type="email"
+                id="email-password"
+                name="email-password"
+                placeholder="Tu correo electrónico"
+                readonly
+                value="tu@email.com"
+              />
+              <button type="submit" class="boton-secundario">Solicitar</button>
+            </div>
+          </form>
+
+          <!-- Formulario Cambiar Nickname -->
+          <form id="form-cambiar-foto">
+            <label for="nickname">Cambiar Foto Perfil</label>
+            <div class="campo-con-boton">
+              <input type="file" id="subir-foto" />
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <!-- Pie de Página -->
+    <footer class="pie">
+      <p>© 2025 Hombres Lobo Online. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="../ts/perfil.ts"></script>
+  </body>
+</html>
