@@ -97,7 +97,7 @@ const validarCamposFormulario = (e: SubmitEvent): void => {
 };
 
 // Función para mostrar el mensaje de error
-const mostrarError = (input: HTMLInputElement, mensaje: string): void => {
+export const mostrarError = (input: HTMLInputElement, mensaje: string): void => {
   let errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
 
   if (!errorSpan) {
@@ -111,7 +111,7 @@ const mostrarError = (input: HTMLInputElement, mensaje: string): void => {
 };
 
 // Función para limpiar el mensaje de error
-const limpiarError = (input: HTMLInputElement): void => {
+export const limpiarError = (input: HTMLInputElement): void => {
   const errorSpan =
     input.parentElement?.querySelector<HTMLSpanElement>(".error");
   if (errorSpan) errorSpan.textContent = "";

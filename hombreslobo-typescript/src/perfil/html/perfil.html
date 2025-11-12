@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Perfil del Jugador - Castronegro</title>
 
+    <!-- BORRAR DE AQUÍ LUEGO -->
+    <link rel="stylesheet" href="../css/perfil.css" />
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -81,12 +83,12 @@
 
           <!-- Formulario Cambiar Nickname -->
           <form id="form-nickname">
-            <label for="nickname">Cambiar Nickname Jugador</label>
+            <label for="nickname">Cambiar Nickname</label>
             <div class="campo-con-boton">
               <input
                 type="text"
-                id="nickname"
-                name="nickname"
+                id="nuevo-nickname"
+                name="nuevo-nickname"
                 placeholder="Nuevo nickname"
               />
               <button type="submit" class="boton-secundario">Cambiar</button>
@@ -97,17 +99,11 @@
           <form id="form-password" style="margin-top: 1.5rem">
             <label for="email-password">Solicitar Nueva Contraseña</label>
             <div class="campo-con-boton">
-              <input
-                type="email"
-                id="email-password"
-                name="email-password"
-                placeholder="Tu correo electrónico"
-                readonly
-                value="tu@email.com"
-              />
               <button type="submit" class="boton-secundario">Solicitar</button>
             </div>
           </form>
+
+          <br /><br />
 
           <!-- Formulario Cambiar Nickname -->
           <form id="form-cambiar-foto">
@@ -125,6 +121,11 @@
       <p>© 2025 Hombres Lobo Online. Todos los derechos reservados.</p>
     </footer>
 
-    <script src="../ts/perfil.ts"></script>
+    <script src="../ts/perfil.js"></script>
+
+    <!-- <script
+      type="module"
+      src="/hombreslobo-typescript/src/perfil/ts/perfil.ts"
+    ></script> -->
   </body>
 </html>
