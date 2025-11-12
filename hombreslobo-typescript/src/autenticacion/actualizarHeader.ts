@@ -5,10 +5,17 @@ cerrarSesion;
 export const actualizarHeader = (sesion: string, clave: string) => {
   const menu = document.querySelector(".menu");
   const token = sessionStorage.getItem(sesion);
-
+  const botonJugarAhora = document.getElementById(
+    "boton-jugar-ahora"
+  ) as HTMLAnchorElement | null;
   if (!menu) return;
 
   if (token) {
+    if (botonJugarAhora) {
+      //Aqui va el enlace del modal
+      botonJugarAhora.href = "#";
+    }
+
     const nombreUsuario = sessionStorage.getItem(clave);
     const loginLink = menu.querySelector(
       'a[href="/src/autenticacion/htmls/login.html"]'
@@ -55,7 +62,9 @@ export const actualizarHeader = (sesion: string, clave: string) => {
     }
   } else {
     // --- USUARIO NO LOGUEADO ---
-
+    if (botonJugarAhora) {
+      botonJugarAhora.href = "/src/autenticacion/htmls/login.html";
+    }
     // 1. Quitar los elementos de "nombre-usuario" y "Cerrar Sesión"
     const divSesion = menu.querySelector(".div-sesion-iniciada");
     //const nombreUsuarioLink = menu.querySelector(".nav-nombre-usuario");

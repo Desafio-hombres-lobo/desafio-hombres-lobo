@@ -94,7 +94,9 @@ body {
   box-shadow: 0 0 8px var(--morado);
   transition: 0.3s all;
 }
-
+#boton-jugar-ahora {
+  text-decoration: none;
+}
 .boton-principal:hover {
   transform: translateY(-3px);
   box-shadow: 0 0 20px var(--rosa-claro);

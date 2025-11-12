@@ -20,38 +20,6 @@
     />
     <link rel="stylesheet" href="base.css" />
     <link rel="stylesheet" href="registro.css" />
-
-    <style>
-      .campo-opciones {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        font-size: 0.9rem;
-      }
-      .campo-opciones .recordar-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--beige); /* Variable de base.css */
-        cursor: pointer;
-        font-weight: 500;
-      }
-      /* Sobrescribimos el 'width: 100%' que 
-        registro.css aplica a todos los inputs 
-      */
-      .campo-opciones input[type="checkbox"] {
-        width: auto;
-        margin-right: 5px;
-      }
-      .campo-opciones a {
-        color: var(--morado); /* Variable de base.css */
-        text-decoration: none;
-      }
-      .campo-opciones a:hover {
-        text-decoration: underline;
-      }
-    </style>
   </head>
   <body>
     <header class="cabecera">
@@ -80,7 +48,7 @@
         <form id="formulario-login">
           <div class="campo">
             <label for="usuario"
-              ><i class="fas fa-user"></i> Correo o Nickname</label
+              ><i class="fas fa-user"></i> Correo o Nombre de usuario</label
             >
             <input
               type="text"
