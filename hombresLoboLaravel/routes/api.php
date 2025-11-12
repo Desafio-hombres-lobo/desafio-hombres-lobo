@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\JugadorController;
 use App\Http\Controllers\UserController, App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,3 +13,7 @@ Route::apiResource('users', UserController::class);
 
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
+
+# Cambiar nickname jugador
+Route::post('/cambiarNicknameUsuario', [JugadorController::class, 'update'])
+     ->middleware('auth:sanctum');

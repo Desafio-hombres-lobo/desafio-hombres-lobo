@@ -1,4 +1,5 @@
 import "../css/perfil.css";
+import { enviarNicknameActualizado } from "../../providers/actualizarNickname";
 
 const formCambiarNickname =
   document.querySelector<HTMLFormElement>("#form-nickname")!;
@@ -6,7 +7,7 @@ const formCambiarNickname =
 const campoNuevoNickname = {
   nuevoNicknameUsuario: {
     input: formCambiarNickname.querySelector<HTMLInputElement>(
-      'input[name="nuevo-nickname"]'
+      'input[name="nickname"]'
     )!,
     validar: (valor: string) => valor.trim().length <= 0,
     mensajeError: "El nuevo nickname no puede estar vacío.",
@@ -23,7 +24,7 @@ const validarFormNickname = (): void => {
   validarCampoNickname();
 };
 
-const validarCampoNickname = (): void => {
+const validarCampoNickname = async (): Promise<void> => {
   let formularioValido = true;
 
   const campo = campoNuevoNickname.nuevoNicknameUsuario;
@@ -42,11 +43,12 @@ const validarCampoNickname = (): void => {
     nickname: campo.input.value,
   };
 
-  // enviarNicknameActualizado(datosNuevoNickname)
+  await enviarNicknameActualizado(datosNuevoNickname);
+  campo.input.value = "";
 };
 
 const mostrarError = (input: HTMLInputElement, mensaje: string): void => {
-  const contenedor = input.parentElement; // .campo-con-boton
+  const contenedor = input.parentElement;
   if (!contenedor) return;
 
   let errorSpan = contenedor.querySelector<HTMLSpanElement>(".error");
