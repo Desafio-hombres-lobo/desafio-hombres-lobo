@@ -1,45 +1,67 @@
 import "../css/perfil.css";
-import {
-  mostrarError,
-  limpiarError,
-} from "../../autenticacion/validarFormulario";
 
 const formCambiarNickname =
-  document.querySelector<HTMLFormElement>("#form-nickname");
+  document.querySelector<HTMLFormElement>("#form-nickname")!;
 
-const nuevoNicknameUsuario =
-  formCambiarNickname?.querySelector<HTMLInputElement>(
-    'input[name="nuevo-nickname"]'
-  )!;
+const campoNuevoNickname = {
+  nuevoNicknameUsuario: {
+    input: formCambiarNickname.querySelector<HTMLInputElement>(
+      'input[name="nuevo-nickname"]'
+    )!,
+    validar: (valor: string) => valor.trim().length <= 0,
+    mensajeError: "El nuevo nickname no puede estar vacío.",
+  },
+};
 
-formCambiarNickname?.addEventListener("submit", () => {
-  console.log("Botón cambiar nickname pulsado");
-
-  if (nuevoNicknameUsuario.value.length <= 0) {
-    alert("El nickname no puede estar vacío");
-    return;
-  } else {
-    alert("Nickname cambiado correctamente");
-  }
+formCambiarNickname.addEventListener("submit", (e) => {
+  e.preventDefault();
+  validarFormNickname();
 });
 
-// const validarFormNickname = (): void => {
-//   if (!formCambiarNickname) return;
+const validarFormNickname = (): void => {
+  if (!formCambiarNickname) return;
+  validarCampoNickname();
+};
 
-//   formCambiarNickname.addEventListener("submit", validarCampoNickname);
-// };
+const validarCampoNickname = (): void => {
+  let formularioValido = true;
 
-// const validarCampoNickname = (e: SubmitEvent): void => {
-//   e.preventDefault();
+  const campo = campoNuevoNickname.nuevoNicknameUsuario;
+  const valor = campo.input.value.trim();
 
-//   const campo = nuevoNicknameUsuario.value;
+  if (campo.validar(valor)) {
+    mostrarError(campo.input, campo.mensajeError);
+    formularioValido = false;
+  } else {
+    limpiarError(campo.input);
+  }
 
-//   if (campo.length < 0) {
-//     mostrarError(
-//       nuevoNicknameUsuario,
-//       "El nuevo nickname no puede estar vacío."
-//     );
-//   } else {
-//     limpiarError(nuevoNicknameUsuario);
-//   }
-// };
+  if (!formularioValido) return;
+
+  const datosNuevoNickname = {
+    nickname: campo.input.value,
+  };
+
+  // enviarNicknameActualizado(datosNuevoNickname)
+};
+
+const mostrarError = (input: HTMLInputElement, mensaje: string): void => {
+  const contenedor = input.parentElement; // .campo-con-boton
+  if (!contenedor) return;
+
+  let errorSpan = contenedor.querySelector<HTMLSpanElement>(".error");
+
+  if (!errorSpan) {
+    errorSpan = document.createElement("span");
+    errorSpan.className = "error";
+    contenedor.insertAdjacentElement("afterend", errorSpan);
+  }
+
+  errorSpan.textContent = mensaje;
+};
+
+const limpiarError = (input: HTMLInputElement): void => {
+  const contenedor = input.parentElement;
+  const errorSpan = contenedor?.nextElementSibling as HTMLSpanElement;
+  if (errorSpan?.classList.contains("error")) errorSpan.textContent = "";
+};

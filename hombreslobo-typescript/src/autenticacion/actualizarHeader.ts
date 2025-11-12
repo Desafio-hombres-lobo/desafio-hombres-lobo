@@ -42,6 +42,7 @@ export const actualizarHeader = (sesion: string, clave: string) => {
 
       const verPerfil = document.createElement("a");
       verPerfil.className = "ver-perfil";
+      verPerfil.href = "/src/perfil/html/perfil.html";
       verPerfil.textContent = "Ver perfil";
       divSesion.appendChild(nombreUsuarioLink);
       divSesion.appendChild(verPerfil);
