@@ -12,8 +12,7 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
 
     // Verificar respuesta
     if (!response.ok) {
-      const errorDatos = await response.json();
-      throw errorDatos;
+      throw response;
     }
 
     const data = await response.json();
@@ -29,8 +28,6 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
       sessionStorage.setItem(CLAVE_USUARIO, data.usuario);
       return true;
     }
-  } catch (error) {
-    return false;
   } finally {
     document.body.style.cursor = "default";
   }
