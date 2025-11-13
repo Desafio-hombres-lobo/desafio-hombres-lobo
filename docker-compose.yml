@@ -7,9 +7,10 @@ services:
       dockerfile: Dockerfile
     container_name: laravel_app
     ports:
-      - "${LARAVEL_PORT}:8000"
+      - "${LARAVEL_PORT:-8000}:8000"
     volumes:
-      - ./hombresLoboLaravel:/var/www/html
+      - laravel_data:/var/www/html
+      - ./hombresLoboLaravel:/var/www/html:cached
     depends_on:
       mysql:
         condition: service_healthy
@@ -27,11 +28,12 @@ services:
     container_name: mysql_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hombres_lobo
+      MYSQL_USER: devuser
+      MYSQL_PASSWORD: devpass
     ports:
-      - "${DB_PORT}:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
     command: --default-authentication-plugin=mysql_native_password --skip-ssl
@@ -41,20 +43,30 @@ services:
       timeout: 5s
       retries: 10
 
-
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
 
   frontend:
     image: node:20
     container_name: ts_frontend
     working_dir: /app
     ports:
-      - "${FRONT_PORT}:5173"
+      - "${FRONT_PORT:-5173}:5173"
     volumes:
-      - ./hombreslobo-typescript:/app
+      - ./hombreslobo-typescript:/app:cached
     command: sh -c "npm install && npm run dev -- --host"
     depends_on:
       - laravel
 
 volumes:
   db_data:
+  laravel_data:
 
