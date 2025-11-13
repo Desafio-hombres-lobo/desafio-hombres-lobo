@@ -37,4 +37,26 @@ class JugadorController extends Controller
         return response()->json($jugador, 200);
 
     }
+
+   public function show(Request $request)
+    {
+        $user = $request->user();
+
+        $jugador = $user->jugador;
+
+        if (!$jugador) {
+            return response()->json(['error' => 'Perfil de jugador no encontrado'], 404);
+        }
+
+        $totalGanadas = $jugador->partidas()->sum('ganadas');
+        $totalPerdidas = $jugador->partidas()->sum('perdidas');
+        $totalPartidas = $jugador->partidas()->count();
+
+        return response()->json([
+            'nickname' => $jugador->nickname,
+            'partidas_jugadas' => $totalPartidas,
+            'partidas_ganadas' => (int) $totalGanadas,
+            'partidas_perdidas' => (int) $totalPerdidas,
+        ]);
+    }
 }

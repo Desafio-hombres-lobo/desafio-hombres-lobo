@@ -17,3 +17,8 @@ Route::post('/login', [AuthController::class, 'loguear']);
 # Cambiar nickname jugador
 Route::post('/cambiarNicknameUsuario', [JugadorController::class, 'update'])
      ->middleware('auth:sanctum');
+
+# Obtener Estadísticas Jugador
+Route::get('/obtenerEstadisticasJugador', [JugadorController::class, 'show'])
+     ->middleware('auth:sanctum');
+
