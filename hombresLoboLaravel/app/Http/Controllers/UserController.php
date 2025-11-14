@@ -25,7 +25,8 @@ class UserController extends Controller
             'name' => $datos['name'],
             'email' => $datos['email'],
             'nickname' => $datos['nickname'],
-            'password' => $datos['password']
+            'password' => $datos['password'],
+            'rol' => $datos['rol']
         ]);
 
         return response()->json($user, 201);

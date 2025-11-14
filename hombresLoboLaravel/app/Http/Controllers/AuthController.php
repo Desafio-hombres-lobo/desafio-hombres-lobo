@@ -20,6 +20,7 @@ class AuthController extends Controller
             'email' => $datos['email'],
             'nickname' => $datos['nickname'],
             'password' => Hash::make($datos['password']),
+            'rol' => 2
         ]);
         $jugadorController = new JugadorController();
         $jugador = $jugadorController->crearJugador($user);
