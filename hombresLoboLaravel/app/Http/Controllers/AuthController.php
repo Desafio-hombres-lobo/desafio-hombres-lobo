@@ -44,8 +44,21 @@ class AuthController extends Controller
 
         if ($login) {
             $user = Auth::user();
+            $user->load('rol');
+            $abilities = [];
+            $rolNombre = $user->rol->nombre;
 
-            $token = $user->createToken('auth_token', ['usuario'])->plainTextToken;
+            switch ($rolNombre) {
+                case 'usuario':
+                    $abilities = ['usuario'];
+                    break;
+                case 'admin':
+                    $abilities = ['admin', 'usuario'];
+                    break;
+            }
+
+
+            $token = $user->createToken('auth_token', $abilities)->plainTextToken;
 
             return response()->json([
                 'token' => $token,
