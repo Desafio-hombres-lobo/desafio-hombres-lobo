@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Roles_administracion;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Controllers\JugadorController;
 use App\Http\Requests\LoginRequest;
@@ -44,9 +45,9 @@ class AuthController extends Controller
 
         if ($login) {
             $user = Auth::user();
-            $user->load('rol');
+            $user->load('role');
             $abilities = [];
-            $rolNombre = $user->rol->nombre;
+            $rolNombre = $user->role->nombre;
 
             switch ($rolNombre) {
                 case 'usuario':

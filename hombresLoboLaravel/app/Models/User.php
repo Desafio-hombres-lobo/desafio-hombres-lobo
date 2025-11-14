@@ -57,7 +57,7 @@ class User extends Authenticatable
         return $this->hasOne(Jugador::class, 'id_usuario');
     }
 
-    public function rol(): BelongsTo
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Roles_administracion::class, 'rol');
     }
