@@ -12,7 +12,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,11 +22,16 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
+        $jugadorId = $this->user()->jugador->id;
+
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'nickname' => 'required|string|alpha_dash|unique:users',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'nickname' => [
+                'required',
+                'string',
+                'alpha_dash',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('jugadores', 'nickname')->ignore($jugadorId),
+            ],
         ];
     }
 }

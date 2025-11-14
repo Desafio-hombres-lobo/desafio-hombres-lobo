@@ -18,9 +18,6 @@ return new class extends Migration {
                 ->constrained('users')
                 ->onDelete('cascade')
                 ->unique();
-            $table->integer('partidas_ganadas')->default(0);
-            $table->integer('partidas_perdidas')->default(0);
-
         });
     }
 

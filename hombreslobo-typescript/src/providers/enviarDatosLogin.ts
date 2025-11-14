@@ -19,6 +19,7 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
     const SESSIONSTORAGE = "auth_token";
     const LOCALSTORAGE = "credenciales";
     const CLAVE_USUARIO = "auth_usuario";
+    const CLAVE_JUGADOR = "auth_jugador";
 
     if (datosUsuario["recordarme"]) {
       localStorage.setItem(LOCALSTORAGE, datosUsuario["usuario"]);
@@ -26,6 +27,7 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
     if (data.token && data.usuario) {
       sessionStorage.setItem(SESSIONSTORAGE, data.token);
       sessionStorage.setItem(CLAVE_USUARIO, data.usuario);
+      sessionStorage.setItem(CLAVE_JUGADOR, data.jugador);
       return true;
     }
   } finally {
