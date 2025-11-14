@@ -49,7 +49,8 @@ class AuthController extends Controller
 
             return response()->json([
                 'token' => $token,
-                'usuario' => $user->nickname
+                'usuario' => $user->nickname,
+                'jugador' => $user->jugador->nickname
             ], 200);
         } else {
             return response()->json([

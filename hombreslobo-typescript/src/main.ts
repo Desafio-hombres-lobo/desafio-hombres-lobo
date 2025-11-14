@@ -6,13 +6,14 @@ import { actualizarHeader } from "./autenticacion/actualizarHeader";
 
 const SESSIONSTORAGE = "auth_token";
 const CLAVE_USUARIO = "auth_usuario";
+const CLAVE_JUGADOR = "auth_jugador";
 const LOCALSTORAGE = "credenciales";
 
 document.addEventListener("DOMContentLoaded", () => {
   const formulario = document.querySelector<HTMLFormElement>("#formulario");
   const formularioLogin =
     document.querySelector<HTMLFormElement>("#formulario-login");
-  actualizarHeader(SESSIONSTORAGE, CLAVE_USUARIO);
+  actualizarHeader(SESSIONSTORAGE, CLAVE_USUARIO, CLAVE_JUGADOR);
   if (formulario) {
     validarFormulario(formulario);
   }

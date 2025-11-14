@@ -12,7 +12,7 @@ class Partida extends Model
 
     public function jugadores(): BelongsToMany
     {
-        return $this->belongsToMany(Jugador::class, 'partidas_jugadores', 'id_partida', 'id_jugador')
+        return $this->belongsToMany(Jugador::class, 'historial_partidas_jugadores', 'id_partida', 'id_jugador')
                     ->withPivot('ganadas', 'perdidas')
                     ->withTimestamps();
     }

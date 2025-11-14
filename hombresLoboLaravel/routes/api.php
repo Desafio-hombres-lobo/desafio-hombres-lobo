@@ -21,4 +21,5 @@ Route::post('/cambiarNicknameUsuario', [JugadorController::class, 'update'])
 # Obtener Estadísticas Jugador
 Route::get('/obtenerEstadisticasJugador', [JugadorController::class, 'show'])
      ->middleware('auth:sanctum');
+    //  ->middleware(['auth:sanctum', 'ability:usuario']);
 

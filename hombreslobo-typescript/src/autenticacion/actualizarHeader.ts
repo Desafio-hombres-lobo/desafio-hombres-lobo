@@ -2,7 +2,11 @@ import { cerrarSesion } from "./cerrarSesion";
 
 cerrarSesion;
 
-export const actualizarHeader = (sesion: string, clave: string) => {
+export const actualizarHeader = (
+  sesion: string,
+  claveUsuario: string,
+  claveJugador: string
+) => {
   const menu = document.querySelector(".menu");
   const token = sessionStorage.getItem(sesion);
   const botonJugarAhora = document.getElementById(
@@ -16,7 +20,7 @@ export const actualizarHeader = (sesion: string, clave: string) => {
       botonJugarAhora.href = "#";
     }
 
-    const nombreUsuario = sessionStorage.getItem(clave);
+    const nombreUsuario = sessionStorage.getItem(claveJugador);
     const loginLink = menu.querySelector(
       'a[href="/src/autenticacion/htmls/login.html"]'
     );
@@ -56,7 +60,7 @@ export const actualizarHeader = (sesion: string, clave: string) => {
       // 4. Añadir el listener para el logout
       cerrarSesionBoton.addEventListener("click", (e) => {
         e.preventDefault();
-        cerrarSesion(sesion, clave);
+        cerrarSesion(sesion, claveUsuario, claveJugador);
       });
       divSesion.appendChild(cerrarSesionBoton);
       menu.appendChild(divSesion);

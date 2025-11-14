@@ -40,7 +40,7 @@ export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
     // if (nicknameH3) nicknameH3.textContent = data.nickname;
 
     // Actualizar el nickname guardado en sesión
-    sessionStorage.setItem("auth_usuario", data.nickname);
+    sessionStorage.setItem("auth_jugador", data.nickname);
 
     return true;
   } catch (error) {
