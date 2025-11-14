@@ -6,18 +6,19 @@ export const actualizarHeader = (sesion: string, clave: string) => {
   const menu = document.querySelector(".menu");
   const token = sessionStorage.getItem(sesion);
   const contenedorFinal = document.getElementById("contenedor-final");
-  const botonJugarAhora = document.getElementById(
-    "boton-jugar-ahora"
-  ) as HTMLAnchorElement | null;
+  const botonesJugarAhora =
+    document.querySelectorAll<HTMLAnchorElement>("#boton-jugar-ahora");
   if (!menu) return;
 
   if (token) {
     if (contenedorFinal) {
       contenedorFinal.classList.add("oculto");
     }
-    if (botonJugarAhora) {
+    if (botonesJugarAhora.length > 0) {
       //Aqui va el enlace del modal
-      botonJugarAhora.href = "#";
+      botonesJugarAhora.forEach((boton: HTMLAnchorElement) => {
+        boton.href = "#";
+      });
     }
 
     const nombreUsuario = sessionStorage.getItem(clave);
@@ -69,8 +70,10 @@ export const actualizarHeader = (sesion: string, clave: string) => {
     if (contenedorFinal) {
       contenedorFinal.classList.remove("oculto");
     }
-    if (botonJugarAhora) {
-      botonJugarAhora.href = "/src/autenticacion/htmls/login.html";
+    if (botonesJugarAhora.length > 0) {
+      botonesJugarAhora.forEach((boton: HTMLAnchorElement) => {
+        boton.href = "/src/autenticacion/htmls/login.html";
+      });
     }
     // 1. Quitar los elementos de "nombre-usuario" y "Cerrar Sesión"
     const divSesion = menu.querySelector(".div-sesion-iniciada");
