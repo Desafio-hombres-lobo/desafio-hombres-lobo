@@ -5,6 +5,7 @@ export const initModalCrearPartida = (): void => {
   const modal = document.getElementById("modalJuego");
   const MIN_JUGADORES = 15;
   const MAX_JUGADORES = 30;
+  const MAX_NOMBRE=20;
 
   if (!crearBtn || !modalCrear) return;
 
@@ -83,10 +84,13 @@ export const initModalCrearPartida = (): void => {
         if (num < MIN_JUGADORES) {
         mostrarError(numJugadoresInput, `El número de jugadores mínimo es ${MIN_JUGADORES}.`);
         hayError = true;
+        }else if (num> MAX_JUGADORES) {
+        mostrarError(numJugadoresInput,`El número máximo permitido es ${MAX_JUGADORES} jugadores.`);
+        hayError = true;
         }
 
-        if (num> MAX_JUGADORES) {
-        mostrarError(numJugadoresInput,`El número máximo permitido es ${MAX_JUGADORES} jugadores.`);
+        if (nombreInput.value.length > MAX_NOMBRE) {
+        mostrarError(nombreInput, `El nombre no puede exceder los ${MAX_NOMBRE} caracteres.`);
         hayError = true;
         }
 
