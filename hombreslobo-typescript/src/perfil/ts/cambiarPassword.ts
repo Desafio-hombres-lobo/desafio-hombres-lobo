@@ -8,6 +8,8 @@ export const cambiarPasswordUsuario = async (): Promise<void> => {
 
   if (!confirmacion) {
     return;
+  } else {
+    alert("Contraseña reestablecida correctamente, mira tu email.");
   }
 
   await obtenerNuevaPassword();
