@@ -64,11 +64,11 @@ input[type="text"],
 input[type="number"],
 input[type="email"] {
   width: 100%;
-  box-sizing: border-box; /* Para que el padding no rompa el ancho */
+  box-sizing: border-box;
   padding: 10px;
   margin-bottom: 10px;
-  background-color: #333; /* Fondo de input */
-  color: #fff; /* Texto de input */
+  background-color: #333;
+  color: #fff;
   border: 1px solid #555;
   border-radius: 4px;
 }
@@ -88,7 +88,7 @@ label {
   color: #aaa;
 }
 #contenedor-formulario-actualizar button {
-  background-color: #28a745; /* Verde éxito */
+  background-color: #28a745;
 }
 #contenedor-formulario-actualizar button:hover {
   background-color: #1e7e34;
@@ -96,13 +96,13 @@ label {
 
 /* --- Salida de Resultados (el <pre>) --- */
 #salida-resultados {
-  background-color: #111; /* Fondo negro para el JSON */
+  background-color: #111;
   border: 1px solid #444;
   padding: 15px;
   border-radius: 4px;
-  overflow-x: auto; /* Scroll horizontal si el JSON es muy largo */
-  max-height: 400px; /* Scroll vertical si es muy largo */
-  white-space: pre-wrap; /* Para que el texto se ajuste */
+  overflow-x: auto;
+  max-height: 400px;
+  white-space: pre-wrap;
   word-wrap: break-word;
 }
 
