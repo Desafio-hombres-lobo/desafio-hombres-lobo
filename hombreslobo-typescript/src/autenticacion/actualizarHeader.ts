@@ -1,7 +1,5 @@
 import { cerrarSesion } from "./cerrarSesion";
 
-cerrarSesion;
-
 export const actualizarHeader = (
   sesion: string,
   clave: string,
@@ -71,7 +69,7 @@ export const actualizarHeader = (
       // 4. Añadir el listener para el logout
       cerrarSesionBoton.addEventListener("click", (e) => {
         e.preventDefault();
-        cerrarSesion(sesion, clave);
+        cerrarSesion(sesion, clave, rol);
       });
       divSesion.appendChild(cerrarSesionBoton);
       menu.appendChild(divSesion);

@@ -105,3 +105,17 @@ label {
   white-space: pre-wrap; /* Para que el texto se ajuste */
   word-wrap: break-word;
 }
+
+a {
+  text-decoration: none;
+  color: rgb(128, 203, 253);
+}
+
+.oculto {
+  display: none;
+}
+
+#response h1 {
+  text-align: center;
+  margin: 0;
+}
