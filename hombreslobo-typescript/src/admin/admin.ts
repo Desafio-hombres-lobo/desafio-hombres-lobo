@@ -10,7 +10,7 @@ const ROL_USUARIO = "auth_rol";
 const CLAVE_USUARIO = "auth_usuario";
 const LOCALSTORAGE = "credenciales";
 
-const btnVerUsuario = document.getElementById("btn-mostrar-todos")!;
+const btnVerUsuarios = document.getElementById("btn-mostrar-todos")!;
 const btnEncontrarUsuario = document.getElementById("btn-buscar-uno")!;
 const btnBorrarUsuario = document.getElementById("btn-borrar-uno")!;
 const entradaUsuario = document.getElementById(
@@ -21,6 +21,9 @@ const nicknameInput = document.getElementById(
   "nickname-usuario"
 ) as HTMLInputElement;
 const emailInput = document.getElementById("email-usuario") as HTMLInputElement;
+const contraseñaInput = document.getElementById(
+  "contraseña-usuario"
+)! as HTMLInputElement;
 const btnActualizar = document.getElementById("actualizar-usuario")!;
 
 const rolUsuario = sessionStorage.getItem(ROL_USUARIO);
@@ -37,14 +40,16 @@ if (rolUsuario !== "admin" && panel) {
 }
 
 //Api responses
+let idUsuarioSeleccionado: number | string | null = null;
 
 function mostrarResultados(data: any) {
   if (resultado) resultado.textContent = JSON.stringify(data, null, 2); //El dos trabaja el indent del JSON para que se vea mas bonito
 }
 
-btnVerUsuario.addEventListener("click", async () => {
+btnVerUsuarios.addEventListener("click", async () => {
   try {
-    const data = await cogerTodosLosUsuarios(); // 👈 Llama al provider
+    resultado.textContent = "Buscando...";
+    const data = await cogerTodosLosUsuarios();
     mostrarResultados(data);
   } catch (error) {
     mostrarResultados({ error: (error as Error).message });
@@ -52,14 +57,14 @@ btnVerUsuario.addEventListener("click", async () => {
 });
 
 btnEncontrarUsuario.addEventListener("click", async () => {
-  const id = entradaUsuario.value;
-  if (!id) {
-    alert("Por favor, introduce un ID o Nickname.");
+  idUsuarioSeleccionado = entradaUsuario.value;
+  if (!idUsuarioSeleccionado) {
+    alert("Por favor, introduce un ID o Nickname."); //En admin si que veo bien algun alert
     return;
   }
   try {
     resultado.textContent = "Buscando...";
-    const data = await cogerUnUsuario(id);
+    const data = await cogerUnUsuario(idUsuarioSeleccionado);
     mostrarResultados(data);
 
     nicknameInput.value = data.nickname;
@@ -68,5 +73,42 @@ btnEncontrarUsuario.addEventListener("click", async () => {
     mostrarResultados({ error: (error as Error).message });
     nicknameInput.value = "";
     emailInput.value = "";
+  }
+});
+
+btnActualizar.addEventListener("click", async (e) => {
+  e.preventDefault();
+  idUsuarioSeleccionado = entradaUsuario.value;
+  if (!idUsuarioSeleccionado) {
+    alert("Por favor, introduce un ID o Nickname.");
+    return;
+  }
+  const password = contraseñaInput.value;
+  const datosParaActualizar: {
+    nickname: string;
+    email: string;
+    password?: string;
+  } = {
+    nickname: nicknameInput.value,
+    email: emailInput.value,
+  };
+  if (password) {
+    datosParaActualizar.password = password;
+  }
+
+  try {
+    resultado.textContent = "Actualizando...";
+    const data = await actualizarUsuario(
+      idUsuarioSeleccionado,
+      datosParaActualizar
+    );
+
+    mostrarResultados(data);
+    nicknameInput.value = "";
+    emailInput.value = "";
+    contraseñaInput.value = "";
+    entradaUsuario.value = "";
+  } catch (error) {
+    mostrarResultados({ error: (error as Error).message });
   }
 });
