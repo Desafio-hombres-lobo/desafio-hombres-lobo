@@ -63,7 +63,8 @@ class AuthController extends Controller
 
             return response()->json([
                 'token' => $token,
-                'usuario' => $user->nickname
+                'usuario' => $user->nickname,
+                'rol' => $rolNombre
             ], 200);
         } else {
             $user = User::where('email', $datos['usuario'])

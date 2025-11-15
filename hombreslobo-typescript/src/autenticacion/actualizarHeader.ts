@@ -2,9 +2,14 @@ import { cerrarSesion } from "./cerrarSesion";
 
 cerrarSesion;
 
-export const actualizarHeader = (sesion: string, clave: string) => {
+export const actualizarHeader = (
+  sesion: string,
+  clave: string,
+  rol: String
+) => {
   const menu = document.querySelector(".menu");
   const token = sessionStorage.getItem(sesion);
+  const rolUsuario = sessionStorage.getItem(rol);
   const contenedorFinal = document.getElementById("contenedor-final");
   const botonesJugarAhora =
     document.querySelectorAll<HTMLAnchorElement>("#boton-jugar-ahora");
@@ -19,6 +24,12 @@ export const actualizarHeader = (sesion: string, clave: string) => {
       botonesJugarAhora.forEach((boton: HTMLAnchorElement) => {
         boton.href = "#";
       });
+    }
+    if (rolUsuario == "admin") {
+      const enlaceAdmin = document.createElement("a");
+      enlaceAdmin.href = "/src/admin/htmls/admin.html";
+      enlaceAdmin.textContent = "Panel de administracion";
+      menu.appendChild(enlaceAdmin);
     }
 
     const nombreUsuario = sessionStorage.getItem(clave);
