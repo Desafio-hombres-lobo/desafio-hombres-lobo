@@ -34,7 +34,7 @@
 
 .descripcion img {
   display: block;
-  max-width: 100%;
+  max-width: 70%;
   height: auto;
   margin: 2rem auto 0;
   animation: girarCartas 40s linear infinite;
@@ -98,16 +98,14 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.03);
-  z-index: 0;
+  background: rgba(255, 255, 255, 0.03)
 }
 
 .tarjeta-item i {
   font-size: 2.5rem;
   color: var(--morado);
   margin-bottom: 1rem;
-  position: relative;
-  z-index: 1;
+  position: relative
 }
 
 .tarjeta-item h3 {
@@ -118,13 +116,11 @@
   color: var(--rosa-claro);
   text-shadow: 1px 1px 5px var(--morado);
   position: relative;
-  z-index: 1;
   margin-bottom: 1rem;
 }
 
 .tarjeta-item p {
   position: relative;
-  z-index: 1;
 }
 
 .contenedor-final {

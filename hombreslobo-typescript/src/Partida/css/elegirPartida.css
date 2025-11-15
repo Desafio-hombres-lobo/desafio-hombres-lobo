@@ -1,5 +1,5 @@
 
-#modalJuego {
+.modalJuego {
   display: none; 
   position: fixed; 
   z-index: 100; 
@@ -49,7 +49,7 @@
   text-shadow:1px 1px 5px var(--morado);
   font-family:var(--fuente-titulo);
   font-weight:lighter;
-  font-size: 2.5rem;
+  font-size: 2rem;
 }
 
 
@@ -60,7 +60,7 @@
   padding: 12px 24px;
   margin: 10px;
   font-family: 'Bahiana', cursive;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #fff;
   background: linear-gradient(135deg, var(--morado), var(--rosa-claro));
   border: none;
@@ -98,6 +98,22 @@
   opacity: 0.5;
 }
 
+.cerrar-modal {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  cursor: pointer;
+  color:var(--morado);
+  transition: 0.2s;
+}
+
+.cerrar-modal:hover {
+  color:white;
+  transform: scale(1.1);
+}
 
 #modalUnirse {
   display: none; 
@@ -118,14 +134,13 @@
   position: relative;
   color: white;
   font-weight: b;
-  filter: blur(0.5px) brightness(0.9);
 }
 
 
 .unirse-modal h3 {
   font-family: var(--fuente-titulo);
   font-weight: lighter;
-  font-size: 30px;
+  font-size: 1.3rem;
   margin-bottom: 1rem;
   text-shadow: 1px 1px 5px var(--morado);
 }
@@ -150,7 +165,7 @@
 
 .unirse-modal button {
   padding: 10px 20px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   border-radius: 6px;
   border: none;
   cursor: pointer;
@@ -164,12 +179,6 @@
 }
 
 
-.unirse-modal .close {
-  color: #fff;
-  float: right;
-  font-size: 28px;
-  cursor: pointer;
-}
 
 
 @keyframes degradadoUnirse {
@@ -195,21 +204,33 @@
 }
 
 
+.modal{
+  border-radius:20px;
+  background-color:var(--negro);
+  padding-bottom: 1rem;
+}
 
 .modal .partida-contenedor {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
 }
+
+.modal label {
+  font-family:var(--fuente-titulo);
+  font-size: 1.2rem;
+  color: var(--rosa-claro);
+}
+
 .modal input[type="text"],
 .modal input[type="number"] {
   padding: 0.8rem 0.8rem;
   margin-left:30px;
   border-radius: 6px;
-  border: 1px solid #555;
+  border: 1px solid var(--morado);
   background-color: #2a2a3d;
   color: #fff;
-  font-size: 0.95rem;;
+  font-size: 0.65rem;;
 }
 
 .modal input:focus,
@@ -220,10 +241,3 @@
 }
 
 
-
-
-@media (max-width: 768px) {
-  .descripcion h2 {
-    font-size: 2rem;
-  }
-}

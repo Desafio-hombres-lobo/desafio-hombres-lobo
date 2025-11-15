@@ -98,7 +98,8 @@ body {
 
 .error {
   display: block;
-  margin-top: 0.4rem;
+  margin-top:-1rem;
+  margin-bottom: 0.6rem;
   font-size: 0.85rem;
   color: var(--error);
   text-shadow: 0 0 3px rgba(255, 118, 117, 0.6);
@@ -114,6 +115,11 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.exito{
+  color: lightgreen;
+  margin-top: 10px;
 }
 
 .boton-registrar {
