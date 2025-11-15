@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Controllers\JugadorController;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Testing\Fluent\Concerns\Has;
 
 class AuthController extends Controller
 {
@@ -24,7 +27,46 @@ class AuthController extends Controller
 
         return response()->json([
             'exito' => true,
-            'nombre de usuario' => $user->nickname,
+            'usuario' => $user->nickname,
         ]);
+    }
+    public function loguear(LoginRequest $request)
+    {
+        $datos = $request->validated();
+        $campo = filter_var($datos['usuario'], FILTER_VALIDATE_EMAIL)
+            ? 'email'
+            : 'nickname';
+        $credenciales = [
+            $campo => $datos['usuario'],
+            'password' => $datos['password']
+        ];
+        $login = Auth::attempt($credenciales);
+
+        if ($login) {
+            $user = Auth::user();
+
+            $token = $user->createToken('auth_token', ['usuario'])->plainTextToken;
+
+            return response()->json([
+                'token' => $token,
+                'usuario' => $user->nickname,
+                'jugador' => $user->jugador->nickname
+            ], 200);
+        } else {
+            $user = User::where('email', $datos['usuario'])
+                ->orWhere('nickname', $datos['usuario'])
+                ->first();
+            if (!$user) {
+                return response()->json([
+                    'error' => 'usuario',
+                    'mensaje' => 'No se encontró ningún usuario con ese correo o apodo.'
+                ], 404);
+            } else {
+                return response()->json([
+                    'error' => 'password',
+                    'mensaje' => 'La contraseña es incorrecta.'
+                ], 401);
+            }
+        }
     }
 }

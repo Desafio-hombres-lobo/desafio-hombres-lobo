@@ -27,19 +27,6 @@ body {
   text-shadow: 1px 1px 5px var(--morado);
 }
 
-.menu a {
-  margin-left: 1.5rem;
-  text-decoration: none;
-  color: var(--beige);
-  font-weight: 500;
-  transition: color 0.3s, text-shadow 0.3s;
-}
-
-.menu a:hover {
-  color: var(--morado);
-  text-shadow: 0 0 8px var(--morado);
-}
-
 .registro {
   display: flex;
   justify-content: center;

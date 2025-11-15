@@ -1,21 +1,39 @@
 import "./css/base.css";
 import "./css/index.css";
-import "/src/autenticacion/css/registro.css";
 import "./Partida/css/elegirPartida.css"
 import { initModal } from "./Partida/ts/mostrarModal";
 import {initModalUnirse} from "./Partida/ts/unirsePartida"
 import { initModalCrearPartida } from "./Partida/ts/crearPartida";
+import { validarFormulario } from "./autenticacion/validarFormulario";
+import { validarLogin } from "./autenticacion/validarLogin";
+import { actualizarHeader } from "./autenticacion/actualizarHeader";
+
+const SESSIONSTORAGE = "auth_token";
+const CLAVE_USUARIO = "auth_usuario";
+const CLAVE_JUGADOR = "auth_jugador";
+const LOCALSTORAGE = "credenciales";
 
 document.addEventListener("DOMContentLoaded", () => {
   initModal();
   initModalUnirse();
   initModalCrearPartida();
-  import("./autenticacion/validarFormulario")
-    .then(({ validarFormulario }) => {
-      validarFormulario();
-    })
-    .catch((error) => {
-      console.log("No hay formulario en esta página, saltando validación.");
-    });
+  const formulario = document.querySelector<HTMLFormElement>("#formulario");
+  const formularioLogin =
+    document.querySelector<HTMLFormElement>("#formulario-login");
+  actualizarHeader(SESSIONSTORAGE, CLAVE_USUARIO, CLAVE_JUGADOR);
+  if (formulario) {
+    validarFormulario(formulario);
+  }
+  if (formularioLogin) {
+    validarLogin(formularioLogin, sacarCredenciales(LOCALSTORAGE));
+  }
 });
 
+const sacarCredenciales = (storage: string) => {
+  const credencial = localStorage.getItem(storage);
+  if (credencial) {
+    return credencial;
+  } else {
+    return false;
+  }
+};
