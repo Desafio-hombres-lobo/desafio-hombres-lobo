@@ -5,7 +5,7 @@ cerrarSesion;
 export const actualizarHeader = (
   sesion: string,
   clave: string,
-  rol: String
+  rol: string
 ) => {
   const menu = document.querySelector(".menu");
   const token = sessionStorage.getItem(sesion);
