@@ -66,7 +66,7 @@ class AuthController extends Controller
                 'token' => $token,
                 'usuario' => $user->nickname,
                 'rol' => $rolNombre,
-                'jugador' => $user->jugador->nickname
+                //'jugador' => $user->jugador->nickname
             ], 200);
         } else {
             $user = User::where('email', $datos['usuario'])

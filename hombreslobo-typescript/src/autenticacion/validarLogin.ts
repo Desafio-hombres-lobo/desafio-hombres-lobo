@@ -7,20 +7,20 @@ export const validarLogin = (
 ) => {
   if (!formularioLogin) return;
   const inputUsuario =
-    formularioLogin.querySelector<HTMLInputElement>("#usuario");
+    formularioLogin.querySelector<HTMLInputElement>("#usuario")!;
   const inputPassword =
-    formularioLogin.querySelector<HTMLInputElement>("#password");
+    formularioLogin.querySelector<HTMLInputElement>("#password")!;
   const inputRecordarme =
-    formularioLogin.querySelector<HTMLInputElement>("#recordarme");
+    formularioLogin.querySelector<HTMLInputElement>("#recordarme")!;
   if (credencial && inputUsuario) {
     inputUsuario.value = credencial;
   }
   const enviarDatos = async (e: SubmitEvent) => {
     e.preventDefault();
     const datosUsuario = {
-      usuario: inputUsuario?.value,
-      password: inputPassword?.value,
-      recordarme: inputRecordarme?.checked,
+      usuario: inputUsuario.value,
+      password: inputPassword.value,
+      recordarme: inputRecordarme.checked,
     };
     try {
       const exito = await enviarDatosLogin(datosUsuario);
