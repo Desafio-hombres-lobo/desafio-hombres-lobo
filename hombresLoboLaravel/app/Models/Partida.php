@@ -9,7 +9,7 @@ class Partida extends Model
 {
     protected $table = 'partidas';
     protected $primaryKey = 'id_partida';
-    protected $fillable = ['id_creador', 'nombre', 'codigo'];
+    protected $fillable = ['creador_id', 'nombre', 'num_jugadores', 'codigo'];
 
     public function creador()
     {

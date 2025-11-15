@@ -39,7 +39,7 @@ export const initModalUnirse = (): void => {
 
     async function cargarPartidas(filtro: string) {
       try {
-        const response = await fetch("http://localhost:8000/api/partidas");
+        const response = await fetch("http://localhost:8000/api/partidasIniciando");
         const partidas = await response.json();
 
         lista.innerHTML = "";
@@ -68,7 +68,7 @@ export const initModalUnirse = (): void => {
   window.addEventListener('click', (e) => {
     if (e.target === modal) {
       modal.style.display = 'none';
-      if (modalUnirse) modalUnirse.style.display = 'none'; // solo ocultar
+      if (modalUnirse) modalUnirse.style.display = 'none'; 
     }
   });
 

@@ -25,3 +25,9 @@ Route::get('/obtenerEstadisticasJugador', [JugadorController::class, 'show'])
     //  ->middleware(['auth:sanctum', 'ability:usuario']);
 
 Route::get('/partidas', [PartidaController::class, 'index']);
+
+Route::get('/partidasIniciando', [PartidaController::class, 'partidasIniciando']);
+
+Route::post('/crearPartida', [PartidaController::class, 'store'])
+     ->middleware('auth:sanctum');
+
