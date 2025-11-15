@@ -23,7 +23,6 @@
   background: linear-gradient(135deg, var(--negro), #5e365ef6, var(--negro));
   background-size: 1000% 1000%;
   animation: degradado 12s ease-in-out infinite;
-  filter: blur(0.5px) brightness(0.9);
 
 }
 
