@@ -2,7 +2,8 @@ import { cerrarSesion } from "./cerrarSesion";
 
 export const actualizarHeader = (
   sesion: string,
-  clave: string,
+  claveUsuario: string,
+  claveJugador: string,
   rol: string
 ) => {
   const menu = document.querySelector(".menu");
@@ -30,7 +31,7 @@ export const actualizarHeader = (
       menu.appendChild(enlaceAdmin);
     }
 
-    const nombreUsuario = sessionStorage.getItem(clave);
+    const nombreUsuario = sessionStorage.getItem(claveJugador);
     const loginLink = menu.querySelector(
       'a[href="/src/autenticacion/htmls/login.html"]'
     );
@@ -56,6 +57,7 @@ export const actualizarHeader = (
 
       const verPerfil = document.createElement("a");
       verPerfil.className = "ver-perfil";
+      verPerfil.href = "/src/perfil/html/perfil.html";
       verPerfil.textContent = "Ver perfil";
       divSesion.appendChild(nombreUsuarioLink);
       divSesion.appendChild(verPerfil);
@@ -69,7 +71,7 @@ export const actualizarHeader = (
       // 4. Añadir el listener para el logout
       cerrarSesionBoton.addEventListener("click", (e) => {
         e.preventDefault();
-        cerrarSesion(sesion, clave, rol);
+        cerrarSesion(sesion, claveUsuario, claveJugador, rol);
       });
       divSesion.appendChild(cerrarSesionBoton);
       menu.appendChild(divSesion);

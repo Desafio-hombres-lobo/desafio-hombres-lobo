@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Testing\Fluent\Concerns\Has;
 
 class AuthController extends Controller
 {
@@ -64,7 +65,8 @@ class AuthController extends Controller
             return response()->json([
                 'token' => $token,
                 'usuario' => $user->nickname,
-                'rol' => $rolNombre
+                'rol' => $rolNombre,
+                'jugador' => $user->jugador->nickname
             ], 200);
         } else {
             $user = User::where('email', $datos['usuario'])

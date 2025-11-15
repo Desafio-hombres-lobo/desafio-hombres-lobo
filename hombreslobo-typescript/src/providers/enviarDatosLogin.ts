@@ -20,6 +20,7 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
     const ROL_USUARIO = "auth_rol";
     const LOCALSTORAGE = "credenciales";
     const CLAVE_USUARIO = "auth_usuario";
+    const CLAVE_JUGADOR = "auth_jugador";
 
     if (datosUsuario["recordarme"]) {
       localStorage.setItem(LOCALSTORAGE, datosUsuario["usuario"]);
@@ -28,6 +29,7 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
       sessionStorage.setItem(SESSIONSTORAGE, data.token);
       sessionStorage.setItem(CLAVE_USUARIO, data.usuario);
       sessionStorage.setItem(ROL_USUARIO, data.rol);
+      sessionStorage.setItem(CLAVE_JUGADOR, data.jugador);
       return true;
     }
   } finally {
