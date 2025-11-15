@@ -3,12 +3,32 @@ export const initModalCrearPartida = (): void => {
   const modalCrear = document.getElementById("modalCrear") as HTMLDivElement | null;
   const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement | null;
   const modal = document.getElementById("modalJuego");
+  const MIN_JUGADORES = 15;
+  const MAX_JUGADORES = 30;
 
   if (!crearBtn || !modalCrear) return;
 
-  
+
+  const mostrarError = (input: HTMLInputElement, mensaje: string): void => {
+    let errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
+
+    if (!errorSpan) {
+      errorSpan = document.createElement("span");
+      errorSpan.className = "error";
+      input.parentElement?.appendChild(errorSpan);
+    }
+
+    errorSpan.textContent = mensaje;;
+  };
+
+  const limpiarError = (input: HTMLInputElement): void => {
+    const errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
+    if (errorSpan) errorSpan.textContent = "";
+  };
+
+
   crearBtn.addEventListener("click", () => {
-    modalUnirse && (modalUnirse.style.display = "none");
+    modalUnirse.style.display = "none";
     modalCrear.innerHTML = "";
     modalCrear.style.display = "block";
 
@@ -29,22 +49,50 @@ export const initModalCrearPartida = (): void => {
       </div>
 
       <button id="crearPartidaBtn" class="btn-crear">Crear partida</button>
+      <p id="mensajeExito" class="exito"></p>
     `;
 
     modalCrear.appendChild(bloque);
 
-
     const crearPartidaBtn = document.getElementById("crearPartidaBtn");
+    const mensajeExito = document.getElementById("mensajeExito") as HTMLParagraphElement;
+
     crearPartidaBtn?.addEventListener("click", async () => {
       const nombreInput = document.getElementById("nombrePartida") as HTMLInputElement;
       const numJugadoresInput = document.getElementById("numJugadores") as HTMLInputElement;
 
-     
-      if (!nombreInput.value || !numJugadoresInput.value || parseInt(numJugadoresInput.value) <= 0) {
-        alert("Rellena todos los campos correctamente.");
-        return;
+      mensajeExito.textContent = ""; 
+
+      let hayError = false;
+
+      if (!nombreInput.value.trim()) {
+        mostrarError(nombreInput, "Debes introducir un nombre.");
+        hayError = true;
+      } else {
+        limpiarError(nombreInput);
       }
 
+      const num = parseInt(numJugadoresInput.value);
+      if (!num || num <= 0) {
+        mostrarError(numJugadoresInput, "Introduce un número válido.");
+        hayError = true;
+      } else {
+        limpiarError(numJugadoresInput);
+      }
+
+        if (num < MIN_JUGADORES) {
+        mostrarError(numJugadoresInput, `El número de jugadores mínimo es ${MIN_JUGADORES}.`);
+        hayError = true;
+        }
+
+        if (num> MAX_JUGADORES) {
+        mostrarError(numJugadoresInput,`El número máximo permitido es ${MAX_JUGADORES} jugadores.`);
+        hayError = true;
+        }
+
+      if (hayError) return;
+
+ 
       const datosPartida = {
         nombre: nombreInput.value,
         num_jugadores: parseInt(numJugadoresInput.value),
@@ -58,26 +106,30 @@ export const initModalCrearPartida = (): void => {
           headers: {
             "Content-type": "application/json",
             Accept: "application/json",
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(datosPartida),
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-          const errorDatos = await response.json();
-          alert("Error al registrar la partida: " + JSON.stringify(errorDatos));
+          mostrarError(numJugadoresInput, data.message ?? "Error desconocido");
           return;
         }
 
-        const data = await response.json();
-        alert("Partida creada correctamente");
-
+        mensajeExito.textContent = "Partida creada correctamente";
 
         nombreInput.value = "";
         numJugadoresInput.value = "";
-        modalCrear.style.display = "none";
+        limpiarError(nombreInput);
+        limpiarError(numJugadoresInput);
+
+        setTimeout(() => {
+          modalCrear.style.display = "none";
+        }, 1200);
       } catch (error) {
-        console.error("Error en la solicitud: ", error);
+        mostrarError(numJugadoresInput, "Error en la solicitud.");
       }
     });
   });

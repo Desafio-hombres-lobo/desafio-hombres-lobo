@@ -19,7 +19,7 @@ export const initModalUnirse = (): void => {
       <h3>Partidas disponibles</h3>
       <div class="input-contenedor">
         <input id="inputBuscarPartida" type="text" placeholder="Nombre o código de la partida">
-        <button id="buscarPartida"><i class="fas fa-search"></i></button>
+        <i class="fas fa-search"></i>
       </div>
       <ul id="listaPartidas"></ul>
     `;
@@ -28,12 +28,11 @@ export const initModalUnirse = (): void => {
 
     
     const lista = bloque.querySelector("#listaPartidas") as HTMLUListElement;
-    const buscarBtn = bloque.querySelector("#buscarPartida") as HTMLButtonElement;
     const input = bloque.querySelector("#inputBuscarPartida") as HTMLInputElement;
 
     cargarPartidas("");
 
-    buscarBtn.addEventListener("click", () => {
+    input.addEventListener("input", () => {
       cargarPartidas(input.value.trim().toLowerCase());
     });
 
