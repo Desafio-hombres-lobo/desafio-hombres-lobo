@@ -24,6 +24,10 @@ Route::get('/obtenerEstadisticasJugador', [JugadorController::class, 'show'])
      ->middleware('auth:sanctum');
     //  ->middleware(['auth:sanctum', 'ability:usuario']);
 
+# Cambiar Contraseña Jugador
+Route::post('/cambiarPasswordJugador', [JugadorController::class, 'cambiarPassword'])
+     ->middleware('auth:sanctum');
+
 Route::get('/partidas', [PartidaController::class, 'index']);
 
 Route::get('/partidasIniciando', [PartidaController::class, 'partidasIniciando']);

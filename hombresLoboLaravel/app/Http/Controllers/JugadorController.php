@@ -6,7 +6,9 @@ use App\Models\Jugador;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateUserRequest;
-
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class JugadorController extends Controller
 {
@@ -58,5 +60,48 @@ class JugadorController extends Controller
             'partidas_ganadas' => (int) $totalGanadas,
             'partidas_perdidas' => (int) $totalPerdidas,
         ]);
+    }
+
+    public function cambiarPassword(Request $request){
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no autenticado'], 401);
+        }
+
+        // Generar una nueva contraseña aleatoria (texto plano)
+        $nuevaPassword = Str::random(10);
+
+        // Actualizar la contraseña en la BD
+        $user->password = $nuevaPassword;
+        $user->save();
+
+        // Datos del correo
+        $datos = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'password' => $nuevaPassword
+        ];
+
+        $email = $user->email;
+
+        try{
+            Mail::send('vista_correo', $datos, function ($message) use ($email) {
+                $message->to($email)
+                        ->subject('Reestablecer Contraseña')
+                        ->from('bermudezenock@gmail.com', 'Solicitud Reestablecer Contraseña Aceptada');
+            });
+
+            return response()->json([
+                'exito' => true,
+                'mensaje' => 'Se ha enviado una nueva contraseña a tu correo.'
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'mensaje' => 'Error al enviar el correo: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
