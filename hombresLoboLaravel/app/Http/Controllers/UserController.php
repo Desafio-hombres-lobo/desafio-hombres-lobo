@@ -35,7 +35,10 @@ class UserController extends Controller
 
     public function show(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::where('id', $id)
+            ->orWhere('nickname', $id)
+            ->with('role') // Carga el rol
+            ->firstOrFail(); // 👈 firstOrFail() da 404 si no encuentra nada
 
         return $user;
     }

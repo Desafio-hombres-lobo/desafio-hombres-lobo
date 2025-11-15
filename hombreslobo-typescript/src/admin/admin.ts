@@ -17,6 +17,11 @@ const entradaUsuario = document.getElementById(
   "input-usuario"
 ) as HTMLInputElement;
 const resultado = document.getElementById("salida-resultados")!;
+const nicknameInput = document.getElementById(
+  "nickname-usuario"
+) as HTMLInputElement;
+const emailInput = document.getElementById("email-usuario") as HTMLInputElement;
+const btnActualizar = document.getElementById("actualizar-usuario")!;
 
 const rolUsuario = sessionStorage.getItem(ROL_USUARIO);
 const panel = document.getElementById("panel-admin");
@@ -43,5 +48,25 @@ btnVerUsuario.addEventListener("click", async () => {
     mostrarResultados(data);
   } catch (error) {
     mostrarResultados({ error: (error as Error).message });
+  }
+});
+
+btnEncontrarUsuario.addEventListener("click", async () => {
+  const id = entradaUsuario.value;
+  if (!id) {
+    alert("Por favor, introduce un ID o Nickname.");
+    return;
+  }
+  try {
+    resultado.textContent = "Buscando...";
+    const data = await cogerUnUsuario(id);
+    mostrarResultados(data);
+
+    nicknameInput.value = data.nickname;
+    emailInput.value = data.email;
+  } catch (error) {
+    mostrarResultados({ error: (error as Error).message });
+    nicknameInput.value = "";
+    emailInput.value = "";
   }
 });
