@@ -1,8 +1,12 @@
 import "../css/perfil.css";
 import { enviarNicknameActualizado } from "../../providers/actualizarNickname";
+import { cambiarPasswordUsuario } from "./cambiarPassword";
 
 const formCambiarNickname =
   document.querySelector<HTMLFormElement>("#form-nickname")!;
+
+const formCambiarPassword =
+  document.querySelector<HTMLFormElement>("#form-password")!;
 
 const campoNuevoNickname = {
   nuevoNicknameUsuario: {
@@ -18,6 +22,8 @@ formCambiarNickname.addEventListener("submit", (e) => {
   e.preventDefault();
   validarFormNickname();
 });
+
+formCambiarPassword.addEventListener("submit", cambiarPasswordUsuario);
 
 const validarFormNickname = (): void => {
   if (!formCambiarNickname) return;
