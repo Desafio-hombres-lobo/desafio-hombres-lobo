@@ -46,7 +46,9 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::where('id', $id)
+            ->orWhere('nickname', $id)
+            ->firstOrFail();
         $datos = $request->validated();
 
         $user->update($datos);
