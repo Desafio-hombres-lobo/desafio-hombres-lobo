@@ -27,6 +27,7 @@ class StoreUserRequest extends FormRequest
             'email' => 'required|string|email|max:255|unique:users',
             'nickname' => 'required|string|alpha_dash|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'rol' => 'integer|exists:roles_administracion,id'
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Roles_administracion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -25,6 +26,7 @@ class User extends Authenticatable
         'email',
         'nickname',
         'password',
+        'rol'
     ];
 
     /**
@@ -53,6 +55,11 @@ class User extends Authenticatable
     public function jugador(): HasOne
     {
         return $this->hasOne(Jugador::class, 'id_usuario');
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Roles_administracion::class, 'rol');
     }
 
 

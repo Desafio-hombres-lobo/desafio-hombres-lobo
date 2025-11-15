@@ -1,14 +1,14 @@
 import { cerrarSesion } from "./cerrarSesion";
 
-cerrarSesion;
-
 export const actualizarHeader = (
   sesion: string,
   claveUsuario: string,
-  claveJugador: string
+  claveJugador: string,
+  rol: string
 ) => {
   const menu = document.querySelector(".menu");
   const token = sessionStorage.getItem(sesion);
+  const rolUsuario = sessionStorage.getItem(rol);
   const contenedorFinal = document.getElementById("contenedor-final");
   const botonesJugarAhora =
     document.querySelectorAll<HTMLAnchorElement>("#boton-jugar-ahora");
@@ -23,6 +23,12 @@ export const actualizarHeader = (
       botonesJugarAhora.forEach((boton: HTMLAnchorElement) => {
         boton.href = "#";
       });
+    }
+    if (rolUsuario == "admin") {
+      const enlaceAdmin = document.createElement("a");
+      enlaceAdmin.href = "/src/admin/htmls/admin.html";
+      enlaceAdmin.textContent = "Panel de administracion";
+      menu.appendChild(enlaceAdmin);
     }
 
     const nombreUsuario = sessionStorage.getItem(claveJugador);
@@ -65,7 +71,7 @@ export const actualizarHeader = (
       // 4. Añadir el listener para el logout
       cerrarSesionBoton.addEventListener("click", (e) => {
         e.preventDefault();
-        cerrarSesion(sesion, claveUsuario, claveJugador);
+        cerrarSesion(sesion, claveUsuario, claveJugador, rol);
       });
       divSesion.appendChild(cerrarSesionBoton);
       menu.appendChild(divSesion);

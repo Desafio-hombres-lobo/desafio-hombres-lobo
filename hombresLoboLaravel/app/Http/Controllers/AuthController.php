@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Roles_administracion;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Controllers\JugadorController;
 use App\Http\Requests\LoginRequest;
@@ -21,6 +22,7 @@ class AuthController extends Controller
             'email' => $datos['email'],
             'nickname' => $datos['nickname'],
             'password' => Hash::make($datos['password']),
+            'rol' => 2
         ]);
         $jugadorController = new JugadorController();
         $jugador = $jugadorController->crearJugador($user);
@@ -44,12 +46,26 @@ class AuthController extends Controller
 
         if ($login) {
             $user = Auth::user();
+            $user->load('role');
+            $abilities = [];
+            $rolNombre = $user->role->nombre;
 
-            $token = $user->createToken('auth_token', ['usuario'])->plainTextToken;
+            switch ($rolNombre) {
+                case 'usuario':
+                    $abilities = ['usuario'];
+                    break;
+                case 'admin':
+                    $abilities = ['admin', 'usuario'];
+                    break;
+            }
+
+
+            $token = $user->createToken('auth_token', $abilities)->plainTextToken;
 
             return response()->json([
                 'token' => $token,
                 'usuario' => $user->nickname,
+                'rol' => $rolNombre,
                 'jugador' => $user->jugador->nickname
             ], 200);
         } else {

@@ -5,13 +5,14 @@ use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, Ap
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware('auth:sanctum')->group(function () {
+    // Rutas de ADMIN (requieren token Y la habilidad 'admin')
+    Route::apiResource('users', UserController::class)
+        ->middleware('ability:admin');
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+});
 
-Route::apiResource('users', UserController::class);
-
+//Rutas publicas
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
 
