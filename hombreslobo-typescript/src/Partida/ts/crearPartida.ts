@@ -2,7 +2,6 @@ export const initModalCrearPartida = (): void => {
   const crearBtn = document.getElementById("crear-partidabtn") as HTMLButtonElement | null;
   const modalCrear = document.getElementById("modalCrear") as HTMLDivElement | null;
   const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement | null;
-  const modal = document.getElementById("modalJuego");
   const MIN_JUGADORES = 15;
   const MAX_JUGADORES = 30;
   const MAX_NOMBRE=20;
@@ -19,7 +18,7 @@ export const initModalCrearPartida = (): void => {
       input.parentElement?.appendChild(errorSpan);
     }
 
-    errorSpan.textContent = mensaje;;
+    errorSpan.textContent = mensaje;
   };
 
   const limpiarError = (input: HTMLInputElement): void => {
@@ -138,12 +137,5 @@ export const initModalCrearPartida = (): void => {
     });
   });
 
-
-  window.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      modal.style.display = "none";
-      modalCrear && (modalCrear.style.display = "none");
-    }
-  });
 };
 

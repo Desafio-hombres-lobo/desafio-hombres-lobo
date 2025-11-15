@@ -2,8 +2,6 @@ import "./css/base.css";
 import "./css/index.css";
 import "./Partida/css/elegirPartida.css"
 import { initModal } from "./Partida/ts/mostrarModal";
-import {initModalUnirse} from "./Partida/ts/unirsePartida"
-import { initModalCrearPartida } from "./Partida/ts/crearPartida";
 import { validarFormulario } from "./autenticacion/validarFormulario";
 import { validarLogin } from "./autenticacion/validarLogin";
 import { actualizarHeader } from "./autenticacion/actualizarHeader";
@@ -15,8 +13,6 @@ const LOCALSTORAGE = "credenciales";
 
 document.addEventListener("DOMContentLoaded", () => {
   initModal();
-  initModalUnirse();
-  initModalCrearPartida();
   const formulario = document.querySelector<HTMLFormElement>("#formulario");
   const formularioLogin =
     document.querySelector<HTMLFormElement>("#formulario-login");

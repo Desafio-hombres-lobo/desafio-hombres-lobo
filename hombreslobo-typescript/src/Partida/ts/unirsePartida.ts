@@ -2,7 +2,6 @@ export const initModalUnirse = (): void => {
   const unirseBtn = document.getElementById("unirsebtn") as HTMLButtonElement | null;
   const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement | null;
   const modalCrear = document.getElementById("modalCrear") as HTMLDivElement | null;
-  const modal = document.getElementById('modalJuego');
 
   if (!unirseBtn || !modalUnirse) return;
 
@@ -63,14 +62,6 @@ export const initModalUnirse = (): void => {
       }
     }
   });
-
-  window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.style.display = 'none';
-      if (modalUnirse) modalUnirse.style.display = 'none'; 
-    }
-  });
-
 };
 
 

@@ -1,3 +1,6 @@
+import { initModalUnirse } from './unirsePartida';
+import { initModalCrearPartida } from './crearPartida';
+
 export function initModal() {
   const modal = document.getElementById('modalJuego');
   const openBtn = document.getElementById('empezar-juego');
@@ -5,8 +8,12 @@ export function initModal() {
   const modalUnirse = document.getElementById("modalUnirse");
   const cerrar = document.getElementById('cerrarModal');  
 
+
   if (!modal || !openBtn) return;
 
+  
+  initModalUnirse();
+  initModalCrearPartida();
 
   openBtn.addEventListener('click', () => {
     const token = sessionStorage.getItem("auth_token");

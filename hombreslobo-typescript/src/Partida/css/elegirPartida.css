@@ -59,7 +59,7 @@
   display: inline-block;
   padding: 12px 24px;
   margin: 10px;
-  font-family: 'Bahiana', cursive;
+  font-family: var(--fuente-titulo);
   font-size: 1.3rem;
   color: #fff;
   background: linear-gradient(135deg, var(--morado), var(--rosa-claro));
@@ -84,18 +84,13 @@
   background: radial-gradient(circle, var(--negro) 0%, transparent 70%);
   opacity: 0.3;
   transform: rotate(45deg);
-  transition: opacity 0.5s ease;
   z-index: -1;
 }
+
 .crear-partida:hover,
 .unirse-partida:hover {
   transform: scale(1.05);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-}
-
-.crear-partida:hover::before,
-.unirse-partida:hover::before {
-  opacity: 0.5;
 }
 
 .cerrar-modal {
@@ -133,7 +128,6 @@
   text-align: center;
   position: relative;
   color: white;
-  font-weight: b;
 }
 
 
@@ -174,17 +168,9 @@
   transition: 0.3s;
 }
 
-.unirse-modal button:hover {
-  background-color:var(--morado);
-}
-
-
-
-
-@keyframes degradadoUnirse {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.unirse-modal button:hover { 
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
 }
 
 #listaPartidas {
@@ -222,8 +208,7 @@
   color: var(--rosa-claro);
 }
 
-.modal input[type="text"],
-.modal input[type="number"] {
+.modal input{
   padding: 0.8rem 0.8rem;
   margin-left:30px;
   border-radius: 6px;
@@ -233,11 +218,5 @@
   font-size: 0.65rem;;
 }
 
-.modal input:focus,
-.modal select:focus {
-  border-color: #ffda6a;
-  outline: none;
-  box-shadow: 0 0 5px rgba(255,218,106,0.6);
-}
 
 
