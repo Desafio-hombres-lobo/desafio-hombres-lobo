@@ -1,5 +1,7 @@
 import "./css/base.css";
 import "./css/index.css";
+import "./Partida/css/elegirPartida.css"
+import { initModal } from "./Partida/ts/mostrarModal";
 import { validarFormulario } from "./autenticacion/validarFormulario";
 import { validarLogin } from "./autenticacion/validarLogin";
 import { actualizarHeader } from "./autenticacion/actualizarHeader";
@@ -10,6 +12,7 @@ const CLAVE_JUGADOR = "auth_jugador";
 const LOCALSTORAGE = "credenciales";
 
 document.addEventListener("DOMContentLoaded", () => {
+  initModal();
   const formulario = document.querySelector<HTMLFormElement>("#formulario");
   const formularioLogin =
     document.querySelector<HTMLFormElement>("#formulario-login");

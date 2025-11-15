@@ -46,9 +46,19 @@
           necesario para descubrir al lobo?
         </p>
         <img src="/src/imagenes/cartas-lobos.png" alt="Cartas de Lobos" />
-        <a href="" id="boton-jugar-ahora"
-          ><button class="boton-principal">¡Jugar Ahora!</button></a
-        >
+        <button id="empezar-juego" class="boton-principal">¡Jugar Ahora!</button>
+        <div id="modalJuego" class="modalJuego">
+          <div class="crear-unirse">
+            <h3>¿Qué quieres hacer?</h3>
+            <button id="cerrarModal" class="cerrar-modal">&times;</button>
+            <button id="unirsebtn" class="unirse-partida">Unirse a una partida</button>
+            <button id="crear-partidabtn" class="crear-partida">Crear partida</button>
+                <div id="modalUnirse" class="modal">
+                </div>
+                <div id="modalCrear" class="modal">
+                </div>
+          </div>
+        </div>
       </div>
     </section>
 
