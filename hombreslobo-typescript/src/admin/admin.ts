@@ -112,3 +112,25 @@ btnActualizar.addEventListener("click", async (e) => {
     mostrarResultados({ error: (error as Error).message });
   }
 });
+
+btnBorrarUsuario.addEventListener("click", async () => {
+  idUsuarioSeleccionado = entradaUsuario.value;
+  if (!idUsuarioSeleccionado) {
+    alert("Por favor, introduce un ID o Nickname.");
+    return;
+  }
+
+  try {
+    resultado.textContent = "Borrando...";
+    const data = await borrarUsuario(idUsuarioSeleccionado);
+    mostrarResultados(data);
+
+    nicknameInput.value = "";
+    emailInput.value = "";
+    contraseñaInput.value = "";
+    entradaUsuario.value = "";
+    idUsuarioSeleccionado = null;
+  } catch (error) {
+    mostrarResultados({ error: (error as Error).message });
+  }
+});
