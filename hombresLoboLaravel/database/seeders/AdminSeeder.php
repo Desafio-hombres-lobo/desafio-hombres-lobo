@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Roles_administracion;
+use App\Http\Controllers\JugadorController;
 class AdminSeeder extends Seeder
 {
     /**
@@ -16,7 +17,7 @@ class AdminSeeder extends Seeder
     {
         $adminRol = Roles_administracion::where('nombre', 'admin')->first();
 
-        User::create([
+        $adminUser = User::create([
             'name' => 'Super admin',
             'nickname' => 'admin',
             'email' => 'admin@admin.com',
@@ -24,6 +25,7 @@ class AdminSeeder extends Seeder
             'rol' => $adminRol->id,
         ]);
 
-
+        $jugadorController = new JugadorController();
+        $jugadorController->crearJugador($adminUser);
     }
 }

@@ -1,6 +1,6 @@
 import "./css/base.css";
 import "./css/index.css";
-import "./Partida/css/elegirPartida.css"
+import "./Partida/css/elegirPartida.css";
 import { initModal } from "./Partida/ts/mostrarModal";
 import { validarFormulario } from "./autenticacion/validarFormulario";
 import { validarLogin } from "./autenticacion/validarLogin";
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const formulario = document.querySelector<HTMLFormElement>("#formulario");
   const formularioLogin =
     document.querySelector<HTMLFormElement>("#formulario-login");
-  actualizarHeader(SESSIONSTORAGE, CLAVE_USUARIO, ROL_USUARIO, CLAVE_JUGADOR);
+  actualizarHeader(SESSIONSTORAGE, CLAVE_USUARIO, CLAVE_JUGADOR, ROL_USUARIO);
   if (formulario) {
     validarFormulario(formulario);
   }
