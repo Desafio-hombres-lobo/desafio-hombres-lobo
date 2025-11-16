@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\JugadorController;
-use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, App\Http\Controllers\PartidaController;
+use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, App\Http\Controllers\PartidaController, App\Http\Controllers\CloudinaryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/partidasIniciando', [PartidaController::class, 'partidasIniciando']);
 
         Route::post('/crearPartida', [PartidaController::class, 'store']);
+
+        # Subir foto
+        Route::post('/cambiarFoto', [CloudinaryController::class, 'cambiarFoto']);
 
     });
 });
