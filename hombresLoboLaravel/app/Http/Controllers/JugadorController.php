@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\JugadorRequest;
 use App\Models\Jugador;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -20,7 +20,7 @@ class JugadorController extends Controller
         return $jugador;
     }
 
-    public function update(UpdateUserRequest $request)
+    public function update(JugadorRequest $request)
     {
         // Usuario autenticado
         $user = $request->user();
@@ -40,7 +40,7 @@ class JugadorController extends Controller
 
     }
 
-   public function show(Request $request)
+    public function show(Request $request)
     {
         $user = $request->user();
 
@@ -62,7 +62,8 @@ class JugadorController extends Controller
         ]);
     }
 
-    public function cambiarPassword(Request $request){
+    public function cambiarPassword(Request $request)
+    {
         $user = $request->user();
 
         if (!$user) {
@@ -85,11 +86,11 @@ class JugadorController extends Controller
 
         $email = $user->email;
 
-        try{
+        try {
             Mail::send('vista_correo', $datos, function ($message) use ($email) {
                 $message->to($email)
-                        ->subject('Reestablecer Contraseña')
-                        ->from('bermudezenock@gmail.com', 'Solicitud Reestablecer Contraseña Aceptada');
+                    ->subject('Reestablecer Contraseña')
+                    ->from('bermudezenock@gmail.com', 'Solicitud Reestablecer Contraseña Aceptada');
             });
 
             return response()->json([
