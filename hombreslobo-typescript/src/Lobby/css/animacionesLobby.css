@@ -1,0 +1,230 @@
+@keyframes balanceo-1 {
+  0% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+  100% { transform: rotate(-3deg); }
+}
+
+@keyframes balanceo-2 {
+  0% { transform: rotate(5deg); }
+  50% { transform: rotate(-4deg); }
+  100% { transform: rotate(5deg); }
+}
+
+@keyframes balanceo-3 {
+  0% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+  100% { transform: rotate(-6deg); }
+}
+
+@keyframes balanceo-4 {
+  0% { transform: rotate(4deg); }
+  50% { transform: rotate(-5deg); }
+  100% { transform: rotate(4deg); }
+}
+
+@keyframes balanceo-5 {
+  0% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+  100% { transform: rotate(-2deg); }
+}
+
+@keyframes balanceo-6 {
+  0% { transform: rotate(3deg); }
+  50% { transform: rotate(-3deg); }
+  100% { transform: rotate(3deg); }
+}
+
+
+
+.bg-card-1, .bg-card-2, .bg-card-3, .bg-card-4,
+.bg-card-5, .bg-card-6, .bg-card-7, .bg-card-8,
+.bg-card-9, .bg-card-10, .bg-card-11, .bg-card-12,
+.bg-card-13, .bg-card-14, .bg-card-15, .bg-card-16, .bg-card-17, .bg-card-18
+{
+  content: "";
+  position: fixed;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.bg-card-1 {
+  width: 150px;
+  height: 220px;
+  background-image: url('../../imagenes/cartas/cazador.png');
+  top: 3%;
+  left: 85%;
+  animation: balanceo-3 8s ease-in-out infinite;
+  transform: rotate(-6deg);
+}
+
+.bg-card-2 {
+  width: 130px;
+  height: 190px;
+  background-image: url('../../imagenes/cartas/aldeano.png');
+  top: 78%;
+  left: 10%;
+  animation: balanceo-4 3s ease-in-out infinite;
+  transform: rotate(4deg);
+}
+
+.bg-card-3 {
+  width: 170px;
+  height: 250px;
+  background-image: url('../../imagenes/cartas/cupido.png');
+  top: 35%;
+  left: 55%;
+  animation: balanceo-5 6s ease-in-out infinite;
+  transform: rotate(-2deg);
+}
+
+.bg-card-4 {
+  width: 140px;
+  height: 200px;
+  background-image: url('../../imagenes/cartas/vidente.png');
+  top: 48%;
+  left: 6%;
+  animation: balanceo-6 4s ease-in-out infinite;
+  transform: rotate(3deg);
+}
+
+.bg-card-5 {
+  width: 150px;
+  height: 220px;
+  background-image: url('../../imagenes/cartas/lobo.png');
+  top: 80%;
+  left: 60%;
+  animation: balanceo-1 3s ease-in-out infinite;
+  transform: rotate(-5deg);
+}
+
+.bg-card-6 {
+  width: 120px;
+  height: 180px;
+  background-image: url('../../imagenes/cartas/niña.png');
+  top: 40%;
+  left: 45%;
+  animation: balanceo-2 9s ease-in-out infinite;
+  transform: rotate(4deg);
+}
+
+.bg-card-7 {
+  width: 140px;
+  height: 210px;
+  background-image: url('../../imagenes/cartas/lobo.png');
+  top: 20%;
+  left: 30%;
+  animation: balanceo-3 5s ease-in-out infinite;
+  transform: rotate(6deg);
+}
+
+.bg-card-8 {
+  width: 130px;
+  height: 200px;
+  background-image: url('../../imagenes/cartas/ladron.png');
+  top: 60%;
+  left: 20%;
+  animation: balanceo-4 8s ease-in-out infinite;
+  transform: rotate(-4deg);
+}
+
+.bg-card-9 {
+  width: 150px;
+  height: 220px;
+  background-image: url('../../imagenes/cartas/niña.png');
+  top: 7%;
+  left: 60%;
+  animation: balanceo-5 6s ease-in-out infinite;
+  transform: rotate(-7deg);
+}
+
+.bg-card-10 {
+  width: 140px;
+  height: 210px;
+  background-image: url('../../imagenes/cartas/aldeano.png');
+  top: 65%;
+  left: 50%;
+  animation: balanceo-6 3s ease-in-out infinite;
+  transform: rotate(5deg);
+}
+
+.bg-card-11 {
+  width: 120px;
+  height: 180px;
+  background-image: url('../../imagenes/cartas/cupido.png');
+  top: 35%;
+  left: 20%;
+  animation: balanceo-1 4s ease-in-out infinite;
+  transform: rotate(-2deg);
+}
+
+.bg-card-12 {
+  width: 160px;
+  height: 240px;
+  background-image: url('../../imagenes/cartas/vidente.png');
+  top: 70%;
+  left: 35%;
+  animation: balanceo-2 7s ease-in-out infinite;
+  transform: rotate(3deg);
+}
+
+.bg-card-13 {
+  width: 130px;
+  height: 190px;
+  background-image: url('../../imagenes/cartas/lobo.png');
+  top: 20%;
+  left: 75%;
+  animation: balanceo-3 3s ease-in-out infinite;
+  transform: rotate(-5deg);
+}
+
+.bg-card-14 {
+  width: 140px;
+  height: 210px;
+  background-image: url('../../imagenes/cartas/niña.png');
+  top: 50%;
+  left: 70%;
+  animation: balanceo-4 6s ease-in-out infinite;
+  transform: rotate(4deg);
+}
+
+.bg-card-15 {
+  width: 150px;
+  height: 220px;
+  background-image: url('../../imagenes/cartas/alguacil.png');
+  top: 20%;
+  left: 45%;
+  animation: balanceo-5 7s ease-in-out infinite;
+  transform: rotate(-3deg);
+}
+
+.bg-card-16 {
+  width: 130px;
+  height: 190px;
+  background-image: url('../../imagenes/cartas/ladron.png');
+  top: 45%;
+  left: 34%;
+  animation: balanceo-6 3s ease-in-out infinite;
+  transform: rotate(5deg);
+}
+
+.bg-card-17{  width: 160px;
+  height: 240px;
+  background-image: url('../../imagenes/cartas/bruja.png');
+  top: 10%;
+  left: 3%;
+  animation: balanceo-1 6s ease-in-out infinite;
+  transform: rotate(-3deg);
+}
+
+.bg-card-18{
+width: 140px;
+height: 210px;
+background-image: url('../../imagenes/cartas/ladron.png');
+top: 70%;
+left: 78%;
+animation: balanceo-2 5s ease-in-out infinite;
+transform: rotate(5deg);
+}
