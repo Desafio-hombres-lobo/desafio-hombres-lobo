@@ -1,4 +1,5 @@
 import { obtenerEstadisticasJugador } from "../../providers/obtenerEstadisticasJugador";
+import { cargarFoto } from "./cargarFotoPerfil";
 
 const asideEstadisticasJugador =
   document.querySelector<HTMLElement>(".stats-card")!;
@@ -35,6 +36,7 @@ const cargarYMostrarEstadisticas = async () => {
 
   if (datos) {
     renderizarEstadisticasJugador(datos);
+    cargarFoto();
   } else {
     if (asideEstadisticasJugador) {
       asideEstadisticasJugador.innerHTML = `<p class="error-mensaje" style="color:var(--error)">Error al cargar estadísticas. Por favor, inicia sesión de nuevo.</p>`;

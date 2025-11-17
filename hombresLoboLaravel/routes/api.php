@@ -32,6 +32,9 @@ Route::middleware('auth:sanctum')->group(function () {
         # Subir foto
         Route::post('/cambiarFoto', [CloudinaryController::class, 'cambiarFoto']);
 
+        # Coger foto de perfil
+        Route::get('/cargarFoto', [CloudinaryController::class, 'cargarFoto']);
+
     });
 });
 
