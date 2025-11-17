@@ -1,0 +1,13 @@
+#!/bin/sh
+Valida que el mensaje de commit empiece con feat:, fix:, chore:, refactor:, docs:, test:
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(head -n1 "$COMMIT_MSG_FILE")
+
+if ! echo "$COMMIT_MSG" | grep -Eq '^(feat|fix|chore|refactor|docs|test|style):'; then
+  echo "Formato de commit inválido."
+  echo "El mensaje debe comenzar con uno de los siguientes prefijos:"
+  echo "  feat:, fix:, chore:, refactor:, docs:, test, style:"
+  exit 1
+fi
+
+exit 0
