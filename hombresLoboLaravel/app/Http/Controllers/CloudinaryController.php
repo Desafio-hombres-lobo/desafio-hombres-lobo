@@ -19,7 +19,7 @@ class CloudinaryController extends Controller
         }
 
 
-        $resultado = $request->file('photo')->storeOnCloudinary('fotos-perfil');
+        $resultado = $request->file('foto')->storeOnCloudinary('fotos-perfil');
 
         return response()->json([
             'exito' => true,
