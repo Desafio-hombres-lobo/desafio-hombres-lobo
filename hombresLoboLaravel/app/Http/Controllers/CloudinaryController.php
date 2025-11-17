@@ -20,7 +20,7 @@ class CloudinaryController extends Controller
         }
 
 
-        $resultado = $request->file('foto')->storeOnCloudinary('fotos-perfil');
+        $resultado = $request->file('foto')->storeOnCloudinary('fotos_perfil');
         $url = $resultado->getSecurePath();
         $usuario->update([
             'foto_perfil' => $url
