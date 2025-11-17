@@ -8,7 +8,7 @@ export const renderizarEstadisticasJugador = (
 ): void => {
   asideEstadisticasJugador.innerHTML = `
     <div class="profile-pic" aria-hidden="true">
-            <i class="fas fa-user-circle"></i>
+            <img></img>
           </div>
 
           <h3 class="nickname">${estadisticasJugador.nickname}</h3>
