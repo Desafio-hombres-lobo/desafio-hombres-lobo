@@ -22,7 +22,8 @@ class AuthController extends Controller
             'email' => $datos['email'],
             'nickname' => $datos['nickname'],
             'password' => Hash::make($datos['password']),
-            'rol' => 2
+            'rol' => 2,
+            'foto_perfil' => 'https://res.cloudinary.com/dj2m9tuoz/image/upload/v1763404018/default_user_photo_mxc7ra.jpg'
         ]);
         $jugadorController = new JugadorController();
         $jugador = $jugadorController->crearJugador($user);
@@ -66,7 +67,8 @@ class AuthController extends Controller
                 'token' => $token,
                 'usuario' => $user->nickname,
                 'rol' => $rolNombre,
-                'jugador' => $user->jugador->nickname
+                'jugador' => $user->jugador->nickname,
+
             ], 200);
         } else {
             $user = User::where('email', $datos['usuario'])
