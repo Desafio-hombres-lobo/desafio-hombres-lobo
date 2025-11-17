@@ -1,11 +1,10 @@
 export async function enviarFotoPerfil(file: File, token: string) {
-  const tokenString = sessionStorage.getItem(token);
   const formData = new FormData();
 
-  formData.append("photo", file);
+  formData.append("foto", file);
 
   const headers = new Headers();
-  headers.set("Authorization", `Bearer ${tokenString}`);
+  headers.set("Authorization", `Bearer ${token}`);
   headers.set("Accept", "application/json");
 
   try {

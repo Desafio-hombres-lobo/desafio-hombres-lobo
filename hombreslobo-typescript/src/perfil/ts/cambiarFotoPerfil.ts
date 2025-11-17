@@ -1,9 +1,7 @@
 import { enviarFotoPerfil } from "../../providers/envioFotoPerfil";
 import { cargarFoto } from "./cargarFotoPerfil";
 export function subirFoto() {
-  const inputFoto = document.getElementById(
-    "cambiar-foto-perfil"
-  ) as HTMLInputElement;
+  const inputFoto = document.getElementById("subir-foto") as HTMLInputElement;
   const btnCambiar = document.getElementById(
     "cambiar-foto-perfil"
   ) as HTMLButtonElement;
