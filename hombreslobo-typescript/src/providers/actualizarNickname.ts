@@ -35,10 +35,6 @@ export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
 
     alert("¡Nickname actualizado con éxito a: " + data.nickname + "!");
 
-    // Actualizar en perfil
-    // const nicknameH3 = document.querySelector(".stats-card .nickname");
-    // if (nicknameH3) nicknameH3.textContent = data.nickname;
-
     // Actualizar el nickname guardado en sesión
     sessionStorage.setItem("auth_jugador", data.nickname);
 

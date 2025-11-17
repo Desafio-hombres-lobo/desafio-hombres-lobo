@@ -49,7 +49,16 @@ const validarCampoNickname = async (): Promise<void> => {
     nickname: campo.input.value,
   };
 
-  await enviarNicknameActualizado(datosNuevoNickname);
+  const nicknameActualizado = await enviarNicknameActualizado(
+    datosNuevoNickname
+  );
+
+  if (nicknameActualizado) {
+    // Actualizar en perfil
+    const nicknameH3 = document.querySelector(".stats-card .nickname");
+    if (nicknameH3) nicknameH3.textContent = campo.input.value;
+  }
+
   campo.input.value = "";
 };
 
