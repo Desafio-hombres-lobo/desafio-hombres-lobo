@@ -76,6 +76,9 @@ class JugadorController extends Controller
         // Actualizar la contraseña en la BD
         $user->password = $nuevaPassword;
         $user->save();
+        $user->update([
+            'password' => $nuevaPassword
+        ]);
 
         // Datos del correo
         $datos = [
@@ -90,7 +93,7 @@ class JugadorController extends Controller
             Mail::send('vista_correo', $datos, function ($message) use ($email) {
                 $message->to($email)
                     ->subject('Reestablecer Contraseña')
-                    ->from('bermudezenock@gmail.com', 'Solicitud Reestablecer Contraseña Aceptada');
+                    ->from(env('MAIL_FROM_ADDRESS'), 'Solicitud Reestablecer Contraseña Aceptada');
             });
 
             return response()->json([

@@ -10,7 +10,6 @@ export const cambiarPasswordUsuario = async (): Promise<void> => {
     return;
   } else {
     alert("Contraseña reestablecida correctamente, mira tu email.");
+    await obtenerNuevaPassword();
   }
-
-  await obtenerNuevaPassword();
 };
