@@ -1,16 +1,19 @@
-export const initModalUnirse = (): void => { 
-  const unirseBtn = document.getElementById("unirsebtn") as HTMLButtonElement | null;
-  const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement | null;
-  const modalCrear = document.getElementById("modalCrear") as HTMLDivElement | null;
+export const initModalUnirse = (): void => {
+  const unirseBtn = document.getElementById(
+    "unirsebtn"
+  ) as HTMLButtonElement | null;
+  const modalUnirse = document.getElementById(
+    "modalUnirse"
+  ) as HTMLDivElement | null;
+  const modalCrear = document.getElementById("modalCrear")! as HTMLDivElement;
 
   if (!unirseBtn || !modalUnirse) return;
 
   unirseBtn.addEventListener("click", () => {
-    modalCrear.style.display = 'none'
+    modalCrear.style.display = "none";
     modalUnirse.innerHTML = "";
     modalUnirse.style.display = "block";
 
-    
     const bloque = document.createElement("div");
     bloque.classList.add("unirse-modal");
 
@@ -25,9 +28,10 @@ export const initModalUnirse = (): void => {
 
     modalUnirse.appendChild(bloque);
 
-    
     const lista = bloque.querySelector("#listaPartidas") as HTMLUListElement;
-    const input = bloque.querySelector("#inputBuscarPartida") as HTMLInputElement;
+    const input = bloque.querySelector(
+      "#inputBuscarPartida"
+    ) as HTMLInputElement;
 
     cargarPartidas("");
 
@@ -36,16 +40,29 @@ export const initModalUnirse = (): void => {
     });
 
     async function cargarPartidas(filtro: string) {
+      const token = sessionStorage.getItem("auth_token");
+
       try {
-        const response = await fetch("http://localhost:8000/api/partidasIniciando");
+        const response = await fetch(
+          "http://localhost:8000/api/partidasIniciando",
+          {
+            method: "GET",
+            headers: {
+              "Content-type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const partidas = await response.json();
 
         lista.innerHTML = "";
 
         partidas
-          .filter((p: any) =>
-            p.nombre.toLowerCase().includes(filtro) ||
-            p.codigo.toLowerCase().includes(filtro)
+          .filter(
+            (p: any) =>
+              p.nombre.toLowerCase().includes(filtro) ||
+              p.codigo.toLowerCase().includes(filtro)
           )
           .forEach((p: any) => {
             const item = document.createElement("li");
@@ -63,6 +80,3 @@ export const initModalUnirse = (): void => {
     }
   });
 };
-
-
-
