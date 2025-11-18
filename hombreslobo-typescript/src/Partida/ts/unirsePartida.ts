@@ -55,6 +55,10 @@ export const initModalUnirse = (): void => {
             btnUnirse.textContent = "Unirse";
             item.appendChild(btnUnirse);
             lista.appendChild(item);
+            btnUnirse.addEventListener("click", () => {
+              localStorage.setItem("partida_id", p.id);
+              window.location.href = "src/Lobby/html/lobby.html";
+              });
           });
 
         if (lista.children.length === 0) {

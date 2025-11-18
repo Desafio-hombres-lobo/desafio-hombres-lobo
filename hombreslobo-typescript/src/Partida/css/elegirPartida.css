@@ -196,8 +196,6 @@
   box-shadow: var(--negro) 0px 0px 10px;
   color:var(--negro);
   font-family: var(--fuente-texto);
-  font-weight:lighter;
-  letter-spacing: 2px;
 }
 .modal{
   border-radius:20px;
