@@ -14,6 +14,8 @@ export const initLobby = () => {
   const codigoPartida = document.getElementById("codigo-partida") as HTMLElement;
   const codigoLabel = document.querySelector(".code strong") as HTMLElement;
   const contadorEl = document.querySelector(".contador") as HTMLElement;
+  const botonAbandonar = document.getElementById("abandonar") as HTMLButtonElement;
+  const btnCopiarCodigo = document.getElementById("copiarCodigo") as HTMLButtonElement;
 
   const cargarPartida = async () => {
     try {
@@ -39,14 +41,25 @@ export const initLobby = () => {
       const nombreCreador = creador.nickname;
       codigoPartida.textContent = `Lobby de partida de: ${nombreCreador}`;
       codigoLabel.textContent = datos.codigo;
-      contadorEl.textContent = `0/${datos.num_jugadores}`;
+      contadorEl.textContent = `1/${datos.num_jugadores}`;
 
     } catch (error) {
       console.error("Error cargando partida:", error);
     }
   };
 
+  btnCopiarCodigo.addEventListener("click", async() => {
+    const codigo = codigoLabel.textContent || ""; 
+    await navigator.clipboard.writeText(codigo);});
 
+  botonAbandonar.addEventListener("click", () => {
+    localStorage.removeItem("partida_id");
+    window.location.href = "/";
+  });
+
+  if (partidaId) {
   cargarPartida();
+}
+
 
 };

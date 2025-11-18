@@ -170,6 +170,12 @@ aside {
   background: transparent;
   border: 1px solid var(--rosa-claro);
   color: var(--rosa-claro);
+  text-align:center;
+}
+
+a {
+  text-decoration:none;
+  text-align:center;
 }
 
 .btn.jugar {
