@@ -239,14 +239,17 @@ img {
 
 /* Contenedor Input + Botón */
 .campo-con-boton {
-  display: flex;
   gap: 0.5rem;
-  align-items: center;
 }
 
 .campo-con-boton input {
   flex: 1;
   margin-bottom: 0;
+}
+
+#form-cambiar-foto div {
+  display: flex;
+  flex-direction: column;
 }
 
 /* Botón "Cambiar" o "Solicitar" */

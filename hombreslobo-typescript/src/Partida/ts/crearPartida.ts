@@ -1,16 +1,22 @@
 export const initModalCrearPartida = (): void => {
-  const crearBtn = document.getElementById("crear-partidabtn") as HTMLButtonElement | null;
-  const modalCrear = document.getElementById("modalCrear") as HTMLDivElement | null;
-  const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement | null;
+  const crearBtn = document.getElementById(
+    "crear-partidabtn"
+  ) as HTMLButtonElement | null;
+  const modalCrear = document.getElementById(
+    "modalCrear"
+  ) as HTMLDivElement | null;
+  const modalUnirse = document.getElementById(
+    "modalUnirse"
+  ) as HTMLDivElement | null;
   const MIN_JUGADORES = 15;
   const MAX_JUGADORES = 30;
-  const MAX_NOMBRE=20;
+  const MAX_NOMBRE = 20;
 
   if (!crearBtn || !modalCrear) return;
 
-
   const mostrarError = (input: HTMLInputElement, mensaje: string): void => {
-    let errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
+    let errorSpan =
+      input.parentElement?.querySelector<HTMLSpanElement>(".error");
 
     if (!errorSpan) {
       errorSpan = document.createElement("span");
@@ -22,13 +28,13 @@ export const initModalCrearPartida = (): void => {
   };
 
   const limpiarError = (input: HTMLInputElement): void => {
-    const errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
+    const errorSpan =
+      input.parentElement?.querySelector<HTMLSpanElement>(".error");
     if (errorSpan) errorSpan.textContent = "";
   };
 
-
   crearBtn.addEventListener("click", () => {
-    modalUnirse.style.display = "none";
+    if (modalUnirse) modalUnirse.style.display = "none";
     modalCrear.innerHTML = "";
     modalCrear.style.display = "block";
 
@@ -55,13 +61,19 @@ export const initModalCrearPartida = (): void => {
     modalCrear.appendChild(bloque);
 
     const crearPartidaBtn = document.getElementById("crearPartidaBtn");
-    const mensajeExito = document.getElementById("mensajeExito") as HTMLParagraphElement;
+    const mensajeExito = document.getElementById(
+      "mensajeExito"
+    ) as HTMLParagraphElement;
 
     crearPartidaBtn?.addEventListener("click", async () => {
-      const nombreInput = document.getElementById("nombrePartida") as HTMLInputElement;
-      const numJugadoresInput = document.getElementById("numJugadores") as HTMLInputElement;
+      const nombreInput = document.getElementById(
+        "nombrePartida"
+      ) as HTMLInputElement;
+      const numJugadoresInput = document.getElementById(
+        "numJugadores"
+      ) as HTMLInputElement;
 
-      mensajeExito.textContent = ""; 
+      mensajeExito.textContent = "";
 
       let hayError = false;
 
@@ -80,22 +92,30 @@ export const initModalCrearPartida = (): void => {
         limpiarError(numJugadoresInput);
       }
 
-        if (num < MIN_JUGADORES) {
-        mostrarError(numJugadoresInput, `El número de jugadores mínimo es ${MIN_JUGADORES}.`);
+      if (num < MIN_JUGADORES) {
+        mostrarError(
+          numJugadoresInput,
+          `El número de jugadores mínimo es ${MIN_JUGADORES}.`
+        );
         hayError = true;
-        }else if (num> MAX_JUGADORES) {
-        mostrarError(numJugadoresInput,`El número máximo permitido es ${MAX_JUGADORES} jugadores.`);
+      } else if (num > MAX_JUGADORES) {
+        mostrarError(
+          numJugadoresInput,
+          `El número máximo permitido es ${MAX_JUGADORES} jugadores.`
+        );
         hayError = true;
-        }
+      }
 
-        if (nombreInput.value.length > MAX_NOMBRE) {
-        mostrarError(nombreInput, `El nombre no puede exceder los ${MAX_NOMBRE} caracteres.`);
+      if (nombreInput.value.length > MAX_NOMBRE) {
+        mostrarError(
+          nombreInput,
+          `El nombre no puede exceder los ${MAX_NOMBRE} caracteres.`
+        );
         hayError = true;
-        }
+      }
 
       if (hayError) return;
 
- 
       const datosPartida = {
         nombre: nombreInput.value,
         num_jugadores: parseInt(numJugadoresInput.value),
@@ -136,6 +156,4 @@ export const initModalCrearPartida = (): void => {
       }
     });
   });
-
 };
-

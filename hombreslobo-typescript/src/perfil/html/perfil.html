@@ -4,9 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Perfil del Jugador - Castronegro</title>
-
-    <!-- BORRAR DE AQUÍ LUEGO -->
-    <link rel="stylesheet" href="../css/perfil.css" />
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -32,7 +29,7 @@
     <!-- Contenido Principal del Perfil -->
     <main class="perfil-contenedor">
       <!-- Botón de Volver del Wireframe -->
-      <a href="../../../index.html" class="back-arrow" aria-label="Volver">
+      <a href="/index.html" class="back-arrow" aria-label="Volver">
         <i class="fas fa-arrow-left"></i>
       </a>
 
@@ -71,9 +68,16 @@
 
           <!-- Formulario Cambiar Nickname -->
           <form id="form-cambiar-foto">
-            <label for="nickname">Cambiar Foto Perfil</label>
-            <div class="campo-con-boton">
+            <label for="subir-foto">Cambiar Foto Perfil</label>
+            <div class="campo-con-boton" id="foto-perfil">
               <input type="file" id="subir-foto" />
+              <button
+                id="cambiar-foto-perfil"
+                class="boton-secundario"
+                type="submit"
+              >
+                Cambiar foto de perfil
+              </button>
             </div>
           </form>
         </section>

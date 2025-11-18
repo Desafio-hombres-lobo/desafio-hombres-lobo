@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->foreignId('rol')->constrained('roles_administracion');
             $table->timestamp('email_verified_at');
             $table->string('password');
+            $table->string('foto_perfil', 2048)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
