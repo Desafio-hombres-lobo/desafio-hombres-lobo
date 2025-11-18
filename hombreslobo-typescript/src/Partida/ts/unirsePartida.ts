@@ -50,6 +50,10 @@ export const initModalUnirse = (): void => {
           .forEach((p: any) => {
             const item = document.createElement("li");
             item.textContent = `${p.nombre} (${p.codigo})`;
+            const btnUnirse = document.createElement("button");
+            btnUnirse.classList.add("btn-unirse");
+            btnUnirse.textContent = "Unirse";
+            item.appendChild(btnUnirse);
             lista.appendChild(item);
           });
 
