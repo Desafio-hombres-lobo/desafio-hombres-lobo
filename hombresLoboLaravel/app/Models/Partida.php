@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Partida extends Model
 {
     protected $table = 'partidas';
-    protected $primaryKey = 'id_partida';
+    protected $primaryKey = 'id';
     protected $fillable = ['creador_id', 'nombre', 'num_jugadores', 'codigo'];
 
     public function creador()

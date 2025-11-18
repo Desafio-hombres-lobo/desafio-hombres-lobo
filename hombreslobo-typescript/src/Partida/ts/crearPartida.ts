@@ -1,3 +1,5 @@
+import { initLobby } from "../../Lobby/ts/lobby";
+
 export const initModalCrearPartida = (): void => {
   const crearBtn = document.getElementById("crear-partidabtn") as HTMLButtonElement | null;
   const modalCrear = document.getElementById("modalCrear") as HTMLDivElement | null;
@@ -116,6 +118,7 @@ export const initModalCrearPartida = (): void => {
 
         const data = await response.json();
 
+
         if (!response.ok) {
           mostrarError(numJugadoresInput, data.message ?? "Error desconocido");
           return;
@@ -128,9 +131,14 @@ export const initModalCrearPartida = (): void => {
         limpiarError(nombreInput);
         limpiarError(numJugadoresInput);
 
-        setTimeout(() => {
-          modalCrear.style.display = "none";
-        }, 1200);
+
+          localStorage.setItem("partida_id", data.partida.id);
+
+          initLobby();
+          
+          window.location.href = `src/Lobby/html/lobby.html`;
+        
+
       } catch (error) {
         mostrarError(numJugadoresInput, "Error en la solicitud.");
       }

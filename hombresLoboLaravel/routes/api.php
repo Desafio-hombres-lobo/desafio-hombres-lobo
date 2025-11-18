@@ -31,3 +31,9 @@ Route::get('/partidasIniciando', [PartidaController::class, 'partidasIniciando']
 Route::post('/crearPartida', [PartidaController::class, 'store'])
      ->middleware('auth:sanctum');
 
+Route::get('/partida/{id}', [PartidaController::class, 'show'])
+     ->middleware('auth:sanctum');
+
+Route::get('/jugador/{id}', [JugadorController::class, 'show'])
+     ->middleware('auth:sanctum');
+

@@ -7,6 +7,7 @@ import { initModal } from "./Partida/ts/mostrarModal";
 import { validarFormulario } from "./autenticacion/validarFormulario";
 import { validarLogin } from "./autenticacion/validarLogin";
 import { actualizarHeader } from "./autenticacion/actualizarHeader";
+import { initLobby } from "./Lobby/ts/lobby";
 
 const SESSIONSTORAGE = "auth_token";
 const CLAVE_USUARIO = "auth_usuario";
@@ -15,6 +16,9 @@ const LOCALSTORAGE = "credenciales";
 
 document.addEventListener("DOMContentLoaded", () => {
   initModal();
+    if (window.location.pathname.includes("lobby.html")) {
+    initLobby();
+  }
   const formulario = document.querySelector<HTMLFormElement>("#formulario");
   const formularioLogin =
     document.querySelector<HTMLFormElement>("#formulario-login");
