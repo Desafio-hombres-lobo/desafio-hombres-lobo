@@ -23,7 +23,10 @@ formCambiarNickname.addEventListener("submit", (e) => {
   validarFormNickname();
 });
 
-formCambiarPassword.addEventListener("submit", cambiarPasswordUsuario);
+formCambiarPassword.addEventListener("submit", (e) => {
+  e.preventDefault();
+  cambiarPasswordUsuario();
+});
 
 const validarFormNickname = (): void => {
   if (!formCambiarNickname) return;

@@ -28,7 +28,7 @@ export const obtenerNuevaPassword = async () => {
       return null;
     }
 
-    return true;
+    return data;
   } catch (error) {
     console.error("Error en la solicitud: " + error);
     return null;
