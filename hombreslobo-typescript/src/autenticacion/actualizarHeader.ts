@@ -1,4 +1,5 @@
 import { cerrarSesion } from "./cerrarSesion";
+import { abrirModalJugar } from "../Partida/ts/mostrarModal";
 
 export const actualizarHeader = (
   sesion: string,
@@ -10,8 +11,8 @@ export const actualizarHeader = (
   const token = sessionStorage.getItem(sesion);
   const rolUsuario = sessionStorage.getItem(rol);
   const contenedorFinal = document.getElementById("contenedor-final");
-  const botonesJugarAhora =
-    document.querySelectorAll<HTMLAnchorElement>("#boton-jugar-ahora");
+  const botonesJugarAhora = document.querySelectorAll<HTMLElement>(".btn-jugar");
+
   if (!menu) return;
 
   if (token) {
@@ -19,9 +20,11 @@ export const actualizarHeader = (
       contenedorFinal.classList.add("oculto");
     }
     if (botonesJugarAhora.length > 0) {
-      //Aqui va el enlace del modal
-      botonesJugarAhora.forEach((boton: HTMLAnchorElement) => {
-        boton.href = "#";
+      botonesJugarAhora.forEach((boton: HTMLElement) => {
+        boton.addEventListener("click", (e) => {
+          e.preventDefault();
+          abrirModalJugar();
+        });
       });
     }
     if (rolUsuario == "admin") {
@@ -82,8 +85,11 @@ export const actualizarHeader = (
       contenedorFinal.classList.remove("oculto");
     }
     if (botonesJugarAhora.length > 0) {
-      botonesJugarAhora.forEach((boton: HTMLAnchorElement) => {
-        boton.href = "/src/autenticacion/htmls/login.html";
+      botonesJugarAhora.forEach((boton: HTMLElement) => {
+        boton.addEventListener("click", (e) => {
+          e.preventDefault();
+          window.location.href = "/src/autenticacion/htmls/login.html";
+        });
       });
     }
     // 1. Quitar los elementos de "nombre-usuario" y "Cerrar Sesión"
