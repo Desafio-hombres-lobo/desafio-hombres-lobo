@@ -1,0 +1,33 @@
+export const enviarDatosCrearPartida = async (token: string, datosPartida: any) => {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/api/crearPartida", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(datosPartida),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        ok: false,
+        mensaje: data.message ?? "Error desconocido",
+      };
+    }
+
+    return {
+      ok: true,
+      mensaje: "Partida creada correctamente",
+    };
+
+  } catch (error) {
+    return {
+      ok: false,
+      mensaje: "Error en la solicitud.",
+    };
+  }
+};

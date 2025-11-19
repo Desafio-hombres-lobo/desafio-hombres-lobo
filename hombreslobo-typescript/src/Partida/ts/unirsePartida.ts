@@ -1,10 +1,12 @@
+import {obtenerPartidas} from '../../providers/obtenerPartidas';
+
 export const initModalUnirse = (): void => {
   const unirseBtn = document.getElementById(
     "unirsebtn"
-  ) as HTMLButtonElement | null;
+  ) as HTMLButtonElement;
   const modalUnirse = document.getElementById(
     "modalUnirse"
-  ) as HTMLDivElement | null;
+  ) as HTMLDivElement;
   const modalCrear = document.getElementById("modalCrear")! as HTMLDivElement;
 
   if (!unirseBtn || !modalUnirse) return;
@@ -36,47 +38,35 @@ export const initModalUnirse = (): void => {
     cargarPartidas("");
 
     input.addEventListener("input", () => {
-      cargarPartidas(input.value.trim().toLowerCase());
+    cargarPartidas(input.value.trim().toLowerCase());
     });
 
     async function cargarPartidas(filtro: string) {
-      const token = sessionStorage.getItem("auth_token");
+      const partidas = await obtenerPartidas();
 
-      try {
-        const response = await fetch(
-          "http://localhost:8000/api/partidasIniciando",
-          {
-            method: "GET",
-            headers: {
-              "Content-type": "application/json",
-              Accept: "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const partidas = await response.json();
+      lista.innerHTML = "";
 
-        lista.innerHTML = "";
-
-        partidas
-          .filter(
-            (p: any) =>
-              p.nombre.toLowerCase().includes(filtro) ||
-              p.codigo.toLowerCase().includes(filtro)
-          )
-          .forEach((p: any) => {
-            const item = document.createElement("li");
-            item.textContent = `${p.nombre} (${p.codigo})`;
-            lista.appendChild(item);
-          });
-
-        if (lista.children.length === 0) {
-          lista.innerHTML = "<li>No se encontraron partidas</li>";
-        }
-      } catch (error) {
-        console.error("Error al cargar partidas:", error);
+      if (!partidas) {
         lista.innerHTML = "<li>Error al cargar partidas</li>";
+        return;
+      }
+
+      partidas
+        .filter(
+          (p: any) =>
+            p.nombre.toLowerCase().includes(filtro) ||
+            p.codigo.toLowerCase().includes(filtro)
+        )
+        .forEach((p: any) => {
+          const item = document.createElement("li");
+          item.textContent = `${p.nombre} (${p.codigo})`;
+          lista.appendChild(item);
+        });
+
+      if (lista.children.length === 0) {
+        lista.innerHTML = "<li>No se encontraron partidas</li>";
       }
     }
+
   });
 };
