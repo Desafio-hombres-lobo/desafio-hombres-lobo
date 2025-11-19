@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "Ejecutando tests de Laravel antes del commit..."
+
+
+php artisan test --without-tty
+STATUS=$?
+
+if [ $STATUS -ne 0 ]; then
+  echo "Tests fallidos. Commit cancelado."
+  exit 1
+fi
+
+echo "Tests OK. Procediendo con el commit."
+exit 0
