@@ -1,4 +1,5 @@
-export const enviarDatosCrearPartida = async (token: string, datosPartida: any) => {
+
+export const enviarDatosCrearPartida = async (token: string, datosPartida: any) => { 
   try {
     const response = await fetch("http://127.0.0.1:8000/api/crearPartida", {
       method: "POST",
@@ -22,6 +23,7 @@ export const enviarDatosCrearPartida = async (token: string, datosPartida: any) 
     return {
       ok: true,
       mensaje: "Partida creada correctamente",
+      partida: { id: data.partida?.id }, 
     };
 
   } catch (error) {
@@ -31,3 +33,4 @@ export const enviarDatosCrearPartida = async (token: string, datosPartida: any) 
     };
   }
 };
+
