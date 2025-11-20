@@ -4,9 +4,9 @@ import {
   cogerUnUsuario,
   borrarUsuario,
   actualizarUsuario,
-} from "../providers/envioDatosAdmin";
+} from "../../providers/envioDatosAdmin";
 
-import { getRol } from "../autenticacion/ts/auth";
+import { getRol } from "../../autenticacion/ts/auth";
 
 const btnVerUsuarios = document.getElementById("btn-mostrar-todos")!;
 const btnEncontrarUsuario = document.getElementById("btn-buscar-uno")!;

@@ -1,9 +1,5 @@
-import { enviarDatosBackend } from "../providers/enviarDatosRegistro";
+import { enviarDatosBackend } from "../../providers/enviarDatosRegistro";
 import "./css/registro.css";
-
-/**
- * =============== *
- */
 
 export const validarFormulario = (formulario: HTMLFormElement): void => {
   if (!formulario) return;
@@ -96,7 +92,10 @@ export const validarFormulario = (formulario: HTMLFormElement): void => {
 };
 
 // Función para mostrar el mensaje de error
-export const mostrarError = (input: HTMLInputElement, mensaje: string): void => {
+export const mostrarError = (
+  input: HTMLInputElement,
+  mensaje: string
+): void => {
   let errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
 
   if (!errorSpan) {

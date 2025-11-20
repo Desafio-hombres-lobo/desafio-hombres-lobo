@@ -1,5 +1,7 @@
+import { getToken } from "../autenticacion/ts/auth";
+
 export const obtenerNuevaPassword = async () => {
-  const token = sessionStorage.getItem("auth_token");
+  const token = getToken();
 
   if (!token) {
     alert("Error: No estás autenticado. Por favor, inicia sesión.");

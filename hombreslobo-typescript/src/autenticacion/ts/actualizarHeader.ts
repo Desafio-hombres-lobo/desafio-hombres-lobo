@@ -1,6 +1,6 @@
 import { cerrarSesion } from "./cerrarSesion";
 import { abrirModalJugar } from "../../partida/ts/mostrarModal";
-import { getToken, getRol, getUsuario, getJugador } from "./auth";
+import { getToken, getRol, getJugador } from "./auth";
 export const actualizarHeader = () => {
   const menu = document.querySelector(".menu");
   const token = getToken();

@@ -1,7 +1,10 @@
+import { getToken } from "../../autenticacion/ts/auth";
 import { enviarDatosCrearPartida } from "../../providers/enviarDatosPartida";
 
 export const initModalCrearPartida = (): void => {
-  const crearBtn = document.getElementById("crear-partidabtn") as HTMLButtonElement;
+  const crearBtn = document.getElementById(
+    "crear-partidabtn"
+  ) as HTMLButtonElement;
   const modalCrear = document.getElementById("modalCrear") as HTMLDivElement;
   const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement;
 
@@ -12,7 +15,9 @@ export const initModalCrearPartida = (): void => {
   if (!crearBtn || !modalCrear) return;
 
   const mostrarError = (input: HTMLInputElement, mensaje: string) => {
-    let errorSpan = input.parentElement?.querySelector(".error") as HTMLSpanElement;
+    let errorSpan = input.parentElement?.querySelector(
+      ".error"
+    ) as HTMLSpanElement;
 
     if (!errorSpan) {
       errorSpan = document.createElement("span");
@@ -53,11 +58,17 @@ export const initModalCrearPartida = (): void => {
     `;
 
     const crearPartidaBtn = document.getElementById("crearPartidaBtn");
-    const mensajeExito = document.getElementById("mensajeExito") as HTMLParagraphElement;
+    const mensajeExito = document.getElementById(
+      "mensajeExito"
+    ) as HTMLParagraphElement;
 
     crearPartidaBtn?.addEventListener("click", async () => {
-      const nombreInput = document.getElementById("nombrePartida") as HTMLInputElement;
-      const numJugadoresInput = document.getElementById("numJugadores") as HTMLInputElement;
+      const nombreInput = document.getElementById(
+        "nombrePartida"
+      ) as HTMLInputElement;
+      const numJugadoresInput = document.getElementById(
+        "numJugadores"
+      ) as HTMLInputElement;
 
       mensajeExito.textContent = "";
       let hayError = false;
@@ -70,7 +81,10 @@ export const initModalCrearPartida = (): void => {
 
       const num = parseInt(numJugadoresInput.value);
       if (!num || num < MIN_JUGADORES || num > MAX_JUGADORES) {
-        mostrarError(numJugadoresInput, `Debe estar entre ${MIN_JUGADORES} y ${MAX_JUGADORES}.`);
+        mostrarError(
+          numJugadoresInput,
+          `Debe estar entre ${MIN_JUGADORES} y ${MAX_JUGADORES}.`
+        );
         hayError = true;
       } else limpiarError(numJugadoresInput);
 
@@ -86,7 +100,7 @@ export const initModalCrearPartida = (): void => {
         num_jugadores: num,
       };
 
-      const token = sessionStorage.getItem("auth_token") ?? "";
+      const token = getToken()!;
 
       const resultado = await enviarDatosCrearPartida(token, datosPartida);
 
@@ -103,4 +117,3 @@ export const initModalCrearPartida = (): void => {
     });
   });
 };
-
