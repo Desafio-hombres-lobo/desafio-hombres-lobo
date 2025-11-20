@@ -1,5 +1,4 @@
 import { enviarDatosCrearPartida } from "../../providers/enviarDatosPartida";
-import { initLobby } from "../../Lobby/ts/lobby";
 
 export const initModalCrearPartida = (): void => {
   const crearBtn = document.getElementById("crear-partidabtn") as HTMLButtonElement | null;
