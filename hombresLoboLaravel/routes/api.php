@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, App\Http\Controllers\PartidaController;
+use App\Http\Controllers\JugadorController;
+use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, App\Http\Controllers\PartidaController, App\Http\Controllers\CloudinaryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    // Rutas de ADMIN (requieren token y la habilidad 'admin')
+    Route::middleware('ability:admin')->group(function () {
 
         Route::apiResource('users', UserController::class);
         Route::get('/partidas', [PartidaController::class, 'index']);
@@ -35,14 +35,13 @@ Route::get('/user', function (Request $request) {
         # Coger foto de perfil
         Route::get('/cargarFoto', [CloudinaryController::class, 'cargarFoto']);
 
+
         Route::get('/partida/{id}', [PartidaController::class, 'show']);
 
         Route::get('/jugador/{id}', [JugadorController::class, 'show']);
-
     });
 });
 
 //Rutas publicas
 Route::post('/registrar', [AuthController::class, 'registrar']);
-
-Route::get('/partidas', [PartidaController::class, 'index']);
+Route::post('/login', [AuthController::class, 'loguear']);
