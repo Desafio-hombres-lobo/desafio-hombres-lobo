@@ -1,9 +1,10 @@
 import { enviarDatosCrearPartida } from "../../providers/enviarDatosPartida";
+import { initLobby } from "../../Lobby/ts/lobby";
 
 export const initModalCrearPartida = (): void => {
-  const crearBtn = document.getElementById("crear-partidabtn") as HTMLButtonElement;
-  const modalCrear = document.getElementById("modalCrear") as HTMLDivElement;
-  const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement;
+  const crearBtn = document.getElementById("crear-partidabtn") as HTMLButtonElement | null;
+  const modalCrear = document.getElementById("modalCrear") as HTMLDivElement | null;
+  const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement | null;
 
   const MIN_JUGADORES = 15;
   const MAX_JUGADORES = 30;
@@ -11,20 +12,18 @@ export const initModalCrearPartida = (): void => {
 
   if (!crearBtn || !modalCrear) return;
 
-  const mostrarError = (input: HTMLInputElement, mensaje: string) => {
-    let errorSpan = input.parentElement?.querySelector(".error") as HTMLSpanElement;
-
+  const mostrarError = (input: HTMLInputElement, mensaje: string): void => {
+    let errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
     if (!errorSpan) {
       errorSpan = document.createElement("span");
       errorSpan.className = "error";
       input.parentElement?.appendChild(errorSpan);
     }
-
     errorSpan.textContent = mensaje;
   };
 
-  const limpiarError = (input: HTMLInputElement) => {
-    const errorSpan = input.parentElement?.querySelector(".error");
+  const limpiarError = (input: HTMLInputElement): void => {
+    const errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
     if (errorSpan) errorSpan.textContent = "";
   };
 
@@ -33,24 +32,27 @@ export const initModalCrearPartida = (): void => {
     modalCrear.innerHTML = "";
     modalCrear.style.display = "block";
 
-    modalCrear.innerHTML = `
-      <div class="unirse-modal">
-        <h3>Crea tu partida</h3>
+    const bloque = document.createElement("div");
+    bloque.classList.add("unirse-modal");
 
-        <div class="partida-contenedor">
-            <label for="nombrePartida">Nombre de la partida:</label>
-            <input id="nombrePartida" type="text" placeholder="Introduce un nombre">
-        </div>
+    bloque.innerHTML = `
+      <h3>Crea tu partida</h3>
 
-        <div class="partida-contenedor">
-            <label for="numJugadores">Número de jugadores:</label>
-            <input type="number" id="numJugadores">
-        </div>
-
-        <button id="crearPartidaBtn" class="btn-crear">Crear partida</button>
-        <p id="mensajeExito" class="exito"></p>
+      <div class="partida-contenedor">
+          <label for="nombrePartida">Nombre de la partida:</label>
+          <input id="nombrePartida" type="text" placeholder="Introduce un nombre">
       </div>
+
+      <div class="partida-contenedor">
+          <label for="numJugadores">Número de jugadores:</label>
+          <input type="number" id="numJugadores" min="1">
+      </div>
+
+      <button id="crearPartidaBtn" class="btn-crear">Crear partida</button>
+      <p id="mensajeExito" class="exito"></p>
     `;
+
+    modalCrear.appendChild(bloque);
 
     const crearPartidaBtn = document.getElementById("crearPartidaBtn");
     const mensajeExito = document.getElementById("mensajeExito") as HTMLParagraphElement;
@@ -62,20 +64,25 @@ export const initModalCrearPartida = (): void => {
       mensajeExito.textContent = "";
       let hayError = false;
 
-      // Validaciones
       if (!nombreInput.value.trim()) {
         mostrarError(nombreInput, "Debes introducir un nombre.");
         hayError = true;
       } else limpiarError(nombreInput);
 
       const num = parseInt(numJugadoresInput.value);
-      if (!num || num < MIN_JUGADORES || num > MAX_JUGADORES) {
-        mostrarError(numJugadoresInput, `Debe estar entre ${MIN_JUGADORES} y ${MAX_JUGADORES}.`);
+      if (!num || num <= 0) {
+        mostrarError(numJugadoresInput, "Introduce un número válido.");
+        hayError = true;
+      } else if (num < MIN_JUGADORES) {
+        mostrarError(numJugadoresInput, `El número mínimo de jugadores es ${MIN_JUGADORES}.`);
+        hayError = true;
+      } else if (num > MAX_JUGADORES) {
+        mostrarError(numJugadoresInput, `El número máximo permitido es ${MAX_JUGADORES}.`);
         hayError = true;
       } else limpiarError(numJugadoresInput);
 
       if (nombreInput.value.length > MAX_NOMBRE) {
-        mostrarError(nombreInput, `Máximo: ${MAX_NOMBRE} caracteres.`);
+        mostrarError(nombreInput, `El nombre no puede exceder los ${MAX_NOMBRE} caracteres.`);
         hayError = true;
       }
 
@@ -88,6 +95,7 @@ export const initModalCrearPartida = (): void => {
 
       const token = sessionStorage.getItem("auth_token") ?? "";
 
+
       const resultado = await enviarDatosCrearPartida(token, datosPartida);
 
       if (!resultado.ok) {
@@ -97,10 +105,11 @@ export const initModalCrearPartida = (): void => {
 
       mensajeExito.textContent = resultado.mensaje;
 
-      setTimeout(() => {
-        modalCrear.style.display = "none";
-      }, 1200);
+      if (resultado.partida?.id != null) {
+        localStorage.setItem("partida_id", resultado.partida.id.toString());
+      }
+
+      window.location.href = "src/Lobby/html/lobby.html";
     });
   });
 };
-

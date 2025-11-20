@@ -189,7 +189,14 @@
   color: white; 
 }
 
-
+#listaPartidas li .btn-unirse{
+  position:relative;
+  right:-20px;
+  background-color: white;
+  box-shadow: var(--negro) 0px 0px 10px;
+  color:var(--negro);
+  font-family: var(--fuente-texto);
+}
 .modal{
   border-radius:20px;
   background-color:var(--negro);

@@ -1,10 +1,13 @@
 import "./css/base.css";
 import "./css/index.css";
-import "./Partida/css/elegirPartida.css";
+import "./Partida/css/elegirPartida.css"
+import "./Lobby/css/lobby.css";
+import "./Lobby/css/animacionesLobby.css";
 import { initModal } from "./Partida/ts/mostrarModal";
 import { validarFormulario } from "./autenticacion/validarFormulario";
 import { validarLogin } from "./autenticacion/validarLogin";
 import { actualizarHeader } from "./autenticacion/actualizarHeader";
+import { initLobby } from "./Lobby/ts/lobby";
 
 const SESSIONSTORAGE = "auth_token";
 const ROL_USUARIO = "auth_rol";
@@ -14,6 +17,9 @@ const LOCALSTORAGE = "credenciales";
 
 document.addEventListener("DOMContentLoaded", () => {
   initModal();
+    if (window.location.pathname.includes("lobby.html")) {
+    initLobby();
+  }
   const formulario = document.querySelector<HTMLFormElement>("#formulario");
   const formularioLogin =
     document.querySelector<HTMLFormElement>("#formulario-login");
