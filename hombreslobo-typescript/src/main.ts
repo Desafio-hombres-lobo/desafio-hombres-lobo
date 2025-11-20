@@ -8,6 +8,9 @@ import { actualizarHeader } from "./autenticacion/ts/actualizarHeader";
 
 document.addEventListener("DOMContentLoaded", () => {
   initModal();
+    if (window.location.pathname.includes("lobby.html")) {
+    initLobby();
+  }
   const formulario = document.querySelector<HTMLFormElement>("#formulario");
   const formularioLogin =
     document.querySelector<HTMLFormElement>("#formulario-login");

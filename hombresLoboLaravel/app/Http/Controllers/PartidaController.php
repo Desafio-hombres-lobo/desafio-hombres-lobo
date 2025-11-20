@@ -29,7 +29,7 @@ class PartidaController extends Controller
         ]);
 
         $jugador = $request->user()->jugador;
-        Partida::create([
+        $partida=Partida::create([
             'creador_id' => $jugador->id,
             'nombre' => $request->nombre,
             'num_jugadores' => $request->num_jugadores,
@@ -38,10 +38,26 @@ class PartidaController extends Controller
         ]);
 
         return response()->json([
-    'success' => true,
-    'message' => 'Partida creada correctamente.'
-]);
+            'success' => true,
+            'message' => 'Partida creada correctamente.',
+            'partida' => [
+                'id' => $partida->id,
+                'codigo' => $partida->codigo,
+                'num_jugadores' => $partida->num_jugadores
+            ]
+        ]);
 
+    }
+
+    public function show($id)
+    {
+        $partida = Partida::find($id);
+
+        if (!$partida) {
+            return response()->json(['message' => 'Partida no encontrada'], 404);
+        }
+
+        return response()->json($partida);
     }
 }
 

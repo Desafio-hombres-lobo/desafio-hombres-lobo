@@ -35,10 +35,13 @@ Route::middleware('auth:sanctum')->group(function () {
         # Coger foto de perfil
         Route::get('/cargarFoto', [CloudinaryController::class, 'cargarFoto']);
 
+
+        Route::get('/partida/{id}', [PartidaController::class, 'show']);
+
+        Route::get('/jugador/{id}', [JugadorController::class, 'show']);
     });
 });
 
 //Rutas publicas
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
-

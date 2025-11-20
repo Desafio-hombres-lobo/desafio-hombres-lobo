@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Los Hombres Lobo de Castronegro - Lobby</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bahiana&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/src/imagenes/logoLobo.png" type="image/x-icon" />
+</head>
+<body>
+  <header>
+    <h1>Los Hombres Lobo de Castronegro</h1>
+    <p id="codigo-partida"></p>
+      <div class="contador"></div>
+  </header>
+
+  <main>
+
+  <div class="circulo">
+  <svg width="322" height="320" viewBox="0 0 320 320">
+    <path id="espiral" d="
+        M160,160
+        m0,-165
+        a150,150 0 1,1 0,300
+        a130,130 0 1,1 0,-260
+        a110,110 0 1,1 0,220
+        a90,90   0 1,1 0,-180
+        a70,70   0 1,1 0,140
+        a50,50   0 1,1 0,-100
+        a30,30   0 1,1 0,60
+      " 
+      fill="none" 
+    />
+  </svg>
+    <div class="centro-circulo">
+      <button class="btn jugar">Iniciar Juego</button>
+    </div>
+  </div>
+
+      <button class="btn-abandon" id="abandonar">Abandonar Partida</button>
+   
+
+    <aside>
+      <div class="panel info">
+        <h3>Información de la Partida</h3>
+        <label class="code">Código de Partida: <strong></strong></label>
+        <button class="btn btn2" id="copiarCodigo">Copiar Código</button>
+
+
+          <button class="btn">⚙️ Configuración de Partida</button>
+          <a class="btn btn3" href="../../../reglas-hombres-lobo-castronegro.pdf" download>📜 Ver Reglas</a>
+      </div>
+
+      <div class="panel chat">
+        <h4>Chat</h4>
+
+        <div class="chat-input">
+          <input type="text" placeholder="Escribe un mensaje..." aria-label="Mensaje de chat" />
+          <button class="btn enviar">➤</button>
+        </div>
+
+        
+      </div>
+    </aside>
+  </main>
+  <div class="bg-card-1"></div>
+  <div class="bg-card-2"></div>
+  <div class="bg-card-3"></div>
+  <div class="bg-card-4"></div>
+  <div class="bg-card-5"></div>
+  <div class="bg-card-6"></div>
+  <div class="bg-card-7"></div>
+  <div class="bg-card-8"></div>
+  <div class="bg-card-9"></div>
+  <div class="bg-card-10"></div>
+  <div class="bg-card-11"></div>
+  <div class="bg-card-12"></div>
+  <div class="bg-card-13"></div>
+  <div class="bg-card-14"></div>
+  <div class="bg-card-15"></div>
+  <div class="bg-card-16"></div>
+  <div class="bg-card-17"></div>
+  <div class="bg-card-18"></div>
+<script type="module" src="../../main.ts"></script>
+
+</body>
+</html>
+
+
