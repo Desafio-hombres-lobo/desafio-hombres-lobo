@@ -5,23 +5,23 @@ const CLAVE_JUGADOR = "auth_jugador";
 const LOCALSTORAGE = "credenciales";
 
 export const getToken = () => {
-  return sessionStorage.getItem(TOKEN);
+  return sessionStorage.getItem(getTokenPath());
 };
 
 export const getUsuario = () => {
-  return sessionStorage.getItem(CLAVE_USUARIO);
+  return sessionStorage.getItem(getUsuarioPath());
 };
 
 export const getJugador = () => {
-  return sessionStorage.getItem(CLAVE_JUGADOR);
+  return sessionStorage.getItem(getJugadorPath());
 };
 
 export const getRol = () => {
-  return sessionStorage.getItem(ROL_USUARIO);
+  return sessionStorage.getItem(getRolPath());
 };
 
 export const getCredenciales = () => {
-  return localStorage.getItem(LOCALSTORAGE);
+  return localStorage.getItem(getCredencialesPath());
 };
 
 export const getTokenPath = () => {

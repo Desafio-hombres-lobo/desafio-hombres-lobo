@@ -1,5 +1,5 @@
 import { enviarDatosBackend } from "../../providers/enviarDatosRegistro";
-import "./css/registro.css";
+import "../css/registro.css";
 
 export const validarFormulario = (formulario: HTMLFormElement): void => {
   if (!formulario) return;
