@@ -70,7 +70,7 @@ export const actualizarHeader = () => {
       // 4. Añadir el listener para el logout
       cerrarSesionBoton.addEventListener("click", (e) => {
         e.preventDefault();
-        cerrarSesion(sesion, claveUsuario, claveJugador, rol);
+        cerrarSesion();
       });
       divSesion.appendChild(cerrarSesionBoton);
       menu.appendChild(divSesion);
