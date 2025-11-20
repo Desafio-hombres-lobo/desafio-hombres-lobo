@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo "Revisando errores básicos..."
+
+# FRONTEND: Revisión de TypeScript
+# "npx tsc --noEmit" revisa los tipos sin crear archivos.
+# "|| exit 1" significa: si falla, cancela el commit.
+echo "--- Frontend (TypeScript) ---"
+npx tsc --noEmit || exit 1
+
+# BACKEND: Estilo de Laravel (Pint)
+# Arregla automáticamente espacios y sintaxis básica de PHP.
+echo "--- Backend (Laravel Pint) ---"
+./vendor/bin/pint || exit 1
+
+echo "Todo se ve bien."
+exit 0

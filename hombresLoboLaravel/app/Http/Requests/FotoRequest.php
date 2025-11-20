@@ -3,16 +3,15 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules;
 
-class StoreUserRequest extends FormRequest
+class FotoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->tokenCan('usuario');
     }
 
     /**
@@ -23,11 +22,8 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'nickname' => 'required|string|alpha_dash|unique:users',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'rol' => 'integer|exists:roles_administracion,id'
+            //No deberia hacer falta poner nada mas, ya que para pasar por aqui hay que tener token 
+            'foto' => 'required|image|mimes:jpeg,jpg,png|max:2048',
         ];
     }
 }

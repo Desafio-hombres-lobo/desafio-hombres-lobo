@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::create('roles_administracion', function (Blueprint $table) {
             $table->id();
+            $table->string('nombre');
             $table->timestamps();
         });
     }
@@ -23,4 +24,6 @@ return new class extends Migration {
     {
         Schema::dropIfExists('roles_administracion');
     }
+
+
 };

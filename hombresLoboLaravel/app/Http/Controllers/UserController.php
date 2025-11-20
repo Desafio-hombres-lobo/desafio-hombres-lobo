@@ -25,7 +25,8 @@ class UserController extends Controller
             'name' => $datos['name'],
             'email' => $datos['email'],
             'nickname' => $datos['nickname'],
-            'password' => $datos['password']
+            'password' => $datos['password'],
+            'rol' => $datos['rol']
         ]);
 
         return response()->json($user, 201);
@@ -34,7 +35,10 @@ class UserController extends Controller
 
     public function show(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::where('id', $id)
+            ->orWhere('nickname', $id)
+            ->with('role')
+            ->firstOrFail();
 
         return $user;
     }
@@ -42,7 +46,9 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::where('id', $id)
+            ->orWhere('nickname', $id)
+            ->firstOrFail();
         $datos = $request->validated();
 
         $user->update($datos);
@@ -53,7 +59,9 @@ class UserController extends Controller
 
     public function destroy(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::where('id', $id)
+            ->orWhere('nickname', $id)
+            ->firstOrFail();
         $userId = $user->id;
         $user->delete();
         return response()->json("Usuario $userId borrado con exito", 200);

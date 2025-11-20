@@ -1,8 +1,12 @@
 import "../css/perfil.css";
 import { enviarNicknameActualizado } from "../../providers/actualizarNickname";
+import { cambiarPasswordUsuario } from "./cambiarPassword";
 
 const formCambiarNickname =
   document.querySelector<HTMLFormElement>("#form-nickname")!;
+
+const formCambiarPassword =
+  document.querySelector<HTMLFormElement>("#form-password")!;
 
 const campoNuevoNickname = {
   nuevoNicknameUsuario: {
@@ -17,6 +21,11 @@ const campoNuevoNickname = {
 formCambiarNickname.addEventListener("submit", (e) => {
   e.preventDefault();
   validarFormNickname();
+});
+
+formCambiarPassword.addEventListener("submit", (e) => {
+  e.preventDefault();
+  cambiarPasswordUsuario();
 });
 
 const validarFormNickname = (): void => {
@@ -43,7 +52,16 @@ const validarCampoNickname = async (): Promise<void> => {
     nickname: campo.input.value,
   };
 
-  await enviarNicknameActualizado(datosNuevoNickname);
+  const nicknameActualizado = await enviarNicknameActualizado(
+    datosNuevoNickname
+  );
+
+  if (nicknameActualizado) {
+    // Actualizar en perfil
+    const nicknameH3 = document.querySelector(".stats-card .nickname");
+    if (nicknameH3) nicknameH3.textContent = campo.input.value;
+  }
+
   campo.input.value = "";
 };
 

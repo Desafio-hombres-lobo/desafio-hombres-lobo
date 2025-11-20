@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rule;
+use App\Models\User;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -12,7 +14,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->tokenCan('admin');
     }
 
     /**
@@ -22,16 +24,27 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $jugadorId = $this->user()->jugador->id;
+        $identifier = $this->route('user');
+        $user = User::where('id', $identifier)
+            ->orWhere('nickname', $identifier)
+            ->first();
+
+        $userId = $user ? $user->id : null;
 
         return [
+            'name' => 'sometimes|required|string|max:255',
+            'email' => [
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($userId)
+            ],
             'nickname' => [
-                'required',
                 'string',
                 'alpha_dash',
-                'max:255',
-                \Illuminate\Validation\Rule::unique('jugadores', 'nickname')->ignore($jugadorId),
+                Rule::unique('users')->ignore($userId)
             ],
+            'password' => ['sometimes', 'required', Rules\Password::defaults()],
         ];
     }
 }

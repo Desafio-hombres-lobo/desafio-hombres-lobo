@@ -1,17 +1,18 @@
 import { cerrarSesion } from "./cerrarSesion";
-
-cerrarSesion;
+import { abrirModalJugar } from "../Partida/ts/mostrarModal";
 
 export const actualizarHeader = (
   sesion: string,
   claveUsuario: string,
-  claveJugador: string
+  claveJugador: string,
+  rol: string
 ) => {
   const menu = document.querySelector(".menu");
   const token = sessionStorage.getItem(sesion);
+  const rolUsuario = sessionStorage.getItem(rol);
   const contenedorFinal = document.getElementById("contenedor-final");
-  const botonesJugarAhora =
-    document.querySelectorAll<HTMLAnchorElement>("#boton-jugar-ahora");
+  const botonesJugarAhora = document.querySelectorAll<HTMLElement>(".btn-jugar");
+
   if (!menu) return;
 
   if (token) {
@@ -19,10 +20,18 @@ export const actualizarHeader = (
       contenedorFinal.classList.add("oculto");
     }
     if (botonesJugarAhora.length > 0) {
-      //Aqui va el enlace del modal
-      botonesJugarAhora.forEach((boton: HTMLAnchorElement) => {
-        boton.href = "#";
+      botonesJugarAhora.forEach((boton: HTMLElement) => {
+        boton.addEventListener("click", (e) => {
+          e.preventDefault();
+          abrirModalJugar();
+        });
       });
+    }
+    if (rolUsuario == "admin") {
+      const enlaceAdmin = document.createElement("a");
+      enlaceAdmin.href = "/src/admin/htmls/admin.html";
+      enlaceAdmin.textContent = "Panel de administracion";
+      menu.appendChild(enlaceAdmin);
     }
 
     const nombreUsuario = sessionStorage.getItem(claveJugador);
@@ -65,7 +74,7 @@ export const actualizarHeader = (
       // 4. Añadir el listener para el logout
       cerrarSesionBoton.addEventListener("click", (e) => {
         e.preventDefault();
-        cerrarSesion(sesion, claveUsuario, claveJugador);
+        cerrarSesion(sesion, claveUsuario, claveJugador, rol);
       });
       divSesion.appendChild(cerrarSesionBoton);
       menu.appendChild(divSesion);
@@ -76,8 +85,11 @@ export const actualizarHeader = (
       contenedorFinal.classList.remove("oculto");
     }
     if (botonesJugarAhora.length > 0) {
-      botonesJugarAhora.forEach((boton: HTMLAnchorElement) => {
-        boton.href = "/src/autenticacion/htmls/login.html";
+      botonesJugarAhora.forEach((boton: HTMLElement) => {
+        boton.addEventListener("click", (e) => {
+          e.preventDefault();
+          window.location.href = "/src/autenticacion/htmls/login.html";
+        });
       });
     }
     // 1. Quitar los elementos de "nombre-usuario" y "Cerrar Sesión"

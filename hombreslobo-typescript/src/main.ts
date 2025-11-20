@@ -10,6 +10,7 @@ import { actualizarHeader } from "./autenticacion/actualizarHeader";
 import { initLobby } from "./Lobby/ts/lobby";
 
 const SESSIONSTORAGE = "auth_token";
+const ROL_USUARIO = "auth_rol";
 const CLAVE_USUARIO = "auth_usuario";
 const CLAVE_JUGADOR = "auth_jugador";
 const LOCALSTORAGE = "credenciales";
@@ -22,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const formulario = document.querySelector<HTMLFormElement>("#formulario");
   const formularioLogin =
     document.querySelector<HTMLFormElement>("#formulario-login");
-  actualizarHeader(SESSIONSTORAGE, CLAVE_USUARIO, CLAVE_JUGADOR);
+  actualizarHeader(SESSIONSTORAGE, CLAVE_USUARIO, CLAVE_JUGADOR, ROL_USUARIO);
   if (formulario) {
     validarFormulario(formulario);
   }

@@ -1,16 +1,21 @@
-export const initModalUnirse = (): void => { 
-  const unirseBtn = document.getElementById("unirsebtn") as HTMLButtonElement | null;
-  const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement | null;
-  const modalCrear = document.getElementById("modalCrear") as HTMLDivElement | null;
+import {obtenerPartidas} from '../../providers/obtenerPartidas';
+
+export const initModalUnirse = (): void => {
+  const unirseBtn = document.getElementById(
+    "unirsebtn"
+  ) as HTMLButtonElement;
+  const modalUnirse = document.getElementById(
+    "modalUnirse"
+  ) as HTMLDivElement;
+  const modalCrear = document.getElementById("modalCrear")! as HTMLDivElement;
 
   if (!unirseBtn || !modalUnirse) return;
 
   unirseBtn.addEventListener("click", () => {
-    modalCrear.style.display = 'none'
+    modalCrear.style.display = "none";
     modalUnirse.innerHTML = "";
     modalUnirse.style.display = "block";
 
-    
     const bloque = document.createElement("div");
     bloque.classList.add("unirse-modal");
 
@@ -25,52 +30,43 @@ export const initModalUnirse = (): void => {
 
     modalUnirse.appendChild(bloque);
 
-    
     const lista = bloque.querySelector("#listaPartidas") as HTMLUListElement;
-    const input = bloque.querySelector("#inputBuscarPartida") as HTMLInputElement;
+    const input = bloque.querySelector(
+      "#inputBuscarPartida"
+    ) as HTMLInputElement;
 
     cargarPartidas("");
 
     input.addEventListener("input", () => {
-      cargarPartidas(input.value.trim().toLowerCase());
+    cargarPartidas(input.value.trim().toLowerCase());
     });
 
     async function cargarPartidas(filtro: string) {
-      try {
-        const response = await fetch("http://localhost:8000/api/partidasIniciando");
-        const partidas = await response.json();
+      const partidas = await obtenerPartidas();
 
-        lista.innerHTML = "";
+      lista.innerHTML = "";
 
-        partidas
-          .filter((p: any) =>
+      if (!partidas) {
+        lista.innerHTML = "<li>Error al cargar partidas</li>";
+        return;
+      }
+
+      partidas
+        .filter(
+          (p: any) =>
             p.nombre.toLowerCase().includes(filtro) ||
             p.codigo.toLowerCase().includes(filtro)
-          )
-          .forEach((p: any) => {
-            const item = document.createElement("li");
-            item.textContent = `${p.nombre} (${p.codigo})`;
-            const btnUnirse = document.createElement("button");
-            btnUnirse.classList.add("btn-unirse");
-            btnUnirse.textContent = "Unirse";
-            item.appendChild(btnUnirse);
-            lista.appendChild(item);
-            btnUnirse.addEventListener("click", () => {
-              localStorage.setItem("partida_id", p.id);
-              window.location.href = "src/Lobby/html/lobby.html";
-              });
-          });
+        )
+        .forEach((p: any) => {
+          const item = document.createElement("li");
+          item.textContent = `${p.nombre} (${p.codigo})`;
+          lista.appendChild(item);
+        });
 
-        if (lista.children.length === 0) {
-          lista.innerHTML = "<li>No se encontraron partidas</li>";
-        }
-      } catch (error) {
-        console.error("Error al cargar partidas:", error);
-        lista.innerHTML = "<li>Error al cargar partidas</li>";
+      if (lista.children.length === 0) {
+        lista.innerHTML = "<li>No se encontraron partidas</li>";
       }
     }
+
   });
 };
-
-
-

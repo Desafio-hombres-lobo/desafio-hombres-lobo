@@ -4,9 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Perfil del Jugador - Castronegro</title>
-
-    <!-- BORRAR DE AQUÍ LUEGO -->
-    <link rel="stylesheet" href="../css/perfil.css" />
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,55 +24,19 @@
     <!-- Cabecera  -->
     <header class="cabecera">
       <a href="index.html" class="titulo-sitio">Castronegro</a>
-      <!-- <nav class="menu">
-        <a href="#">Jugar</a>
-        <a href="#">Reglas</a>
-        <a href="#">Comunidad</a>
-        <a href="#">Cerrar Sesión</a>
-      </nav> -->
     </header>
 
     <!-- Contenido Principal del Perfil -->
     <main class="perfil-contenedor">
       <!-- Botón de Volver del Wireframe -->
-      <a href="../../../index.html" class="back-arrow" aria-label="Volver">
+      <a href="/index.html" class="back-arrow" aria-label="Volver">
         <i class="fas fa-arrow-left"></i>
       </a>
 
       <h2 class="titulo-seccion">Perfil del Jugador</h2>
 
       <div class="perfil-grid">
-        <aside class="stats-card">
-          <!-- <div class="profile-pic" aria-hidden="true">
-            <i class="fas fa-user-circle"></i>
-          </div>
-
-          <h3 class="nickname"></h3>
-
-          <h4>Estadísticas</h4>
-          <ul>
-            <li>
-              <span>P. Jugadas</span>
-              <span>20</span>
-            </li>
-            <li>
-              <span>P. Ganadas</span>
-              <span>15</span>
-            </li>
-            <li>
-              <span>P. Perdidas</span>
-              <span>5</span>
-            </li>
-            <li>
-              <span>Muertes</span>
-              <span>4</span>
-            </li>
-            <li>
-              <span>Resurrecciones</span>
-              <span>2</span>
-            </li>
-          </ul> -->
-        </aside>
+        <aside class="stats-card"></aside>
 
         <!-- Columna Derecha: Ajustes -->
         <section class="settings-form">
@@ -107,9 +68,16 @@
 
           <!-- Formulario Cambiar Nickname -->
           <form id="form-cambiar-foto">
-            <label for="nickname">Cambiar Foto Perfil</label>
-            <div class="campo-con-boton">
+            <label for="subir-foto">Cambiar Foto Perfil</label>
+            <div class="campo-con-boton" id="foto-perfil">
               <input type="file" id="subir-foto" />
+              <button
+                id="cambiar-foto-perfil"
+                class="boton-secundario"
+                type="submit"
+              >
+                Cambiar foto de perfil
+              </button>
             </div>
           </form>
         </section>
