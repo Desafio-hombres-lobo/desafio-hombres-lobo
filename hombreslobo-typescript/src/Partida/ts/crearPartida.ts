@@ -1,15 +1,6 @@
 import { enviarDatosCrearPartida } from "../../providers/enviarDatosPartida";
 import { initLobby } from "../../Lobby/ts/lobby";
 
-// Tipado del resultado que devuelve tu provider
-interface ResultadoCrearPartida {
-  ok: boolean;
-  mensaje: string;
-  partida?: {
-    id: string | number;
-  };
-}
-
 export const initModalCrearPartida = (): void => {
   const crearBtn = document.getElementById("crear-partidabtn") as HTMLButtonElement | null;
   const modalCrear = document.getElementById("modalCrear") as HTMLDivElement | null;
@@ -23,13 +14,11 @@ export const initModalCrearPartida = (): void => {
 
   const mostrarError = (input: HTMLInputElement, mensaje: string): void => {
     let errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
-
     if (!errorSpan) {
       errorSpan = document.createElement("span");
       errorSpan.className = "error";
       input.parentElement?.appendChild(errorSpan);
     }
-
     errorSpan.textContent = mensaje;
   };
 
@@ -75,31 +64,26 @@ export const initModalCrearPartida = (): void => {
       mensajeExito.textContent = "";
       let hayError = false;
 
-      // --- Validación nombre ---
       if (!nombreInput.value.trim()) {
         mostrarError(nombreInput, "Debes introducir un nombre.");
         hayError = true;
       } else limpiarError(nombreInput);
 
-      if (nombreInput.value.length > MAX_NOMBRE) {
-        mostrarError(nombreInput, `El nombre no puede exceder los ${MAX_NOMBRE} caracteres.`);
-        hayError = true;
-      }
-
-      // --- Validación número jugadores ---
       const num = parseInt(numJugadoresInput.value);
-
       if (!num || num <= 0) {
         mostrarError(numJugadoresInput, "Introduce un número válido.");
         hayError = true;
       } else if (num < MIN_JUGADORES) {
-        mostrarError(numJugadoresInput, `El mínimo son ${MIN_JUGADORES} jugadores.`);
+        mostrarError(numJugadoresInput, `El número mínimo de jugadores es ${MIN_JUGADORES}.`);
         hayError = true;
       } else if (num > MAX_JUGADORES) {
-        mostrarError(numJugadoresInput, `El máximo permitido es ${MAX_JUGADORES}.`);
+        mostrarError(numJugadoresInput, `El número máximo permitido es ${MAX_JUGADORES}.`);
         hayError = true;
-      } else {
-        limpiarError(numJugadoresInput);
+      } else limpiarError(numJugadoresInput);
+
+      if (nombreInput.value.length > MAX_NOMBRE) {
+        mostrarError(nombreInput, `El nombre no puede exceder los ${MAX_NOMBRE} caracteres.`);
+        hayError = true;
       }
 
       if (hayError) return;
@@ -111,27 +95,21 @@ export const initModalCrearPartida = (): void => {
 
       const token = sessionStorage.getItem("auth_token") ?? "";
 
-      // --- Usar provider con tipado ---
-      const resultado: ResultadoCrearPartida = await enviarDatosCrearPartida(token, datosPartida);
+
+      const resultado = await enviarDatosCrearPartida(token, datosPartida);
 
       if (!resultado.ok) {
-        mostrarError(numJugadoresInput, resultado.mensaje ?? "Error desconocido");
+        mostrarError(numJugadoresInput, resultado.mensaje);
         return;
       }
 
       mensajeExito.textContent = resultado.mensaje;
 
-      // Guardar ID de la partida si existe
-      const idPartida = resultado.partida?.id;
-      if (idPartida != null) {
-        localStorage.setItem("partida_id", idPartida.toString());
+      if (resultado.partida?.id != null) {
+        localStorage.setItem("partida_id", resultado.partida.id.toString());
       }
 
-      initLobby();
-      window.location.href = `src/Lobby/html/lobby.html`;
+      window.location.href = "src/Lobby/html/lobby.html";
     });
   });
 };
-
-
-
