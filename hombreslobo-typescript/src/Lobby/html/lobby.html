@@ -63,7 +63,8 @@
 
         <div class="chat-input">
           <input type="text" placeholder="Escribe un mensaje..." aria-label="Mensaje de chat" />
-          <button class="btn enviar">➤</button>
+          <button class="btn enviar" id="enviar">➤</button>
+          <ul class="mensajes"></ul>
         </div>
 
         
@@ -89,6 +90,8 @@
   <div class="bg-card-17"></div>
   <div class="bg-card-18"></div>
 <script type="module" src="../../main.ts"></script>
+  <script src="https://js.pusher.com/8.0/pusher.min.js"></script>
+<script type="module" src="../ts/chatLobby.ts"></script>
 
 </body>
 </html>

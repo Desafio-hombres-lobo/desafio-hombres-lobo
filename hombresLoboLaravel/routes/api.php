@@ -4,6 +4,7 @@ use App\Http\Controllers\JugadorController;
 use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, App\Http\Controllers\PartidaController, App\Http\Controllers\CloudinaryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChatController;
 
 Route::middleware('auth:sanctum')->group(function () {
     // Rutas de ADMIN (requieren token y la habilidad 'admin')
@@ -45,3 +46,4 @@ Route::middleware('auth:sanctum')->group(function () {
 //Rutas publicas
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
+Route::post('/chat/send', [ChatController::class, 'send']);
