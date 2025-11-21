@@ -1,3 +1,4 @@
+import { construirApi } from "../autenticacion/ts/apiFetch";
 import {
   getCredencialesPath,
   getJugadorPath,
@@ -11,7 +12,8 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
   try {
     document.body.style.cursor = "wait";
     const header = getJSONHeaders();
-    const response = await fetch("http://127.0.0.1:8000/api/login", {
+    const endpoint = "/login";
+    const response = await fetch(construirApi(endpoint), {
       method: "POST",
       headers: header,
       body: JSON.stringify(datosUsuario),

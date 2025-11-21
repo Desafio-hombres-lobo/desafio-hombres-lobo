@@ -1,3 +1,4 @@
+import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getJugadorPath, getToken } from "../autenticacion/ts/auth";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
@@ -12,14 +13,12 @@ export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
 
   try {
     const header = getJSONHeaders();
-    const response = await fetch(
-      "http://127.0.0.1:8000/api/cambiarNicknameUsuario",
-      {
-        method: "POST",
-        headers: header,
-        body: JSON.stringify(datosNuevoNickname),
-      }
-    );
+    const endpoint = "/cambiarNicknameUsuario";
+    const response = await fetch(construirApi(endpoint), {
+      method: "POST",
+      headers: header,
+      body: JSON.stringify(datosNuevoNickname),
+    });
 
     const data = await response.json();
 

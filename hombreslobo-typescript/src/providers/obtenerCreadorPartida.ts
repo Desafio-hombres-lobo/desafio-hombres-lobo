@@ -1,3 +1,4 @@
+import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getToken } from "../autenticacion/ts/auth";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
@@ -11,7 +12,8 @@ export const obtenerCreador = async (creadorId: string) => {
 
   try {
     const header = getJSONHeaders();
-    const res = await fetch(`http://127.0.0.1:8000/api/jugador/${creadorId}`, {
+    const endpoint = `/jugador/${creadorId}`;
+    const res = await fetch(construirApi(endpoint), {
       headers: header,
     });
 

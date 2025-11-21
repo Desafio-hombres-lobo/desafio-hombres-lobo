@@ -1,3 +1,4 @@
+import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 import { enviarDatosLogin } from "./enviarDatosLogin";
 
@@ -6,7 +7,8 @@ export const enviarDatosBackend = async (datosUsuario: any) => {
   try {
     document.body.style.cursor = "wait";
     const header = getJSONHeaders();
-    const response = await fetch("http://127.0.0.1:8000/api/registrar", {
+    const endpoint = "/registrar";
+    const response = await fetch(construirApi(endpoint), {
       method: "POST",
       headers: header,
       body: JSON.stringify(datosUsuario),

@@ -1,12 +1,10 @@
-import { getToken } from "../autenticacion/ts/auth";
+import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
-const API = "http://127.0.0.1:8000/api/cargarFoto";
-
 export const obtenerFotoPerfil = async () => {
-  const token = getToken();
   const header = getJSONHeaders();
-  const response = await fetch(API, {
+  const endpoint = "/cargarFoto";
+  const response = await fetch(construirApi(endpoint), {
     method: "GET",
     headers: header,
   });

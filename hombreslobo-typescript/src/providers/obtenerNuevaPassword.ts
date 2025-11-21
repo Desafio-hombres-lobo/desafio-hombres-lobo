@@ -1,3 +1,4 @@
+import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getToken } from "../autenticacion/ts/auth";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
@@ -11,13 +12,11 @@ export const obtenerNuevaPassword = async () => {
 
   try {
     const header = getJSONHeaders();
-    const response = await fetch(
-      "http://127.0.0.1:8000/api/cambiarPasswordJugador",
-      {
-        method: "POST",
-        headers: header,
-      }
-    );
+    const endpoint = "/cambiarPasswordJugador";
+    const response = await fetch(construirApi(endpoint), {
+      method: "POST",
+      headers: header,
+    });
 
     const data = await response.json();
     console.log("Cambio contraseña: " + JSON.stringify(data));
