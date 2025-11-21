@@ -13,3 +13,16 @@ export const getJSONHeaders = (): Headers => {
 
   return headers;
 };
+
+export const getFileHeaders = (): Headers => {
+  const headers = new Headers();
+  const token = getToken();
+
+  headers.append("Accept", "application/json");
+
+  if (token) {
+    headers.append("Authorization", `Bearer ${token}`);
+  }
+
+  return headers;
+};

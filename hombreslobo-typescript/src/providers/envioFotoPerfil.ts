@@ -1,12 +1,12 @@
 import { construirApi } from "../autenticacion/ts/apiFetch";
-import { getJSONHeaders } from "../autenticacion/ts/header";
+import { getFileHeaders } from "../autenticacion/ts/header";
 
 export async function enviarFotoPerfil(file: File) {
   const formData = new FormData();
 
   formData.append("foto", file);
 
-  const headers = getJSONHeaders();
+  const headers = getFileHeaders();
   const endpoint = "/cambiarFoto";
   try {
     const response = await fetch(construirApi(endpoint), {
