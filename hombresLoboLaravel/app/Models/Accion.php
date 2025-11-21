@@ -12,6 +12,6 @@ class Accion extends Model
 
     public function personajes(): BelongsToMany
     {
-        return $this->belongsToMany(Personaje::class, 'accion_personaje');
+        return $this->belongsToMany(Personaje::class, 'acciones_personajes', 'id_accion', 'id_personaje');
     }
 }
