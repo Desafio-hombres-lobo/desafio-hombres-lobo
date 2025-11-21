@@ -1,11 +1,11 @@
-import { getToken } from "../autenticacion/ts/auth";
+import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
 export const enviarDatosCrearPartida = async (datosPartida: any) => {
   try {
-    const token = getToken();
+    const endpoint = "/crearPartida";
     const headers = getJSONHeaders();
-    const response = await fetch("http://127.0.0.1:8000/api/crearPartida", {
+    const response = await fetch(construirApi(endpoint), {
       method: "POST",
       headers: headers,
       body: JSON.stringify(datosPartida),
