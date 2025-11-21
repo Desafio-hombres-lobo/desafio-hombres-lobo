@@ -29,7 +29,8 @@ export const initModalCrearPartida = (): void => {
   };
 
   const limpiarError = (input: HTMLInputElement): void => {
-    const errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
+    const errorSpan =
+      input.parentElement?.querySelector<HTMLSpanElement>(".error");
     if (errorSpan) errorSpan.textContent = "";
   };
 
@@ -86,15 +87,24 @@ export const initModalCrearPartida = (): void => {
         mostrarError(numJugadoresInput, "Introduce un número válido.");
         hayError = true;
       } else if (num < MIN_JUGADORES) {
-        mostrarError(numJugadoresInput, `El número mínimo de jugadores es ${MIN_JUGADORES}.`);
+        mostrarError(
+          numJugadoresInput,
+          `El número mínimo de jugadores es ${MIN_JUGADORES}.`
+        );
         hayError = true;
       } else if (num > MAX_JUGADORES) {
-        mostrarError(numJugadoresInput, `El número máximo permitido es ${MAX_JUGADORES}.`);
+        mostrarError(
+          numJugadoresInput,
+          `El número máximo permitido es ${MAX_JUGADORES}.`
+        );
         hayError = true;
       } else limpiarError(numJugadoresInput);
 
       if (nombreInput.value.length > MAX_NOMBRE) {
-        mostrarError(nombreInput, `El nombre no puede exceder los ${MAX_NOMBRE} caracteres.`);
+        mostrarError(
+          nombreInput,
+          `El nombre no puede exceder los ${MAX_NOMBRE} caracteres.`
+        );
         hayError = true;
       }
 
@@ -105,10 +115,7 @@ export const initModalCrearPartida = (): void => {
         num_jugadores: num,
       };
 
-      const token = getToken()!;
-
-
-      const resultado = await enviarDatosCrearPartida(token, datosPartida);
+      const resultado = await enviarDatosCrearPartida(datosPartida);
 
       if (!resultado.ok) {
         mostrarError(numJugadoresInput, resultado.mensaje);
