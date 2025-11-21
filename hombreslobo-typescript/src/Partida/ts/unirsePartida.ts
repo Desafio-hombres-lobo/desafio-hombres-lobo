@@ -1,4 +1,4 @@
-import { obtenerPartidas } from "../../providers/obtenerPartidas";
+import { obtenerPartidas } from "../../providers/obtenerPartidasIniciando";
 
 export const initModalUnirse = (): void => {
   const unirseBtn = document.getElementById("unirsebtn") as HTMLButtonElement | null;
