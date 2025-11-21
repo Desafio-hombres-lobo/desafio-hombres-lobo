@@ -1,6 +1,5 @@
 import { getToken } from "../../autenticacion/ts/auth";
 import { enviarDatosCrearPartida } from "../../providers/enviarDatosPartida";
-import { initLobby } from "../../Lobby/ts/lobby";
 
 export const initModalCrearPartida = (): void => {
   const crearBtn = document.getElementById(
