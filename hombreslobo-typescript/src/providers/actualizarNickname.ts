@@ -1,4 +1,5 @@
 import { getJugadorPath, getToken } from "../autenticacion/ts/auth";
+import { getJSONHeaders } from "../autenticacion/ts/header";
 
 export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
   // Obtener token usuario
@@ -10,15 +11,12 @@ export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
   }
 
   try {
+    const header = getJSONHeaders();
     const response = await fetch(
       "http://127.0.0.1:8000/api/cambiarNicknameUsuario",
       {
         method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: header,
         body: JSON.stringify(datosNuevoNickname),
       }
     );

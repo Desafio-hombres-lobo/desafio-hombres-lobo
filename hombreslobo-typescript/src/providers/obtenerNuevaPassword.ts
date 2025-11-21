@@ -1,4 +1,5 @@
 import { getToken } from "../autenticacion/ts/auth";
+import { getJSONHeaders } from "../autenticacion/ts/header";
 
 export const obtenerNuevaPassword = async () => {
   const token = getToken();
@@ -9,15 +10,12 @@ export const obtenerNuevaPassword = async () => {
   }
 
   try {
+    const header = getJSONHeaders();
     const response = await fetch(
       "http://127.0.0.1:8000/api/cambiarPasswordJugador",
       {
         method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: header,
       }
     );
 

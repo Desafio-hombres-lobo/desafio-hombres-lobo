@@ -1,11 +1,11 @@
+import { getJSONHeaders } from "../autenticacion/ts/header";
+
 export async function enviarFotoPerfil(file: File, token: string) {
   const formData = new FormData();
 
   formData.append("foto", file);
 
-  const headers = new Headers();
-  headers.set("Authorization", `Bearer ${token}`);
-  headers.set("Accept", "application/json");
+  const headers = getJSONHeaders();
 
   try {
     const response = await fetch(`http://127.0.0.1:8000/api/cambiarFoto`, {

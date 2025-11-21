@@ -1,15 +1,13 @@
 import { getToken } from "../autenticacion/ts/auth";
+import { getJSONHeaders } from "../autenticacion/ts/header";
 
 export const enviarDatosCrearPartida = async (datosPartida: any) => {
   try {
     const token = getToken();
+    const headers = getJSONHeaders();
     const response = await fetch("http://127.0.0.1:8000/api/crearPartida", {
       method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: headers,
       body: JSON.stringify(datosPartida),
     });
 
