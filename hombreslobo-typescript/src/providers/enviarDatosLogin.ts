@@ -5,16 +5,15 @@ import {
   getTokenPath,
   getUsuarioPath,
 } from "../autenticacion/ts/auth";
+import { getJSONHeaders } from "../autenticacion/ts/header";
 
 export const enviarDatosLogin = async (datosUsuario: any) => {
   try {
     document.body.style.cursor = "wait";
+    const header = getJSONHeaders();
     const response = await fetch("http://127.0.0.1:8000/api/login", {
       method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Accept: "application/json",
-      },
+      headers: header,
       body: JSON.stringify(datosUsuario),
     });
 
