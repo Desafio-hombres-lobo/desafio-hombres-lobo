@@ -1,17 +1,13 @@
 import { cerrarSesion } from "./cerrarSesion";
-import { abrirModalJugar } from "../Partida/ts/mostrarModal";
-
-export const actualizarHeader = (
-  sesion: string,
-  claveUsuario: string,
-  claveJugador: string,
-  rol: string
-) => {
+import { abrirModalJugar } from "../../partida/ts/mostrarModal";
+import { getToken, getRol, getJugador } from "./auth";
+export const actualizarHeader = () => {
   const menu = document.querySelector(".menu");
-  const token = sessionStorage.getItem(sesion);
-  const rolUsuario = sessionStorage.getItem(rol);
+  const token = getToken();
+  const rolUsuario = getRol();
   const contenedorFinal = document.getElementById("contenedor-final");
-  const botonesJugarAhora = document.querySelectorAll<HTMLElement>(".btn-jugar");
+  const botonesJugarAhora =
+    document.querySelectorAll<HTMLElement>(".btn-jugar");
 
   if (!menu) return;
 
@@ -34,7 +30,7 @@ export const actualizarHeader = (
       menu.appendChild(enlaceAdmin);
     }
 
-    const nombreUsuario = sessionStorage.getItem(claveJugador);
+    const nombreJugador = getJugador();
     const loginLink = menu.querySelector(
       'a[href="/src/autenticacion/htmls/login.html"]'
     );
@@ -56,7 +52,7 @@ export const actualizarHeader = (
 
       const nombreUsuarioLink = document.createElement("a");
       nombreUsuarioLink.className = "nombre-usuario";
-      nombreUsuarioLink.innerHTML = `${nombreUsuario}`;
+      nombreUsuarioLink.innerHTML = `${nombreJugador}`;
 
       const verPerfil = document.createElement("a");
       verPerfil.className = "ver-perfil";
@@ -74,7 +70,7 @@ export const actualizarHeader = (
       // 4. Añadir el listener para el logout
       cerrarSesionBoton.addEventListener("click", (e) => {
         e.preventDefault();
-        cerrarSesion(sesion, claveUsuario, claveJugador, rol);
+        cerrarSesion();
       });
       divSesion.appendChild(cerrarSesionBoton);
       menu.appendChild(divSesion);

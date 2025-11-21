@@ -1,6 +1,8 @@
+import { getJugadorPath, getToken } from "../autenticacion/ts/auth";
+
 export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
   // Obtener token usuario
-  const token = sessionStorage.getItem("auth_token");
+  const token = getToken();
 
   if (!token) {
     alert("Error: No estás autenticado. Por favor, inicia sesión.");
@@ -36,7 +38,7 @@ export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
     alert("¡Nickname actualizado con éxito a: " + data.nickname + "!");
 
     // Actualizar el nickname guardado en sesión
-    sessionStorage.setItem("auth_jugador", data.nickname);
+    sessionStorage.setItem(getJugadorPath(), data.nickname);
 
     return true;
   } catch (error) {

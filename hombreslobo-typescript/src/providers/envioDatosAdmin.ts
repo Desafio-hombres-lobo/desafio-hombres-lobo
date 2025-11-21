@@ -1,11 +1,7 @@
+import { getToken } from "../autenticacion/ts/auth";
 const api = "http://127.0.0.1:8000/api/users";
-const SESSIONSTORAGE = "auth_token";
 
 export const cogerUsuarios = () => {};
-
-function getToken(): string | null {
-  return sessionStorage.getItem(SESSIONSTORAGE);
-}
 
 async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const token = getToken();

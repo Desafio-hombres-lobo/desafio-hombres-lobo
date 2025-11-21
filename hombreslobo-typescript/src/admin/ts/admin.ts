@@ -4,11 +4,9 @@ import {
   cogerUnUsuario,
   borrarUsuario,
   actualizarUsuario,
-} from "../providers/envioDatosAdmin";
-const SESSIONSTORAGE = "auth_token";
-const ROL_USUARIO = "auth_rol";
-const CLAVE_USUARIO = "auth_usuario";
-const LOCALSTORAGE = "credenciales";
+} from "../../providers/envioDatosAdmin";
+
+import { getRol } from "../../autenticacion/ts/auth";
 
 const btnVerUsuarios = document.getElementById("btn-mostrar-todos")!;
 const btnEncontrarUsuario = document.getElementById("btn-buscar-uno")!;
@@ -26,7 +24,7 @@ const contraseñaInput = document.getElementById(
 )! as HTMLInputElement;
 const btnActualizar = document.getElementById("actualizar-usuario")!;
 
-const rolUsuario = sessionStorage.getItem(ROL_USUARIO);
+const rolUsuario = getRol();
 const panel = document.getElementById("panel-admin");
 
 if (rolUsuario !== "admin" && panel) {

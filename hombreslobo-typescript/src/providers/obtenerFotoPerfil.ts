@@ -1,8 +1,9 @@
+import { getToken } from "../autenticacion/ts/auth";
+
 const API = "http://127.0.0.1:8000/api/cargarFoto";
-const SESSIONSTORAGE = "auth_token";
 
 export const obtenerFotoPerfil = async () => {
-  const token = sessionStorage.getItem(SESSIONSTORAGE);
+  const token = getToken();
   const response = await fetch(API, {
     method: "GET",
     headers: {

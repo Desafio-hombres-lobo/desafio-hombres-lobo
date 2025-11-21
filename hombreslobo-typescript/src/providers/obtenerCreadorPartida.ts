@@ -1,5 +1,7 @@
+import { getToken } from "../autenticacion/ts/auth";
+
 export const obtenerCreador = async (creadorId: string) => {
-  const token = sessionStorage.getItem("auth_token");
+  const token = getToken();
 
   if (!token) {
     console.error("No hay token de autenticación");

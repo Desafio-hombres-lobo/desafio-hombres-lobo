@@ -1,9 +1,12 @@
+import { getToken } from "../../autenticacion/ts/auth";
 import { enviarDatosCrearPartida } from "../../providers/enviarDatosPartida";
 
 export const initModalCrearPartida = (): void => {
-  const crearBtn = document.getElementById("crear-partidabtn") as HTMLButtonElement | null;
-  const modalCrear = document.getElementById("modalCrear") as HTMLDivElement | null;
-  const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement | null;
+  const crearBtn = document.getElementById(
+    "crear-partidabtn"
+  ) as HTMLButtonElement;
+  const modalCrear = document.getElementById("modalCrear") as HTMLDivElement;
+  const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement;
 
   const MIN_JUGADORES = 15;
   const MAX_JUGADORES = 30;
@@ -11,8 +14,11 @@ export const initModalCrearPartida = (): void => {
 
   if (!crearBtn || !modalCrear) return;
 
-  const mostrarError = (input: HTMLInputElement, mensaje: string): void => {
-    let errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
+  const mostrarError = (input: HTMLInputElement, mensaje: string) => {
+    let errorSpan = input.parentElement?.querySelector(
+      ".error"
+    ) as HTMLSpanElement;
+
     if (!errorSpan) {
       errorSpan = document.createElement("span");
       errorSpan.className = "error";
@@ -22,7 +28,8 @@ export const initModalCrearPartida = (): void => {
   };
 
   const limpiarError = (input: HTMLInputElement): void => {
-    const errorSpan = input.parentElement?.querySelector<HTMLSpanElement>(".error");
+    const errorSpan =
+      input.parentElement?.querySelector<HTMLSpanElement>(".error");
     if (errorSpan) errorSpan.textContent = "";
   };
 
@@ -54,11 +61,17 @@ export const initModalCrearPartida = (): void => {
     modalCrear.appendChild(bloque);
 
     const crearPartidaBtn = document.getElementById("crearPartidaBtn");
-    const mensajeExito = document.getElementById("mensajeExito") as HTMLParagraphElement;
+    const mensajeExito = document.getElementById(
+      "mensajeExito"
+    ) as HTMLParagraphElement;
 
     crearPartidaBtn?.addEventListener("click", async () => {
-      const nombreInput = document.getElementById("nombrePartida") as HTMLInputElement;
-      const numJugadoresInput = document.getElementById("numJugadores") as HTMLInputElement;
+      const nombreInput = document.getElementById(
+        "nombrePartida"
+      ) as HTMLInputElement;
+      const numJugadoresInput = document.getElementById(
+        "numJugadores"
+      ) as HTMLInputElement;
 
       mensajeExito.textContent = "";
       let hayError = false;
@@ -73,15 +86,24 @@ export const initModalCrearPartida = (): void => {
         mostrarError(numJugadoresInput, "Introduce un número válido.");
         hayError = true;
       } else if (num < MIN_JUGADORES) {
-        mostrarError(numJugadoresInput, `El número mínimo de jugadores es ${MIN_JUGADORES}.`);
+        mostrarError(
+          numJugadoresInput,
+          `El número mínimo de jugadores es ${MIN_JUGADORES}.`
+        );
         hayError = true;
       } else if (num > MAX_JUGADORES) {
-        mostrarError(numJugadoresInput, `El número máximo permitido es ${MAX_JUGADORES}.`);
+        mostrarError(
+          numJugadoresInput,
+          `El número máximo permitido es ${MAX_JUGADORES}.`
+        );
         hayError = true;
       } else limpiarError(numJugadoresInput);
 
       if (nombreInput.value.length > MAX_NOMBRE) {
-        mostrarError(nombreInput, `El nombre no puede exceder los ${MAX_NOMBRE} caracteres.`);
+        mostrarError(
+          nombreInput,
+          `El nombre no puede exceder los ${MAX_NOMBRE} caracteres.`
+        );
         hayError = true;
       }
 
@@ -92,10 +114,7 @@ export const initModalCrearPartida = (): void => {
         num_jugadores: num,
       };
 
-      const token = sessionStorage.getItem("auth_token") ?? "";
-
-
-      const resultado = await enviarDatosCrearPartida(token, datosPartida);
+      const resultado = await enviarDatosCrearPartida(datosPartida);
 
       if (!resultado.ok) {
         mostrarError(numJugadoresInput, resultado.mensaje);

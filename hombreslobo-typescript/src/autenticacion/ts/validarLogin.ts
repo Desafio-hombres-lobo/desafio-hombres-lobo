@@ -1,10 +1,8 @@
-import "./css/login.css";
-import { enviarDatosLogin } from "../providers/enviarDatosLogin";
+import "../css/login.css";
+import { enviarDatosLogin } from "../../providers/enviarDatosLogin";
+import { getCredenciales } from "./auth";
 
-export const validarLogin = (
-  formularioLogin: HTMLFormElement,
-  credencial: any
-) => {
+export const validarLogin = (formularioLogin: HTMLFormElement) => {
   if (!formularioLogin) return;
   const inputUsuario =
     formularioLogin.querySelector<HTMLInputElement>("#usuario")!;
@@ -12,6 +10,7 @@ export const validarLogin = (
     formularioLogin.querySelector<HTMLInputElement>("#password")!;
   const inputRecordarme =
     formularioLogin.querySelector<HTMLInputElement>("#recordarme")!;
+  const credencial = getCredenciales();
   if (credencial && inputUsuario) {
     inputUsuario.value = credencial;
   }
