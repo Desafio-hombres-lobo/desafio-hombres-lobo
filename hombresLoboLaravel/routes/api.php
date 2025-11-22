@@ -44,14 +44,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
         # Rutas Acciones Personajes
         Route::post('/accionPersonaje', [PersonajeController::class, 'accionesDelPersonaje']);
-        // Route::post('/asignarJugadorAPartida', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
-        // Route::post('/cambiarEstadoDePersonaje', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);
+        Route::post('/asignarJugadorAPartida', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
+        Route::post('/cambiarEstadoDePersonaje', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);
     });
 });
 
 //Rutas publicas
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
-
-Route::post('/asignar', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
-Route::post('/cambiar-estado', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);
