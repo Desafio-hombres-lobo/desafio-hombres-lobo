@@ -1,25 +1,28 @@
 import { obtenerAccionesPersonaje } from "../../providers/obtenerAccionesPersonaje";
 import "../css/styles.css";
+import loboImg from "../../imagenes/cartas/lobo.png";
+import aldeanoImg from "../../imagenes/cartas/aldeano.png";
 
 const ID_ALDEANO = 1;
 const ID_LOBO = 2;
-const IMG_HOMBRE_LOBO = "imagenes/cartas/lobo.png";
-const IMG_ALDEANO = "imagenes/cartas/aldeano.png";
+const IMG_HOMBRE_LOBO = loboImg;
+const IMG_ALDEANO = aldeanoImg;
 
 export const renderizarCartaLobo = async (
-  contenedorCirculo: HTMLElement
+  contenedor: HTMLElement
 ): Promise<void> => {
   const datosAccionesPersonaje: any = await obtenerAccionesPersonaje(ID_LOBO);
 
   if (!datosAccionesPersonaje) {
-    contenedorCirculo.innerHTML = "<p>Error al cargar Hombre Lobo</p>";
+    contenedor.innerHTML = "<p>Error al cargar Hombre Lobo</p>";
     return;
   }
 
   const listaAcciones = datosAccionesPersonaje.acciones;
   const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Hombre Lobo";
+  const contenedorCarta = document.createElement("div");
 
-  contenedorCirculo.innerHTML = `
+  contenedorCarta.innerHTML = `
         <div class="carta-rol carta-lobo"> <div class="carta-img-container">
                 <img src="${IMG_HOMBRE_LOBO}" alt="${nombrePersonaje}">
             </div>
@@ -39,6 +42,11 @@ export const renderizarCartaLobo = async (
             </div>
         </div>
     `;
+
+  // contenedor.innerHTML = '';
+
+  contenedor.appendChild(contenedorCarta);
+  console.log("Carta añadida al DOM");
 };
 
 export const renderizarCartaAldeano = async (
@@ -55,8 +63,9 @@ export const renderizarCartaAldeano = async (
 
   const listaAcciones = datosAccionesPersonaje.acciones;
   const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Aldeano";
+  const contenedorCarta = document.createElement("div");
 
-  contenedorCirculo.innerHTML = `
+  contenedorCarta.innerHTML = `
         <div class="carta-rol carta-aldeano"> <div class="carta-img-container">
               <img src="${IMG_ALDEANO}" alt="${nombrePersonaje}">
           </div>
@@ -76,4 +85,8 @@ export const renderizarCartaAldeano = async (
           </div>
       </div>
     `;
+
+  // contenedor.innerHTML = '';
+
+  contenedorCirculo.appendChild(contenedorCarta);
 };
