@@ -29,6 +29,7 @@ services:
         condition: service_healthy
     ports:
       - "${LARAVEL_PORT:-8000}:8000"
+      - "8080:8080"
     env_file:
       - .env
     environment:
@@ -48,30 +49,6 @@ services:
       php artisan migrate:fresh --force --seed &&
       php artisan serve --host=0.0.0.0 --port=8000
       "
-  reverb:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: reverb_server
-    restart: unless-stopped
-    depends_on:
-      - mysql
-      - laravel
-    ports:
-      - "8080:8080"
-    env_file:
-      - .env
-    environment:
-      DB_CONNECTION: ${DB_CONNECTION}
-      DB_HOST: mysql
-      DB_PORT: ${DB_PORT}
-      DB_DATABASE: ${DB_DATABASE}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - ./hombresLoboLaravel:/var/www/html
-      - /var/www/html/vendor
-    command: php artisan reverb:start --host=0.0.0.0 --port=8080
 
   frontend:
     image: node:20
