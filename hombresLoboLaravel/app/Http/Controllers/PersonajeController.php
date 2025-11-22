@@ -27,6 +27,10 @@ class PersonajeController extends Controller
         $user = $request->user();
         $jugador = $user->jugador;
 
+        if (!$jugador) {
+            return response()->json(['error' => 'No se encontró el perfil del jugador'], 404);
+        }
+
         $personaje = Personaje::findOrFail($request->id_personaje);
 
         $acciones_personaje = $personaje->acciones;
@@ -44,7 +48,7 @@ class PersonajeController extends Controller
 
         }
 
-        return response()->json(['acciones' => $datos]);
+        return response()->json(['acciones' => $datos], 200);
 
     }
 

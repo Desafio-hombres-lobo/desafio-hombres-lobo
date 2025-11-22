@@ -19,7 +19,7 @@ return new class extends Migration
                     ->constrained('personajes')
                     ->onDelete('set null');
 
-            // Añadir estado (0: muerto/eliminado, 1: vivo, 2: votado )
+            // Añadir estado (0: terminada, 1: en curso)
             $table->integer('estado')->default(1)->after('id_personaje');
         });
     }

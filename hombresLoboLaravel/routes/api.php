@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\JugadorController;
 use App\Http\Controllers\PersonajeController;
+use App\Http\Controllers\JugadorPartidaPersonajeController;
 use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, App\Http\Controllers\PartidaController, App\Http\Controllers\CloudinaryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         # Rutas Acciones Personajes
         Route::post('/accionPersonaje', [PersonajeController::class, 'accionesDelPersonaje']);
+        // Route::post('/asignarJugadorAPartida', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
+        // Route::post('/cambiarEstadoDePersonaje', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);
     });
 });
 
@@ -50,3 +53,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
 
+Route::post('/asignar', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
+Route::post('/cambiar-estado', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);

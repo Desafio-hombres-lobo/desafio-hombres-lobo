@@ -17,4 +17,12 @@ class Personaje extends Model
     {
         return $this->belongsToMany(Accion::class, 'acciones_personajes', 'id_personaje', 'id_accion');
     }
+
+    // Jugadores que han usado un personaje en alguna partida y su estado
+    public function jugadorPartidas(): BelongsToMany {
+        return $this->belongsToMany(Jugador::class, 'jugador_partida_personaje')
+                    ->withPivot('id_partida', 'estado')
+                    ->withTimestamps();
+    }
+
 }
