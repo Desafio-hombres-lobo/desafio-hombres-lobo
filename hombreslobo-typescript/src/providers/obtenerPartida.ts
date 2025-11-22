@@ -1,3 +1,6 @@
+import { construirApi } from "../autenticacion/ts/apiFetch";
+import { getJSONHeaders } from "../autenticacion/ts/header";
+
 export let partidaActual: any = null;
 
 export const obtenerPartida = async (partidaId: string) => {
@@ -9,10 +12,10 @@ export const obtenerPartida = async (partidaId: string) => {
   }
 
   try {
-    const res = await fetch(`http://127.0.0.1:8000/api/partida/${partidaId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const header = getJSONHeaders();
+    const endpoint = `/partida/${partidaId}`;
+    const res = await fetch(construirApi(endpoint), {
+      headers: header,
     });
 
     const datos = await res.json();

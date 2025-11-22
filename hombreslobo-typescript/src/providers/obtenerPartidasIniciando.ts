@@ -1,7 +1,11 @@
+import { construirApi } from "../autenticacion/ts/apiFetch";
+import { getToken } from "../autenticacion/ts/auth";
+import { getJSONHeaders } from "../autenticacion/ts/header";
+
 export let partidas = [];
 
 export const obtenerPartidas = async () => {
-  const token = sessionStorage.getItem("auth_token");
+  const token = getToken();
 
   if (!token) {
     alert("Error: No estás autenticado. Por favor, inicia sesión.");
@@ -9,17 +13,12 @@ export const obtenerPartidas = async () => {
   }
 
   try {
-    const response = await fetch(
-      "http://127.0.0.1:8000/api/partidasIniciando",
-      {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const header = getJSONHeaders();
+    const endpoint = "/partidasIniciando";
+    const response = await fetch(construirApi(endpoint), {
+      method: "GET",
+      headers: header,
+    });
 
     const data = await response.json();
     partidas = data;

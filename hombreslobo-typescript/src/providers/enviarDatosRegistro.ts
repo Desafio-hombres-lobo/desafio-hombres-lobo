@@ -1,15 +1,16 @@
+import { construirApi } from "../autenticacion/ts/apiFetch";
+import { getJSONHeaders } from "../autenticacion/ts/header";
 import { enviarDatosLogin } from "./enviarDatosLogin";
 
 // Enviar objeto al backend
 export const enviarDatosBackend = async (datosUsuario: any) => {
   try {
     document.body.style.cursor = "wait";
-    const response = await fetch("http://127.0.0.1:8000/api/registrar", {
+    const header = getJSONHeaders();
+    const endpoint = "/registrar";
+    const response = await fetch(construirApi(endpoint), {
       method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Accept: "application/json",
-      },
+      headers: header,
       body: JSON.stringify(datosUsuario),
     });
 
