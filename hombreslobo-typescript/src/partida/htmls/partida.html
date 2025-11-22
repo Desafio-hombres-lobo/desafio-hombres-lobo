@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Partida en Curso - Castronegro</title>
+
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="stylesheet" href="../css/partida.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bahiana&family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="cabecera">
+      <div class="nav-logo-titulo">
+        <h1 class="titulo-sitio">Castronegro</h1>
+      </div>
+      <nav class="menu">
+        <div class="div-sesion-iniciada">
+          <a href="/index.html" class="boton-salir"
+            ><i class="fas fa-sign-out-alt"></i> Salir</a
+          >
+        </div>
+      </nav>
+    </header>
+
+    <main class="contenedor-juego">
+      
+      </section>
+
+      <section class="area-chat">
+        <div class="cabecera-chat">
+          <h3>Chat de la Aldea</h3>
+          <span class="status-live"><i class="fas fa-circle"></i> En vivo</span>
+        </div>
+
+        <div class="mensajes-container" id="lista-mensajes">
+          <div class="mensaje mensaje-sistema">
+            <p>La partida ha comenzado.</p>
+          </div>
+          <div class="mensaje mensaje-otro">
+            <strong class="remitente">Jugador A:</strong>
+            <p>Hola a todos, ¿quién es el lobo?</p>
+          </div>
+          <div class="mensaje mensaje-propio">
+            <p>Yo no soy, lo juro.</p>
+          </div>
+        </div>
+
+        <form class="form-chat" id="form-chat">
+          <input
+            type="text"
+            id="input-mensaje"
+            placeholder="Escribe un mensaje..."
+            autocomplete="off"
+          />
+          <button type="submit" id="btn-enviar">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
