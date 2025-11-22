@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\JugadorController;
+use App\Http\Controllers\PersonajeController;
 use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, App\Http\Controllers\PartidaController, App\Http\Controllers\CloudinaryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,9 +40,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/partida/{id}', [PartidaController::class, 'show']);
 
         Route::get('/jugador/{id}', [JugadorController::class, 'show']);
+
+        # Rutas Acciones Personajes
+        Route::post('/accionPersonaje', [PersonajeController::class, 'accionesDelPersonaje']);
     });
 });
 
 //Rutas publicas
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
+
