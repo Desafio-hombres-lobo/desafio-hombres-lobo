@@ -12,12 +12,14 @@ class ChatController extends Controller
         $msg = $request->input('message');
         $idPartida = $request->input('partida_id');
 
+        $user = $request->user();
 
-        event(new MessageSent($msg, $idPartida));
+        broadcast(new MessageSent($msg, $idPartida, $user->nickname));
 
         return response()->json([
             'status' => 'ok',
-            'message' => $msg
+            'message' => $msg,
+            'user' => $user->nickname
         ]);
     }
 

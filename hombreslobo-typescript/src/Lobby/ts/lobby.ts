@@ -156,6 +156,9 @@ export const initLobby = () => {
       jugadoresMaximos = datosJugadores.jugadores_maximos;
 
       contadorEl.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
+    if(jugadoresActuales == jugadoresMaximos){
+      contadorEl.classList.add('iniciar')
+    }
 
     } catch (error) {
       console.error('Error notificando unión:', error);

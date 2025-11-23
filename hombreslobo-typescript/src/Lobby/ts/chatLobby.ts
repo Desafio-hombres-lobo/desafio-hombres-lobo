@@ -32,13 +32,18 @@ const pusher = new Pusher('cw5xkporz11sccbkkxni', {
 const channel = pusher.subscribe('chat.'+partidaId);
 
 
-channel.bind('message.sent', (data: { message: string }) => {
-    console.log('Mensaje recibido desde servidor:', data.message);
-    const li = document.createElement('li');
-    li.textContent = data.message;
-    li.classList.add('list-group-item');
-    ulMessages.appendChild(li);
-});
+    channel.bind('message.sent', (data: { message: string, username: string }) => {
+        const li = document.createElement('li');
+
+        li.innerHTML = `
+            <span>${data.username}:</span> ${data.message}
+        `;
+
+        li.classList.add('mensaje');
+
+        ulMessages.appendChild(li);
+        ulMessages.scrollTop = ulMessages.scrollHeight; 
+    });
 
 
 btnEnviar.addEventListener('click', () => {

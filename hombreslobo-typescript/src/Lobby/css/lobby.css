@@ -72,6 +72,9 @@ header p {
   box-shadow: 0 0 12px rgba(171,111,160,0.3);
 }
 
+.contador .iniciar{
+  background-color:rgb(134, 197, 134);
+}
 
 
 .btn-abandon {
@@ -193,8 +196,9 @@ a {
 
 .chat-input {
   display: flex;
-  flex-direction: column; /* de fila a columna */
+  flex-direction: column;
   gap: 8px;
+  max-height:180px;
 }
 
 
@@ -223,15 +227,52 @@ a {
 }
 
 .mensajes li {
-  background: rgba(255,255,255,0.08);
-  padding: 10px 14px;
-  border-radius: 12px;
+  background: none;
+  padding: 0;
+  border-radius: 0;
   color: var(--beige);
-  font-family: var(--fuente-titulo);
-  font-size: 0.95rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
   animation: aparecer 0.3s ease;
 }
+
+span{
+  font-family:var(--fuente-titulo);
+  color:var(--rosa-claro)
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-row input {
+  flex: 1;
+  padding: 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  color: white;
+}
+
+.input-row .btn.enviar {
+  padding: 10px 14px;
+  font-size: 1rem;
+  background: var(--morado);
+  color: #1a0f21;
+  font-weight: bold;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(171,111,160,0.4);
+  transition: background 0.2s ease;
+}
+
+.input-row .btn.enviar:hover {
+  background: var(--texto-suave);
+  color: var(--negro);
+}
+
 
 @keyframes aparecer {
   from { transform: translateY(10px); opacity: 0; }
