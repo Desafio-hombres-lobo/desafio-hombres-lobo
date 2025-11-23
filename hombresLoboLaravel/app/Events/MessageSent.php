@@ -15,16 +15,18 @@ class MessageSent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
  public $message;
+ public $idPartida;
 
-    public function __construct($message)
+    public function __construct($message, $idPartida)
     {
         $this->message = $message;
+        $this->idPartida = $idPartida;
     }
 
 
     public function broadcastOn(): Channel
     {
-        return new Channel('chat');
+        return new Channel('chat.'.$this->idPartida);
     }
 
     // Nombre del evento en el cliente

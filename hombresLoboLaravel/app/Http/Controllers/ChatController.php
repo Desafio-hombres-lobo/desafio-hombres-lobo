@@ -10,11 +10,15 @@ class ChatController extends Controller
     public function send(Request $request)
     {
         $msg = $request->input('message');
+        $idPartida = $request->input('partida_id');
 
-        // Emitimos el evento
-        event(new MessageSent($msg));
 
-        // Devolvemos confirmación
-        return response()->json(['status' => 'ok']);
+        event(new MessageSent($msg, $idPartida));
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => $msg
+        ]);
     }
+
 }

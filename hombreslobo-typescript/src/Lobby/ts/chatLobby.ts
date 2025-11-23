@@ -11,6 +11,8 @@ if (!txtMensaje || !btnEnviar || !ulMessages) {
 }
 
 
+const partidaId = localStorage.getItem("partida_id");
+const token = sessionStorage.getItem("auth_token");
 const wsHost = 'localhost';
 const wsPort = 8080;
 const apiPort = 8000;
@@ -27,7 +29,7 @@ const pusher = new Pusher('cw5xkporz11sccbkkxni', {
 });
 
 
-const channel = pusher.subscribe('chat');
+const channel = pusher.subscribe('chat.'+partidaId);
 
 
 channel.bind('message.sent', (data: { message: string }) => {
@@ -51,11 +53,16 @@ btnEnviar.addEventListener('click', () => {
     fetch(apiUrl, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+            message: mensaje,
+            partida_id: partidaId
+        }),
     })
+    
     .then(res => res.json())
     .then(resp => {
         console.log('Confirmación del servidor:', resp);

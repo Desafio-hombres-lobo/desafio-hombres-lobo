@@ -48,11 +48,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/partida/{id}/jugadores', [PartidaController::class, 'jugadores']);
 
         Route::post('/partida/abandonar', [PartidaController::class, 'abandonarPartida']);
+
+
+        Route::post('/chat/send', [ChatController::class, 'send']);
     });
 });
 
 //Rutas publicas
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
-Route::post('/chat/send', [ChatController::class, 'send']);
 
