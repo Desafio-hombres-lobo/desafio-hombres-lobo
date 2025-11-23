@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\JugadorAbandono;
 use App\Events\PlayerJoined;
 use App\Models\Jugador;
 use App\Models\Partida;
@@ -100,6 +101,44 @@ class PartidaController extends Controller
             'jugadores_actuales' => $jugadores,
             'jugadores_maximos' => $partida->num_jugadores
         ]);
+    }
+
+    public function abandonarPartida(Request $request)
+    {
+        $validated = $request->validate([
+            'partida_id' => 'required|exists:partidas,id',
+        ]);
+
+        $partidaId = $validated['partida_id'];
+
+
+        $usuarioId = $request->user()->id;
+
+        $jugador = Jugador::where('id_usuario', $usuarioId)->first();
+
+        if (!$jugador) {
+            return response()->json(['error' => 'Jugador no encontrado'], 404);
+        }
+
+        $partida = Partida::find($partidaId);
+
+        if (!$partida) {
+            return response()->json(['error' => 'Partida no encontrada'], 404);
+        }
+
+        if ($partida->jugadoresLobby()->where('jugador_id', $jugador->id)->exists()) {
+
+            $partida->jugadoresLobby()->detach($jugador->id);
+
+            broadcast(new JugadorAbandono($partidaId, $jugador->nickname))->toOthers();
+
+            return response()->json([
+                'mensaje' => 'Has abandonado la partida correctamente',
+                'jugadores_actuales' => $partida->jugadoresLobby()->count()
+            ]);
+        }
+
+        return response()->json(['error' => 'No estás en esta partida¿?'], 400);
     }
 }
 

@@ -19,7 +19,6 @@ export const initLobby = () => {
   const botonAbandonar = document.getElementById("abandonar") as HTMLButtonElement;
   const btnCopiarCodigo = document.getElementById("copiarCodigo") as HTMLButtonElement;
 
-  
   let jugadoresActuales = 0;
   let jugadoresMaximos = 0;
 
@@ -61,8 +60,25 @@ export const initLobby = () => {
       notificacion.remove();
     }, 3000);
 
-
     jugadoresActuales++;
+    contadorEl.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
+  });
+
+
+  channel.bind('jugador.abandono', (data: any) => {
+    console.log('Jugador abandonó:', data.jugador);
+    const notificacion = document.createElement('div');
+    notificacion.textContent = `${data.jugador} ha abandonado la partida`;
+    notificacion.classList.add('notificacion');
+    document.body.appendChild(notificacion);
+
+    setTimeout(() => {
+      notificacion.remove();
+    }, 3000);
+
+
+    jugadoresActuales--;
+    if (jugadoresActuales < 0) jugadoresActuales = 0;
     contadorEl.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
   });
 
@@ -75,8 +91,6 @@ export const initLobby = () => {
       });
 
       const datos = await res.json();
-      
-
       jugadoresMaximos = datos.num_jugadores;
       
       let respuestaCreador;
@@ -138,8 +152,6 @@ export const initLobby = () => {
       });
       
       const datosJugadores = await resJugadores.json();
-      
-
       jugadoresActuales = datosJugadores.jugadores_actuales;
       jugadoresMaximos = datosJugadores.jugadores_maximos;
 
@@ -150,15 +162,38 @@ export const initLobby = () => {
     }
   };
 
+
+  const abandonarPartida = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/partida/abandonar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          partida_id: partidaId
+        }),
+      });
+
+
+      pusher.unsubscribe('game.' + partidaId);
+      localStorage.removeItem("partida_id");
+      window.location.href = "/";
+
+    } catch (error) {
+      console.error('Error abandonando partida:', error);
+    }
+  };
+
   btnCopiarCodigo.addEventListener("click", async() => {
     const codigo = codigoLabel.textContent || ""; 
     await navigator.clipboard.writeText(codigo);
   });
 
   botonAbandonar.addEventListener("click", () => {
-    pusher.unsubscribe('game.' + partidaId);
-    localStorage.removeItem("partida_id");
-    window.location.href = "/";
+    abandonarPartida();
   });
 
   if (partidaId) {
