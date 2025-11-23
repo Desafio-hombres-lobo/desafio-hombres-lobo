@@ -44,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/game/join', [PartidaController::class, 'join']);
 
         Route::get('/jugador', [JugadorController::class, 'jugadorAutenticado']);
+
+        Route::get('/partida/{id}/jugadores', [PartidaController::class, 'jugadores']);
     });
 });
 
@@ -51,3 +53,4 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
 Route::post('/chat/send', [ChatController::class, 'send']);
+

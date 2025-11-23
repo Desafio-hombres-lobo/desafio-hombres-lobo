@@ -84,6 +84,23 @@ class PartidaController extends Controller
 
         return response()->json(['status' => 'ok']);
     }
+
+    public function jugadores($id){
+        $partida = Partida::find($id);
+
+        if (!$partida) {
+            return response()->json(['error' => 'Partida no encontrada'], 404);
+        }
+
+
+        $jugadores = $partida->jugadoresLobby()->count();
+
+        return response()->json([
+            'partida_id' => $id,
+            'jugadores_actuales' => $jugadores,
+            'jugadores_maximos' => $partida->num_jugadores
+        ]);
+    }
 }
 
 

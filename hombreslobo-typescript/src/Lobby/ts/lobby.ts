@@ -19,20 +19,21 @@ export const initLobby = () => {
   const botonAbandonar = document.getElementById("abandonar") as HTMLButtonElement;
   const btnCopiarCodigo = document.getElementById("copiarCodigo") as HTMLButtonElement;
 
-let jugadoresActuales = 0;
-const wsHost = 'localhost';
-const wsPort = 8080;
+  
+  let jugadoresActuales = 0;
+  let jugadoresMaximos = 0;
 
+  const wsHost = 'localhost';
+  const wsPort = 8080;
 
-const pusher = new Pusher('cw5xkporz11sccbkkxni', {
+  const pusher = new Pusher('cw5xkporz11sccbkkxni', {
     wsHost,
     wsPort,
     forceTLS: false,
     enabledTransports: ['ws'],
     cluster: 'mt1',
     disableStats: true,
-});
-
+  });
 
   pusher.connection.bind('connected', () => {
     console.info('Conectado correctamente a Reverb');
@@ -46,7 +47,6 @@ const pusher = new Pusher('cw5xkporz11sccbkkxni', {
     }
   });
 
-
   const channel = pusher.subscribe('game.' + partidaId);
 
 
@@ -55,16 +55,14 @@ const pusher = new Pusher('cw5xkporz11sccbkkxni', {
     const notificacion = document.createElement('div');
     notificacion.textContent = `${data.player} se ha unido a la partida`;
     notificacion.classList.add('notificacion');
-        document.body.appendChild(notificacion);
-    
+    document.body.appendChild(notificacion);
 
     setTimeout(() => {
-        notificacion.remove();
-    }, 3000)
+      notificacion.remove();
+    }, 3000);
 
-    const contadorActual = contadorEl.textContent?.split('/') || ['0', '0'];
-    jugadoresActuales = jugadoresActuales + 1;
-    const jugadoresMaximos = contadorActual[1];
+
+    jugadoresActuales++;
     contadorEl.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
   });
 
@@ -77,6 +75,10 @@ const pusher = new Pusher('cw5xkporz11sccbkkxni', {
       });
 
       const datos = await res.json();
+      
+
+      jugadoresMaximos = datos.num_jugadores;
+      
       let respuestaCreador;
       try {
         respuestaCreador = await fetch(`http://127.0.0.1:8000/api/jugador/${datos.creador_id}`, {
@@ -92,8 +94,7 @@ const pusher = new Pusher('cw5xkporz11sccbkkxni', {
       const nombreCreador = creador.nickname;
       codigoPartida.textContent = `Lobby de partida de: ${nombreCreador}`;
       codigoLabel.textContent = datos.codigo;
-      contadorEl.textContent = `0/${datos.num_jugadores}`;
-
+      contadorEl.textContent = `0/${jugadoresMaximos}`;
 
       notificarUnion();
 
@@ -104,14 +105,12 @@ const pusher = new Pusher('cw5xkporz11sccbkkxni', {
 
   const notificarUnion = async () => {
     try {
-
       const resJugador = await fetch(`http://127.0.0.1:8000/api/jugador`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
       const jugador = await resJugador.json();
-
 
       const payload = {
         game_id: partidaId,
@@ -131,6 +130,20 @@ const pusher = new Pusher('cw5xkporz11sccbkkxni', {
 
       const result = await response.json();
       console.log('Unión notificada al servidor:', result);
+
+      const resJugadores = await fetch(`http://127.0.0.1:8000/api/partida/${partidaId}/jugadores`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      const datosJugadores = await resJugadores.json();
+      
+
+      jugadoresActuales = datosJugadores.jugadores_actuales;
+      jugadoresMaximos = datosJugadores.jugadores_maximos;
+
+      contadorEl.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
 
     } catch (error) {
       console.error('Error notificando unión:', error);
