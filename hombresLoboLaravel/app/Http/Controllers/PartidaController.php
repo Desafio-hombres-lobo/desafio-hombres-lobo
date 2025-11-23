@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Events\PlayerJoined;
+use App\Models\Jugador;
 use App\Models\Partida;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -58,6 +61,28 @@ class PartidaController extends Controller
         }
 
         return response()->json($partida);
+    }
+
+    public function join(Request $request)
+    {
+        $gameId = $request->input('game_id');
+        $player = $request->input('player');
+
+        $user = $request->user();
+
+        $jugador = Jugador::where('id_usuario', $user->id)->firstOrFail();
+
+
+        $partida = Partida::findOrFail($gameId);
+
+        if (!$partida->jugadoresLobby()->where('jugador_id', $jugador->id)->exists()) {
+            $partida->jugadoresLobby()->attach($jugador->id);
+        }
+
+
+        event(new PlayerJoined($player, $gameId));
+
+        return response()->json(['status' => 'ok']);
     }
 }
 

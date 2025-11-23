@@ -238,3 +238,19 @@ a {
   to   { transform: translateY(0); opacity: 1; }
 }
 
+  .notificacion {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: white;
+    color: var(--morado);
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 10000;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+

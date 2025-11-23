@@ -108,4 +108,10 @@ class JugadorController extends Controller
             ], 500);
         }
     }
+
+    public function jugadorAutenticado(Request $request)
+    {
+        $jugador = $request->user();
+        return response()->json($jugador);
+    }
 }
