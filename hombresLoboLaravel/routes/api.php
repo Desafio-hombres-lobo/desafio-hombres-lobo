@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatPartidaController;
 use App\Http\Controllers\JugadorController;
 use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, App\Http\Controllers\PartidaController, App\Http\Controllers\CloudinaryController;
 use Illuminate\Http\Request;
@@ -39,9 +40,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/partida/{id}', [PartidaController::class, 'show']);
 
         Route::get('/jugador/{id}', [JugadorController::class, 'show']);
+
+        Route::post('/chat/aldea', [ChatPartidaController::class, 'enviar']);
     });
 });
 
 //Rutas publicas
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
+
+
