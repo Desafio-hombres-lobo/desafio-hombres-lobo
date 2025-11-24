@@ -1,4 +1,5 @@
 import { obtenerAccionesPersonaje } from "../../providers/obtenerAccionesPersonaje";
+import { ejecutarAccion } from "./accionesCartaPersonaje";
 import "../css/styles.css";
 import loboImg from "../../imagenes/cartas/lobo.png";
 import aldeanoImg from "../../imagenes/cartas/aldeano.png";
@@ -33,7 +34,7 @@ export const renderizarCartaLobo = async (
                 ${listaAcciones
                   .map(
                     (accion: any) => `
-                    <button class="btn-accion btn-lobo">
+                    <button class="btn-accion btn-lobo" data-id="${accion.id}">
                         ${accion.nombre_accion}
                     </button>
                 `
@@ -46,7 +47,8 @@ export const renderizarCartaLobo = async (
   // contenedor.innerHTML = '';
 
   contenedor.appendChild(contenedorCarta);
-  console.log("Carta añadida al DOM");
+
+  accionesBotones();
 };
 
 export const renderizarCartaAldeano = async (
@@ -89,4 +91,22 @@ export const renderizarCartaAldeano = async (
   // contenedor.innerHTML = '';
 
   contenedorCirculo.appendChild(contenedorCarta);
+  accionesBotones();
+};
+
+const accionesBotones = () => {
+  document.querySelectorAll(".btn-accion").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idAccion = btn.getAttribute("data-id");
+
+      if (!idAccion) {
+        console.warn("El botón no tiene data-id");
+        return;
+      }
+
+      const idAccionInt = parseInt(idAccion);
+
+      ejecutarAccion(idAccionInt);
+    });
+  });
 };
