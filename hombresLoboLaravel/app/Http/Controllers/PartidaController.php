@@ -20,7 +20,7 @@ class PartidaController extends Controller
 
 
     public function partidasIniciando(){
-        $partidas = Partida::where('estado', 'iniciando')->get();
+        $partidas = Partida::where('estado', 0)->get();
         return $partidas;
     }
 
@@ -37,7 +37,7 @@ class PartidaController extends Controller
             'creador_id' => $jugador->id,
             'nombre' => $request->nombre,
             'num_jugadores' => $request->num_jugadores,
-            'estado' => 'iniciando',
+            'estado' => 0,
             'codigo' => Str::upper(Str::random(6)),
         ]);
 
@@ -93,13 +93,13 @@ class PartidaController extends Controller
             return response()->json(['error' => 'Partida no encontrada'], 404);
         }
 
-
-        $jugadores = $partida->jugadoresLobby()->count();
+        $jugadores = $partida->jugadoresLobby()->get(['nickname'])->pluck('nickname');
 
         return response()->json([
             'partida_id' => $id,
-            'jugadores_actuales' => $jugadores,
-            'jugadores_maximos' => $partida->num_jugadores
+            'jugadores_actuales' => $jugadores->count(),
+            'jugadores_maximos' => $partida->num_jugadores,
+            'lista_jugadores' => $jugadores
         ]);
     }
 
@@ -150,6 +150,29 @@ class PartidaController extends Controller
 
         return response()->json(['error' => 'No estás en esta partida¿?'], 400);
     }
+
+    public function llenar(Request $request, $id)
+{
+    $partida = Partida::find($id);
+
+    if (!$partida) {
+        return response()->json(['error' => 'Partida no encontrada'], 404);
+    }
+
+    $request->validate([
+        'estado' => 'required|integer|in:0,1,2,3', // 0=iniciando, 1=jugando, 2=llena, 3=finalizada
+    ]);
+
+
+    $partida->estado = $request->estado;
+    $partida->save();
+
+    return response()->json([
+        'ok' => true,
+        'mensaje' => "Estado actualizado a {$partida->estado}"
+    ]);
+}
+
 }
 
 
