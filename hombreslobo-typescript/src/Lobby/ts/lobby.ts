@@ -5,7 +5,7 @@ import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { obtenerJugador } from "../../providers/obtenerJugador";
 import { unirsePartida } from "../../providers/unirsePartida";
 import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
-import { salirPartida} from "../../providers/abandonarPartida";
+import { salirPartida } from "../../providers/abandonarPartida";
 
 export const initLobby = () => {
   const partidaId = sessionStorage.getItem("partida_id");
@@ -55,19 +55,25 @@ export const initLobby = () => {
 
   const channel = pusher.subscribe('game.' + partidaId);
 
+  const actualizarContador = () => {
+    contadorEl.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
+    if (jugadoresActuales === jugadoresMaximos) {
+      contadorEl.classList.add('lleno');
+    } else {
+      contadorEl.classList.remove('lleno');
+    }
+  };
+
   channel.bind('player.joined', (data: any) => {
     console.log('Jugador unido:', data.player);
     const notificacion = document.createElement('div');
     notificacion.textContent = `${data.player} se ha unido a la partida`;
     notificacion.classList.add('notificacion');
     document.body.appendChild(notificacion);
-
-    setTimeout(() => {
-      notificacion.remove();
-    }, 3000);
+    setTimeout(() => notificacion.remove(), 3000);
 
     jugadoresActuales++;
-    contadorEl.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
+    actualizarContador();
   });
 
   channel.bind('jugador.abandono', (data: any) => {
@@ -76,14 +82,11 @@ export const initLobby = () => {
     notificacion.textContent = `${data.jugador} ha abandonado la partida`;
     notificacion.classList.add('notificacion');
     document.body.appendChild(notificacion);
-
-    setTimeout(() => {
-      notificacion.remove();
-    }, 3000);
+    setTimeout(() => notificacion.remove(), 3000);
 
     jugadoresActuales--;
     if (jugadoresActuales < 0) jugadoresActuales = 0;
-    contadorEl.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
+    actualizarContador();
   });
 
   const cargarPartida = async () => {
@@ -124,17 +127,12 @@ export const initLobby = () => {
     const response = await unirsePartida(token, payload);
     console.log('Unión notificada al servidor:', response);
 
-
     const resultado = await obtenerJugadoresPartida(token, partidaId);
     
     if (resultado.ok) {
       jugadoresActuales = resultado.jugadoresActuales;
       jugadoresMaximos = resultado.jugadoresMaximos;
-      contadorEl.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
-      
-      if (jugadoresActuales === jugadoresMaximos) {
-        contadorEl.classList.add('iniciar');
-      }
+      actualizarContador();
     } else {
       console.error('Error obteniendo jugadores:', resultado.error);
     }
@@ -142,7 +140,6 @@ export const initLobby = () => {
 
   const abandonarPartida = async () => {
     const resultado = await salirPartida(token, partidaId);
-    
     if (resultado.ok) {
       pusher.unsubscribe('game.' + partidaId);
       localStorage.removeItem("partida_id");
@@ -152,7 +149,7 @@ export const initLobby = () => {
     }
   };
 
-  btnCopiarCodigo.addEventListener("click", async() => {
+  btnCopiarCodigo.addEventListener("click", async () => {
     const codigo = codigoLabel.textContent || ""; 
     await navigator.clipboard.writeText(codigo);
   });
