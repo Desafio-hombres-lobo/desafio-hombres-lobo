@@ -7,13 +7,13 @@ export const ejecutarAccion = async (
   switch (idPersonaje) {
     case 1:
       contenedorCarta.addEventListener("click", () => {
-        console.log(`El Aldeano ${idPersonaje} ha sido votado y eliminado.`);
+        console.log(`El Aldeano ${idPersonaje} ha sido votado.`);
       });
       break;
 
     case 2:
       contenedorCarta.addEventListener("click", () => {
-        console.log(`El Lobo ${idPersonaje} ha sido votado y eliminado.`);
+        console.log(`El Lobo ${idPersonaje} ha sido votado.`);
       });
       break;
 

@@ -28,6 +28,9 @@ export const obtenerJugadorMasVotado = async (idPartida: number) => {
     const data = await response.json();
     const recuentoVotos = data;
 
+    // BORRAR
+    console.log(recuentoVotos);
+
     return recuentoVotos;
   } catch (error) {
     console.error("Error en la solicitud: " + error);

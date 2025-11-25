@@ -34,6 +34,9 @@ export const votarAJugador = async (
     const data = await response.json();
     const jugadorVotado = data;
 
+    // BORRAR
+    console.log(jugadorVotado)
+
     return jugadorVotado;
   } catch (error) {
     console.error("Error en la solicitud: " + error);
