@@ -30,6 +30,9 @@ body {
   display: flex;
   padding: 1rem;
   gap: 1rem;
+  height: calc(100vh - 70px);
+  max-height: calc(100vh - 70px);
+  overflow: hidden; /* Cortamos cualquier desborde global */
   /* Usamos el gradiente base, sin capas extrañas */
 }
 
@@ -83,7 +86,22 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: rgba(255, 255, 255, 0.02);
+
+  background-color: var(--negro); /* Fallback */
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  transition: background-image 3s ease-in-out; /* Transición suave entre día y noche */
+  position: relative;
+  overflow: hidden;
+}
+
+.centro-info::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4); /* Oscuridad al 40% */
+  z-index: 1;
 }
 
 .centro-info h2 {
@@ -96,6 +114,22 @@ body {
   letter-spacing: 3px;
 }
 
+.centro-info h2,
+.centro-info p {
+  position: relative;
+  z-index: 2;
+}
+.fase-dia {
+  /* Ajusta la ruta según tu estructura de carpetas real */
+  background-image: url("/src/imagenes/fondos/aldea_dia.png");
+  border-color: var(--amarillo); /* Borde dorado de día */
+}
+
+.fase-noche {
+  /* Ajusta la ruta según tu estructura de carpetas real */
+  background-image: url("/src/imagenes/fondos/aldea_noche.png");
+  border-color: var(--morado); /* Borde morado de noche */
+}
 /* --- JUGADORES (Slots) --- */
 .jugador {
   /* Estilo "mini tarjeta" */
@@ -213,10 +247,15 @@ body {
 .chat-mensajes {
   flex: 1;
   padding: 1rem;
+  min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.chat-mensajes::-webkit-scrollbar {
+  display: none;
 }
 
 .msg {

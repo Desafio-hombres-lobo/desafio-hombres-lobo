@@ -9,6 +9,20 @@ const formChat = document.getElementById("form-chat") as HTMLFormElement;
 const inputMensaje = document.getElementById(
   "input-mensaje"
 ) as HTMLInputElement;
+const centroInfo = document.querySelector(".centro-info") as HTMLElement;
+
+let dia: boolean = true;
+
+function actualizarFaseVisual() {
+  if (dia) {
+    centroInfo.classList.remove("fase-noche");
+    centroInfo.classList.add("fase-dia");
+    // Opcional: Cambiar texto o iconos si quieres
+  } else {
+    centroInfo.classList.remove("fase-dia");
+    centroInfo.classList.add("fase-noche");
+  }
+}
 
 const canal = pusher.subscribe("chat");
 
@@ -26,6 +40,13 @@ formChat.addEventListener("submit", async (e) => {
 
   inputMensaje.value = "";
 
+  if (mensaje === "/cambiar") {
+    //placeholder, lo haremos con el reverb
+    dia = !dia;
+    actualizarFaseVisual();
+    inputMensaje.value = "";
+    return;
+  }
   try {
     await enviarMensaje(mensaje);
   } catch {
