@@ -37,11 +37,8 @@ export const renderizarCartaLobo = async (
         </div>
     `;
 
-  // contenedor.innerHTML = '';
-
   contenedor.appendChild(contenedorCarta);
   ejecutarAccion(contenedorCarta, idAccion, idPersonaje);
-  console.log(listaAcciones);
 };
 
 export const renderizarCartaAldeano = async (
@@ -75,8 +72,7 @@ export const renderizarCartaAldeano = async (
       </div>
     `;
 
-  // contenedor.innerHTML = '';
-
   contenedor.appendChild(contenedorCarta);
   ejecutarAccion(contenedorCarta, idAccion, idPersonaje);
 };
+

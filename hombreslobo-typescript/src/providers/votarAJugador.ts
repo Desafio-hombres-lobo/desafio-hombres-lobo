@@ -2,9 +2,11 @@ import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getToken } from "../autenticacion/ts/auth";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
-let accionesPersonaje = {};
-
-export const obtenerAccionesPersonaje = async (idPersonaje: number) => {
+export const votarAJugador = async (
+  idJugador: number,
+  idPartida: number,
+  estado: number
+) => {
   const token = getToken();
 
   if (!token) {
@@ -14,12 +16,14 @@ export const obtenerAccionesPersonaje = async (idPersonaje: number) => {
 
   try {
     const header = getJSONHeaders();
-    const endpoint = "/accionPersonaje";
+    const endpoint = "/cambiarEstadoDePersonaje";
     const response = await fetch(construirApi(endpoint), {
       method: "POST",
       headers: header,
       body: JSON.stringify({
-        id_personaje: idPersonaje,
+        id_jugador: idJugador,
+        id_partida: idPartida,
+        estado: estado,
       }),
     });
 
@@ -28,9 +32,9 @@ export const obtenerAccionesPersonaje = async (idPersonaje: number) => {
     }
 
     const data = await response.json();
-    accionesPersonaje = data;
+    const jugadorVotado = data;
 
-    return accionesPersonaje;
+    return jugadorVotado;
   } catch (error) {
     console.error("Error en la solicitud: " + error);
     return null;

@@ -52,10 +52,54 @@ class JugadorPartidaPersonajeController extends Controller
                     ->where('id_partida', $request->id_partida)
                     ->firstOrFail();
 
+        // Si es un voto (estado = 2)
+        if ($request->estado == 2) {
+            $registro->votos += 1;
+            $registro->save();
+
+            return response()->json([
+                'mensaje' => 'Voto registrado',
+                'datos' => $registro
+            ]);
+        }
+
+        // Si es matar o revivir directamente
         $registro->estado = $request->estado;
         $registro->save();
 
-        return response()->json(['mensaje' => 'Estado actualizado', 'datos' => $registro], 200);
+        return response()->json([
+            'mensaje' => 'Estado actualizado',
+            'datos' => $registro
+        ]);
+    }
+
+    public function resolverVotos(Request $request){
+        $request->validate([
+            'id_partida' => 'required|exists:partidas,id',
+        ]);
+
+        // Buscar todos los jugadores de la partida
+        $jugadores = JugadorPartidaPersonaje::where('id_partida', $request->id_partida)->get();
+
+        // Jugador más votado
+        $jugadorMasVotado = $jugadores->sortByDesc('votos')->first();
+
+        if (!$jugadorMasVotado) {
+            return response()->json(['mensaje' => 'No hay jugadores.'], 400);
+        }
+
+        // Matar al jugador más votado
+        $jugadorMasVotado->estado = 0;
+        $jugadorMasVotado->save();
+
+        // Resetear votos
+        JugadorPartidaPersonaje::where('id_partida', $request->id_partida)
+            ->update(['votos' => 0]);
+
+        return response()->json([
+            'mensaje' => 'Jugador eliminado por votación.',
+            'eliminado' => $jugadorMasVotado
+        ]);
     }
 
     public function mostrarJugadoresPorEstado($id_partida, $estado)

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('id_partida')->constrained('partidas')->onDelete('cascade');
             $table->foreignId('id_personaje')->constrained('personajes')->onDelete('cascade');
             $table->unsignedTinyInteger('estado')->default(1); // 0: muerto, 1: vivo, 2: votado
+            $table->unsignedTinyInteger('votos')->default(0);
             $table->timestamps();
         });
     }

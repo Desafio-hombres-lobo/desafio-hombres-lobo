@@ -16,6 +16,7 @@ class JugadorPartidaPersonaje extends Model
         'id_partida',
         'id_personaje',
         'estado',
+        'votos'
     ];
 
     // Estado

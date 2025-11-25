@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/accionPersonaje', [PersonajeController::class, 'accionesDelPersonaje']);
         Route::post('/asignarJugadorAPartida', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
         Route::post('/cambiarEstadoDePersonaje', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);
+        Route::post('/resolverVotos', [JugadorPartidaPersonajeController::class, 'resolverVotos']);
     });
 });
 

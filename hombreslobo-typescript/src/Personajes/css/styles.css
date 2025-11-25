@@ -64,13 +64,6 @@
   transition: transform 0.1s;
 }
 
-.btn-accion:hover {
-  transform: scale(1.03);
-}
-.btn-accion:active {
-  transform: scale(0.97);
-}
-
 /* ESTILOS CARTA HOMBRE LOBO */
 .carta-lobo {
   background-color: #e63935;
