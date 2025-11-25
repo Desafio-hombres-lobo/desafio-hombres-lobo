@@ -11,7 +11,8 @@ class ChatPartidaController extends Controller
     {
         $msg = $request->input('mensaje');
         $usuario = $request->user();
-        event(new MensajeEnviado($msg, $usuario));
+        $partidaId = $request->input('partida_id');
+        event(new MensajeEnviado($msg, $usuario, $partidaId));
         return response()->json(['status' => 'ok']);
     }
 

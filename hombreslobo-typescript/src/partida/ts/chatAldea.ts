@@ -1,4 +1,4 @@
-import { getJugador } from "../../autenticacion/ts/auth";
+import { getJugador, getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
 import "../css/partida.css";
@@ -10,21 +10,28 @@ const inputMensaje = document.getElementById(
   "input-mensaje"
 ) as HTMLInputElement;
 const centroInfo = document.querySelector(".centro-info") as HTMLElement;
+const spanFase = document.getElementById("fase-partida")!;
+const headerChat = document.getElementById("h3-chat")!;
+
+const partida_id = getPartidaId();
 
 let dia: boolean = true;
 
 function actualizarFaseVisual() {
   if (dia) {
+    spanFase.innerHTML = "FASE: DÍA";
+    headerChat.innerHTML = "CHAT DE LA ALDEA";
     centroInfo.classList.remove("fase-noche");
     centroInfo.classList.add("fase-dia");
-    // Opcional: Cambiar texto o iconos si quieres
   } else {
+    spanFase.innerHTML = "FASE: NOCHE";
+    headerChat.innerHTML = "CHAT DE LOS LOBOS";
     centroInfo.classList.remove("fase-dia");
     centroInfo.classList.add("fase-noche");
   }
 }
 
-const canal = pusher.subscribe("chat");
+const canal = pusher.subscribe("aldea" + partida_id);
 
 canal.bind("nuevo-mensaje", (data: any) => {
   console.log("mensaje", data);
@@ -48,7 +55,7 @@ formChat.addEventListener("submit", async (e) => {
     return;
   }
   try {
-    await enviarMensaje(mensaje);
+    await enviarMensaje(mensaje, partida_id);
   } catch {
     alert("Error");
   }

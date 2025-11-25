@@ -20,17 +20,19 @@ class MensajeEnviado implements ShouldBroadcast
      */
     public $usuario;
     public $mensaje;
+    public $idPartida;
 
-    public function __construct($mensaje, User $usuario)
+    public function __construct($mensaje, User $usuario, $idPartida)
     {
         $this->usuario = $usuario->jugador->nickname;
         $this->mensaje = $mensaje;
+        $this->idPartida = $idPartida;
     }
 
     // Canal público "chat"
     public function broadcastOn(): Channel
     {
-        return new Channel('chat');
+        return new Channel('aldea' . $this->idPartida);
     }
 
     // Nombre del evento en el cliente
