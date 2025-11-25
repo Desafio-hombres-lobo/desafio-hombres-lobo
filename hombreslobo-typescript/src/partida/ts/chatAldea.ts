@@ -15,7 +15,9 @@ const centroInfo = document.querySelector(".centro-info") as HTMLElement;
 const spanFase = document.getElementById("fase-partida")!;
 const headerChat = document.getElementById("h3-chat")!;
 const reloj = document.getElementById("reloj-partida")!;
+const btnIniciar = document.getElementById("btn-iniciar")! as HTMLButtonElement;
 const partida_id = getPartidaId();
+const textoEspera = document.getElementById("texto-espera")!;
 
 let temporizador: number | null = null;
 let dia: boolean = true;
@@ -25,6 +27,9 @@ let host = false;
 (async () => {
   host = await verificarHost(partida_id);
   console.log("¿Soy el creador de la partida?", host);
+  if (host) {
+    btnIniciar.classList.remove("oculto");
+  }
 })();
 
 function actualizarFaseVisual() {
@@ -52,6 +57,9 @@ canal.bind("cambio-fase", (data: any) => {
     dia = true;
   } else {
     dia = false;
+  }
+  if (textoEspera) {
+    textoEspera.classList.add("oculto");
   }
   actualizarFaseVisual();
   iniciarCuentaAtras(data.tiempoFin);
@@ -116,6 +124,22 @@ formChat.addEventListener("submit", async (e) => {
     alert("Error");
   }
 });
+
+if (btnIniciar) {
+  btnIniciar.addEventListener("click", async () => {
+    btnIniciar.disabled = true;
+    btnIniciar.innerText = "Iniciando...";
+
+    try {
+      await cambiarFasePartida(partida_id, !dia);
+      btnIniciar.classList.add("oculto");
+    } catch (error) {
+      console.error("Error al iniciar partida:", error);
+      btnIniciar.disabled = false;
+      btnIniciar.innerText = "EMPEZAR PARTIDA";
+    }
+  });
+}
 
 function pintarMensaje(usuario: string, texto: string) {
   const div = document.createElement("div");

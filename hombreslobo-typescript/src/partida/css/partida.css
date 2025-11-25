@@ -115,7 +115,8 @@ body {
 }
 
 .centro-info h2,
-.centro-info p {
+.centro-info p,
+.centro-info button {
   position: relative;
   z-index: 2;
 }
