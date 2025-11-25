@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/chat/aldea', [ChatPartidaController::class, 'enviar']);
         Route::post('/partida/cambiarFase', [MotorPartidaController::class, 'cambioFase']);
+        Route::post('/partida/host', [MotorPartidaController::class, 'esHost']);
     });
 });
 

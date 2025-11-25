@@ -4,6 +4,7 @@ import { enviarMensaje } from "../../providers/envioDatosChat";
 import "../css/partida.css";
 import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
+import { verificarHost } from "../../providers/verificarHost";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
 const formChat = document.getElementById("form-chat") as HTMLFormElement;
@@ -18,6 +19,13 @@ const partida_id = getPartidaId();
 
 let temporizador: number | null = null;
 let dia: boolean = true;
+let host = false;
+
+//Se ejecuta nada más cargar el script, del que te cuento
+(async () => {
+  host = await verificarHost(partida_id);
+  console.log("¿Soy el creador de la partida?", host);
+})();
 
 function actualizarFaseVisual() {
   if (dia) {
@@ -54,7 +62,7 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
     window.clearInterval(temporizador);
   }
   const fechaObjetivo = new Date(fechaFinIso).getTime();
-  temporizador = window.setInterval(() => {
+  temporizador = window.setInterval(async () => {
     const ahora = new Date().getTime();
     const distancia = fechaObjetivo - ahora;
 
@@ -62,7 +70,13 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
       if (temporizador) {
         window.clearInterval(temporizador);
         reloj.innerHTML = '<i class="fas fa-clock"></i> 00:00';
-        return;
+        if (host) {
+          try {
+            await cambiarFasePartida(partida_id, !dia);
+          } catch (error) {
+            console.error();
+          }
+        }
       }
     }
 
@@ -87,11 +101,13 @@ formChat.addEventListener("submit", async (e) => {
 
   if (mensaje === "/cambiar") {
     //placeholder, lo haremos con el reverb
-    try {
-      await cambiarFasePartida(partida_id, !dia);
-      return;
-    } catch {
-      console.error;
+    if (host) {
+      try {
+        await cambiarFasePartida(partida_id, !dia);
+        return;
+      } catch {
+        console.error;
+      }
     }
   }
   try {
