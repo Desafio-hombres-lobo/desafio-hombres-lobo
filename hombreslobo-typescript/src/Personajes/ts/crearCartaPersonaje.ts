@@ -30,10 +30,7 @@ export const renderizarCartaLobo = async (
                 <img src="${IMG_HOMBRE_LOBO}" alt="${nombrePersonaje}">
             </div>
 
-            <h3 class="carta-titulo">${nombrePersonaje}</h3>
-            <div class="carta-acciones">
-              <p class="txt-accion txt-lobo">Cada noche devora a un aldeano. De día se hace pasar por uno de ellos.</p>
-            </div>
+            <p class="carta-titulo">${nombrePersonaje}</p>
         </div>
     `;
 
@@ -64,15 +61,10 @@ export const renderizarCartaAldeano = async (
               <img src="${IMG_ALDEANO}" alt="${nombrePersonaje}">
           </div>
 
-          <h3 class="carta-titulo">${nombrePersonaje}</h3>
-
-          <div class="carta-acciones">
-              <p class="txt-accion txt-aldeano">Su única arma es el análisis y su voto para linchar al culpable.</p>
-          </div>
+          <p class="carta-titulo">${nombrePersonaje}</p>
       </div>
     `;
 
   contenedor.appendChild(contenedorCarta);
   ejecutarAccion(contenedorCarta, idAccion, idPersonaje);
 };
-

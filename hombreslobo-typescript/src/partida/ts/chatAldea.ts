@@ -3,6 +3,10 @@ import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
 import "../css/partida.css";
 import "../../css/base.css";
+import {
+  renderizarCartaAldeano,
+  renderizarCartaLobo,
+} from "../../Personajes/ts/crearCartaPersonaje";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
 const formChat = document.getElementById("form-chat") as HTMLFormElement;
@@ -10,8 +14,14 @@ const inputMensaje = document.getElementById(
   "input-mensaje"
 ) as HTMLInputElement;
 const centroInfo = document.querySelector(".centro-info") as HTMLElement;
+// PRUEBAS BORRAR LUEGO
+const tablero = document.querySelector(".grid-tablero") as HTMLElement;
 const spanFase = document.getElementById("fase-partida")!;
 const headerChat = document.getElementById("h3-chat")!;
+
+// PRUEBAS BORRAR LUEGO
+renderizarCartaLobo(tablero);
+renderizarCartaAldeano(centroInfo);
 
 const partida_id = getPartidaId();
 
