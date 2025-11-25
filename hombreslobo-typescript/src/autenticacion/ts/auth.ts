@@ -3,6 +3,7 @@ const ROL_USUARIO = "auth_rol";
 const CLAVE_USUARIO = "auth_usuario";
 const CLAVE_JUGADOR = "auth_jugador";
 const LOCALSTORAGE = "credenciales";
+const PARTIDA = "partida_id";
 
 export const getToken = () => {
   return sessionStorage.getItem(getTokenPath());
@@ -24,6 +25,9 @@ export const getCredenciales = () => {
   return localStorage.getItem(getCredencialesPath());
 };
 
+export const getPartidaId = () => {
+  return sessionStorage.getItem(getPartidaIdPath());
+};
 export const getTokenPath = () => {
   return TOKEN;
 };
@@ -42,4 +46,8 @@ export const getRolPath = () => {
 
 export const getCredencialesPath = () => {
   return LOCALSTORAGE;
+};
+
+export const getPartidaIdPath = () => {
+  return PARTIDA;
 };

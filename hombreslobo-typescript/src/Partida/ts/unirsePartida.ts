@@ -1,9 +1,16 @@
+import { getPartidaIdPath } from "../../autenticacion/ts/auth";
 import { obtenerPartidas } from "../../providers/obtenerPartidasIniciando";
 
 export const initModalUnirse = (): void => {
-  const unirseBtn = document.getElementById("unirsebtn") as HTMLButtonElement | null;
-  const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement | null;
-  const modalCrear = document.getElementById("modalCrear") as HTMLDivElement | null;
+  const unirseBtn = document.getElementById(
+    "unirsebtn"
+  ) as HTMLButtonElement | null;
+  const modalUnirse = document.getElementById(
+    "modalUnirse"
+  ) as HTMLDivElement | null;
+  const modalCrear = document.getElementById(
+    "modalCrear"
+  ) as HTMLDivElement | null;
 
   if (!unirseBtn || !modalUnirse) return;
 
@@ -27,7 +34,9 @@ export const initModalUnirse = (): void => {
     modalUnirse.appendChild(bloque);
 
     const lista = bloque.querySelector("#listaPartidas") as HTMLUListElement;
-    const input = bloque.querySelector("#inputBuscarPartida") as HTMLInputElement;
+    const input = bloque.querySelector(
+      "#inputBuscarPartida"
+    ) as HTMLInputElement;
 
     cargarPartidas("");
 
@@ -61,7 +70,7 @@ export const initModalUnirse = (): void => {
             btnUnirse.textContent = "Unirse";
 
             btnUnirse.addEventListener("click", () => {
-              localStorage.setItem("partida_id", p.id.toString());
+              sessionStorage.setItem(getPartidaIdPath(), p.id.toString());
               window.location.href = "src/Lobby/html/lobby.html";
             });
 
@@ -79,4 +88,3 @@ export const initModalUnirse = (): void => {
     }
   });
 };
-

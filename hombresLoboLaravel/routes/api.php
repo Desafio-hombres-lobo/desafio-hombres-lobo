@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatPartidaController;
 use App\Http\Controllers\JugadorController;
 use App\Http\Controllers\PersonajeController;
 use App\Http\Controllers\JugadorPartidaPersonajeController;
@@ -47,9 +48,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/asignarJugadorAPartida', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
         Route::post('/cambiarEstadoDePersonaje', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);
         Route::post('/resolverVotos', [JugadorPartidaPersonajeController::class, 'resolverVotos']);
+        Route::post('/chat/aldea', [ChatPartidaController::class, 'enviar']);
     });
 });
 
 //Rutas publicas
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
+
+

@@ -1,4 +1,4 @@
-import { getToken } from "../../autenticacion/ts/auth";
+import { getPartidaIdPath, getToken } from "../../autenticacion/ts/auth";
 import { enviarDatosCrearPartida } from "../../providers/enviarDatosPartida";
 
 export const initModalCrearPartida = (): void => {
@@ -124,7 +124,10 @@ export const initModalCrearPartida = (): void => {
       mensajeExito.textContent = resultado.mensaje;
 
       if (resultado.partida?.id != null) {
-        localStorage.setItem("partida_id", resultado.partida.id.toString());
+        sessionStorage.setItem(
+          getPartidaIdPath(),
+          resultado.partida.id.toString()
+        );
       }
 
       window.location.href = "src/Lobby/html/lobby.html";
