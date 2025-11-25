@@ -89,7 +89,7 @@ formChat.addEventListener("submit", async (e) => {
     //placeholder, lo haremos con el reverb
     try {
       await cambiarFasePartida(partida_id, !dia);
-      mensaje = "";
+      return;
     } catch {
       console.error;
     }
