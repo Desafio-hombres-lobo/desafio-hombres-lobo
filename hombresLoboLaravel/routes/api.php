@@ -53,6 +53,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
         Route::post('/chat/send', [ChatController::class, 'send']);
+
+        Route::post('/{id}/llena', [PartidaController::class, 'llenar']);
+
     });
 });
 

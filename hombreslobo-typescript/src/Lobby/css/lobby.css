@@ -305,8 +305,33 @@ span{
   }
 }
 
+.panel.jugadores {
+  position:absolute;
+  left:40px;
+  margin-top: 20px;
+}
+
+.jugadores-lista {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 5px;
+  background-color:none;
+  text-align:center;
+}
+
+.jugador-item {
+  padding: 5px 10px;
+  font-family:var(--fuente-titulo);
+  font-size:1.3rem;
+  color:var(--rosa-claro);
+  letter-spacing:2px;
+  font-weight:bold;
+  text-align:center;
+}
+
 .lleno {
-  background-color:#81b887;
+   background-color:#81b887;
+  transition: background-color 0.3s ease;
 }
 
 

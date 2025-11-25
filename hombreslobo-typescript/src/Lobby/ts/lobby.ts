@@ -6,6 +6,7 @@ import { obtenerJugador } from "../../providers/obtenerJugador";
 import { unirsePartida } from "../../providers/unirsePartida";
 import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
 import { salirPartida } from "../../providers/abandonarPartida";
+import { actualizarEstadoPartida } from "../../providers/actualizarEstadoPartida";
 
 export const initLobby = () => {
   const partidaId = sessionStorage.getItem("partida_id");
@@ -22,7 +23,8 @@ export const initLobby = () => {
 
   const codigoPartida = document.getElementById("codigo-partida") as HTMLElement;
   const codigoLabel = document.querySelector(".code strong") as HTMLElement;
-  const contadorEl = document.querySelector(".contador") as HTMLElement;
+  const contadorJugadores = document.querySelector(".contador") as HTMLElement;
+  const listaJugadoresEl = document.querySelector(".jugadores-lista") as HTMLElement;
   const botonAbandonar = document.getElementById("abandonar") as HTMLButtonElement;
   const btnCopiarCodigo = document.getElementById("copiarCodigo") as HTMLButtonElement;
 
@@ -31,6 +33,7 @@ export const initLobby = () => {
 
   const wsHost = 'localhost';
   const wsPort = 8080;
+  let jugadoresArray: string[] = [];
 
   const pusher = new Pusher('cw5xkporz11sccbkkxni', {
     wsHost,
@@ -41,39 +44,35 @@ export const initLobby = () => {
     disableStats: true,
   });
 
-  pusher.connection.bind('connected', () => {
-    console.info('Conectado correctamente a Reverb');
-  });
-
-  pusher.connection.bind('error', (err: any) => {
-    if (err.data.code === 1006) {
-      console.warn('Conexión perdida con Reverb');
-    } else {
-      console.error('Error WebSocket:', err);
-    }
-  });
-
   const channel = pusher.subscribe('game.' + partidaId);
 
   const actualizarContador = () => {
-    contadorEl.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
+    contadorJugadores.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
+
     if (jugadoresActuales === jugadoresMaximos) {
-      contadorEl.classList.add('lleno');
+      contadorJugadores.classList.add("lleno");
+      actualizarEstadoPartida(token, partidaId, 1);
     } else {
-      contadorEl.classList.remove('lleno');
+      contadorJugadores.classList.remove("lleno");
+      actualizarEstadoPartida(token, partidaId, 0);
     }
   };
 
-  channel.bind('player.joined', (data: any) => {
-    console.log('Jugador unido:', data.player);
-    const notificacion = document.createElement('div');
-    notificacion.textContent = `${data.player} se ha unido a la partida`;
-    notificacion.classList.add('notificacion');
-    document.body.appendChild(notificacion);
-    setTimeout(() => notificacion.remove(), 3000);
+  const actualizarListaJugadores = () => {
+    listaJugadoresEl.innerHTML = '';
+    jugadoresArray.forEach(j => {
+      const item = document.createElement('div');
+      item.textContent = j;
+      item.classList.add('jugador-item');
+      listaJugadoresEl.appendChild(item);
+    });
+  };
 
+  channel.bind('player.joined', (data: any) => {
     jugadoresActuales++;
+    jugadoresArray.push(data.player);
     actualizarContador();
+    actualizarListaJugadores();
   });
 
   channel.bind('jugador.abandono', (data: any) => {
@@ -87,6 +86,7 @@ export const initLobby = () => {
     jugadoresActuales--;
     if (jugadoresActuales < 0) jugadoresActuales = 0;
     actualizarContador();
+    actualizarListaJugadores();
   });
 
   const cargarPartida = async () => {
@@ -96,19 +96,10 @@ export const initLobby = () => {
 
     const respuestaCreador = await obtenerCreador(token, partidaId);
     const idCreador = await respuestaCreador.json();
-    console.log(idCreador);
-
-    let respuestaNombreCreador;
-    try {
-      respuestaNombreCreador = await obtenerJugador(token, idCreador);
-    } catch (error) {
-      console.error("Error cargando creador de la partida:", error);
-      return;
-    }
-
+    const respuestaNombreCreador = await obtenerJugador(token, idCreador);
     const creador = await respuestaNombreCreador.json();
-    const nombreCreador = creador.nickname;
-    codigoPartida.textContent = `Lobby de partida de: ${nombreCreador}`;
+
+    codigoPartida.textContent = `Lobby de partida de: ${creador.nickname}`;
     codigoLabel.textContent = datos.codigo;
 
     notificarUnion();
@@ -124,17 +115,15 @@ export const initLobby = () => {
       timestamp: new Date().toISOString(),
     };
 
-    const response = await unirsePartida(token, payload);
-    console.log('Unión notificada al servidor:', response);
+    await unirsePartida(token, payload);
 
     const resultado = await obtenerJugadoresPartida(token, partidaId);
-    
     if (resultado.ok) {
       jugadoresActuales = resultado.jugadoresActuales;
       jugadoresMaximos = resultado.jugadoresMaximos;
+      jugadoresArray = resultado.listaJugadores || [];
       actualizarContador();
-    } else {
-      console.error('Error obteniendo jugadores:', resultado.error);
+      actualizarListaJugadores();
     }
   };
 

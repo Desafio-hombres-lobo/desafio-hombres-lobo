@@ -7,12 +7,14 @@ export const obtenerJugadoresPartida = async (token: string, partidaId: string) 
       }
     });
 
-     const datos = await res.json();
+    const datos = await res.json();
+
     return { 
       ok: true, 
       jugadoresActuales: datos.jugadores_actuales,
       jugadoresMaximos: datos.jugadores_maximos,
-      partidaId: datos.partida_id
+      partidaId: datos.partida_id,
+      listaJugadores: datos.lista_jugadores || []
     };
 
   } catch (error) {

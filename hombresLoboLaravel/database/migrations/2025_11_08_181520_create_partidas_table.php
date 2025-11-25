@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('nombre');
             $table->string('codigo')->unique();
             $table->foreignId('creador_id')->constrained('jugadores');
-            $table->enum('estado', ['iniciando', 'jugando', 'finalizada']);
+            $table->integer('estado')->default(0);
             $table->integer('num_jugadores');
         });
     }
