@@ -29,7 +29,7 @@ formChat.addEventListener("submit", async (e) => {
   try {
     await enviarMensaje(mensaje);
   } catch {
-    alert("Cagaste");
+    alert("Error");
   }
 });
 
