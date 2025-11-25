@@ -1,5 +1,5 @@
 import { cerrarSesion } from "./cerrarSesion";
-import { abrirModalJugar } from "../Partida/ts/mostrarModal";
+import { abrirModalJugar } from "../partida/ts/mostrarModal";
 
 export const actualizarHeader = (
   sesion: string,

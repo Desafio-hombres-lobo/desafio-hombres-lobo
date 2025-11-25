@@ -62,6 +62,16 @@ class JugadorController extends Controller
         ]);
     }
 
+    public function showJugador($id){
+        $jugador = Jugador::find($id);
+        if (!$jugador) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        return response()->json($jugador);
+
+    }
+
     public function cambiarPassword(Request $request)
     {
         $user = $request->user();
@@ -109,7 +119,7 @@ class JugadorController extends Controller
         }
     }
 
-    public function jugadorAutenticado(Request $request)
+    public function jugadorActual(Request $request)
     {
         $jugador = $request->user();
         return response()->json($jugador);

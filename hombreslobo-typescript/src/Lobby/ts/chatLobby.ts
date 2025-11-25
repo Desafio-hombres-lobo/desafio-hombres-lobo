@@ -11,7 +11,7 @@ if (!txtMensaje || !btnEnviar || !ulMessages) {
 }
 
 
-const partidaId = localStorage.getItem("partida_id");
+const partidaId = sessionStorage.getItem("partida_id");
 const token = sessionStorage.getItem("auth_token");
 const wsHost = 'localhost';
 const wsPort = 8080;
@@ -29,7 +29,7 @@ const pusher = new Pusher('cw5xkporz11sccbkkxni', {
 });
 
 
-const channel = pusher.subscribe('chat.'+partidaId);
+const channel = pusher.subscribe('lobby.'+partidaId);
 
 
     channel.bind('message.sent', (data: { message: string, username: string }) => {

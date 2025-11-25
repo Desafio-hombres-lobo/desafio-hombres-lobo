@@ -103,6 +103,16 @@ class PartidaController extends Controller
         ]);
     }
 
+    public function creadorPartida($idPartida){
+        $partida = Partida::find($idPartida);
+
+        if(!$partida){
+            return response()->json(['error' => 'Partida no encontrada']);
+        }
+
+        return $partida->creador_id;
+    }
+
     public function abandonarPartida(Request $request)
     {
         $validated = $request->validate([

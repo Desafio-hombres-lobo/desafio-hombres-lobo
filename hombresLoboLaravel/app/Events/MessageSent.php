@@ -28,7 +28,7 @@ class MessageSent implements ShouldBroadcast
 
     public function broadcastOn(): Channel
     {
-        return new Channel('chat.'.$this->idPartida);
+        return new Channel('lobby.'.$this->idPartida);
     }
 
     // Nombre del evento en el cliente

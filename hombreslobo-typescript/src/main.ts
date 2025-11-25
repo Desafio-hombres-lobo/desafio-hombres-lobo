@@ -3,7 +3,7 @@ import "./css/index.css";
 import "./Partida/css/elegirPartida.css"
 import "./Lobby/css/lobby.css";
 import "./Lobby/css/animacionesLobby.css";
-import { initModal } from "./Partida/ts/mostrarModal";
+import { initModal } from "./partida/ts/mostrarModal";
 import { validarFormulario } from "./autenticacion/validarFormulario";
 import { validarLogin } from "./autenticacion/validarLogin";
 import { actualizarHeader } from "./autenticacion/actualizarHeader";

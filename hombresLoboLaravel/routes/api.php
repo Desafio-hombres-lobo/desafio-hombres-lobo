@@ -39,11 +39,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/partida/{id}', [PartidaController::class, 'show']);
 
-        Route::get('/jugador/{id}', [JugadorController::class, 'show']);
+        Route::get('/jugador/{id}', [JugadorController::class, 'showJugador']);
 
         Route::post('/game/join', [PartidaController::class, 'join']);
 
-        Route::get('/jugador', [JugadorController::class, 'jugadorAutenticado']);
+        Route::get('/creadorPartida/{id}', [PartidaController::class, 'creadorPartida']);
+
+        Route::get('/jugador', [JugadorController::class, 'jugadorActual']);
 
         Route::get('/partida/{id}/jugadores', [PartidaController::class, 'jugadores']);
 
