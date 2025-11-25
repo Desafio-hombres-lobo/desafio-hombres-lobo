@@ -39,15 +39,16 @@ function pintarMensaje(usuario: string, texto: string) {
   const miUsuario = getJugador();
   const yo = usuario === miUsuario;
 
-  div.classList.add("mensaje");
-  div.classList.add(yo ? "mensaje-propio" : "mensaje-otro");
+  div.classList.add("msg");
 
   if (yo) {
-    div.innerHTML = `<p>${texto}</p>`;
+    div.classList.add("propio");
+    div.innerHTML = `<strong>Tú:</strong> ${texto}`;
   } else {
-    div.innerHTML = `<strong class="remitente">${usuario}:</strong> <p>${texto}</p>`;
+    div.innerHTML = `<strong>${usuario}:</strong> ${texto}`;
   }
 
   listaMensajes.appendChild(div);
+  //Autoscroll
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 }
