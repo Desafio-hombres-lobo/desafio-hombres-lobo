@@ -1,19 +1,23 @@
 // Ejecutar acción
-export const ejecutarAccion = async (idAccion: number): Promise<void> => {
-  switch (idAccion) {
+export const ejecutarAccion = async (
+  contenedorCarta: HTMLElement,
+  idAccion: number,
+  idPersonaje: number
+): Promise<void> => {
+  switch (idPersonaje) {
     case 1:
-      // método votar
+      contenedorCarta.addEventListener("click", () => {
+        console.log(`El Aldeano ${idPersonaje} ha sido votado y eliminado.`);
+      });
       break;
 
     case 2:
-      // método matar
+      contenedorCarta.addEventListener("click", () => {
+        console.log(`El Lobo ${idPersonaje} ha sido votado y eliminado.`);
+      });
       break;
 
     default:
       console.warn("Acción no reconocida: ", idAccion);
   }
 };
-
-// Matar
-
-// Votar

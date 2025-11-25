@@ -13,6 +13,7 @@
   font-family: "Patrick Hand", cursive;
   box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.2);
   background-color: #fff;
+  cursor: pointer;
 }
 
 .carta-img-container {
@@ -48,13 +49,16 @@
   width: 90%;
 }
 
-.btn-accion {
+.carta-acciones p {
+  color: #1a1a1a;
+}
+
+.txt-accion {
   border: 3px solid #1a1a1a;
   border-radius: 12px;
   padding: 8px;
   font-family: "Patrick Hand", cursive;
   font-size: 1.2rem;
-  text-transform: uppercase;
   cursor: pointer;
   color: #1a1a1a;
   transition: transform 0.1s;
@@ -72,10 +76,10 @@
   background-color: #e63935;
 }
 
-.btn-lobo {
+.txt-lobo {
   background-color: #ffb85f;
 }
-.btn-lobo:hover {
+.txt-lobo:hover {
   background-color: #ffcf8f;
 }
 
@@ -84,9 +88,9 @@
   background-color: #ffec99;
 }
 
-.btn-aldeano {
+.txt-aldeano {
   background-color: #ffb85f;
 }
-.btn-aldeano:hover {
+.txt-aldeano:hover {
   background-color: #ffcf8f;
 }

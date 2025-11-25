@@ -30,7 +30,7 @@ export const obtenerAccionesPersonaje = async (idPersonaje: number) => {
     const data = await response.json();
     accionesPersonaje = data;
 
-    console.log(accionesPersonaje);
+    // console.log(accionesPersonaje);
 
     return accionesPersonaje;
   } catch (error) {
