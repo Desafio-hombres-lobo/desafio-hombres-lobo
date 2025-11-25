@@ -3,10 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Partida en Curso - Castronegro</title>
-
-    <link rel="stylesheet" href="../../base.css" />
-    <link rel="stylesheet" href="../css/partida.css" />
+    <title>Partida - Castronegro</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,43 +21,59 @@
       <div class="nav-logo-titulo">
         <h1 class="titulo-sitio">Castronegro</h1>
       </div>
+      <div class="info-estado">
+        <span class="dato-partida"><i class="fas fa-clock"></i> 02:00</span>
+        <span class="dato-partida">FASE: DÍA</span>
+      </div>
       <nav class="menu">
-        <div class="div-sesion-iniciada">
-          <a href="/index.html" class="boton-salir"
-            ><i class="fas fa-sign-out-alt"></i> Salir</a
-          >
-        </div>
+        <a href="/index.html" class="boton-salir">Abandonar</a>
       </nav>
     </header>
 
-    <main class="contenedor-juego">
-      
+    <main class="pantalla-juego">
+      <section class="contenedor-mesa tarjeta-estilo">
+        <div class="grid-tablero">
+          <div class="centro-info">
+            <h2>La Aldea</h2>
+            <p>Esperando a los jugadores...</p>
+          </div>
+
+          <div class="jugador slot-1"><span>J1</span></div>
+          <div class="jugador slot-18"><span>J18</span></div>
+          <div class="jugador slot-17"><span>J17</span></div>
+          <div class="jugador slot-16"><span>J16</span></div>
+          <div class="jugador slot-15"><span>J15</span></div>
+
+          <div class="jugador slot-4"><span>J4</span></div>
+          <div class="jugador slot-5"><span>J5</span></div>
+          <div class="jugador slot-6"><span>J6</span></div>
+
+          <div class="jugador slot-14"><span>J14</span></div>
+          <div class="jugador slot-13"><span>J13</span></div>
+          <div class="jugador slot-12"><span>J12</span></div>
+
+          <div class="jugador slot-7"><span>J7</span></div>
+          <div class="jugador slot-8"><span>J8</span></div>
+          <div class="jugador slot-9"><span>J9</span></div>
+          <div class="jugador slot-10"><span>J10</span></div>
+          <div class="jugador slot-11"><span>J11</span></div>
+        </div>
       </section>
 
-      <section class="area-chat">
-        <div class="cabecera-chat">
-          
+      <section class="contenedor-chat tarjeta-estilo">
+        <div class="chat-header">
+          <h3>Chat de la Aldea</h3>
         </div>
 
-        <div class="mensajes-container" id="lista-mensajes">
-          
-          </div>
-        </div>
+        <div class="chat-mensajes" id="lista-mensajes"></div>
 
-        <form class="form-chat" id="form-chat">
-          <input
-            type="text"
-            id="input-mensaje"
-            placeholder="Escribe un mensaje..."
-            autocomplete="off"
-          />
-          <button type="submit" id="btn-enviar">
-            <i class="fas fa-paper-plane"></i>
-          </button>
+        <form class="chat-input-area" id="form-chat">
+          <input type="text" placeholder="Escribe aquí..." autocomplete="off" />
+          <button type="submit"><i class="fas fa-paper-plane"></i></button>
         </form>
       </section>
     </main>
+
     <script type="module" src="../ts/chatAldea.ts"></script>
   </body>
-  
 </html>

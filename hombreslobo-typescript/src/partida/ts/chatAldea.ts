@@ -1,6 +1,8 @@
 import { getJugador } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
+import "../css/partida.css";
+import "../../css/base.css";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
 const formChat = document.getElementById("form-chat") as HTMLFormElement;
@@ -13,7 +15,6 @@ const canal = pusher.subscribe("chat");
 canal.bind("nuevo-mensaje", (data: any) => {
   console.log("mensaje", data);
 
-  // data contiene lo que definiste en el evento (usuario, mensaje)
   pintarMensaje(data.usuario, data.mensaje);
 });
 
