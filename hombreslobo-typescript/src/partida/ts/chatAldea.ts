@@ -3,6 +3,7 @@ import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
 import "../css/partida.css";
 import "../../css/base.css";
+import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
 const formChat = document.getElementById("form-chat") as HTMLFormElement;
@@ -12,9 +13,10 @@ const inputMensaje = document.getElementById(
 const centroInfo = document.querySelector(".centro-info") as HTMLElement;
 const spanFase = document.getElementById("fase-partida")!;
 const headerChat = document.getElementById("h3-chat")!;
-
+const reloj = document.getElementById("reloj-partida")!;
 const partida_id = getPartidaId();
 
+let temporizador: number | null = null;
 let dia: boolean = true;
 
 function actualizarFaseVisual() {
@@ -34,10 +36,46 @@ function actualizarFaseVisual() {
 const canal = pusher.subscribe("aldea" + partida_id);
 
 canal.bind("nuevo-mensaje", (data: any) => {
-  console.log("mensaje", data);
-
   pintarMensaje(data.usuario, data.mensaje);
 });
+
+canal.bind("cambio-fase", (data: any) => {
+  if (data.fase === "dia") {
+    dia = true;
+  } else {
+    dia = false;
+  }
+  actualizarFaseVisual();
+  iniciarCuentaAtras(data.tiempoFin);
+});
+
+const iniciarCuentaAtras = (fechaFinIso: string) => {
+  if (temporizador) {
+    window.clearInterval(temporizador);
+  }
+  const fechaObjetivo = new Date(fechaFinIso).getTime();
+  temporizador = window.setInterval(() => {
+    const ahora = new Date().getTime();
+    const distancia = fechaObjetivo - ahora;
+
+    if (distancia < 0) {
+      if (temporizador) {
+        window.clearInterval(temporizador);
+        reloj.innerHTML = '<i class="fas fa-clock"></i> 00:00';
+        return;
+      }
+    }
+
+    // Cálculos matemáticos
+    const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+    const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+    // Formato con ceros a la izquierda (02:05)
+    const minStr = minutos < 10 ? "0" + minutos : minutos;
+    const segStr = segundos < 10 ? "0" + segundos : segundos;
+    reloj.innerHTML = `<i class="fas fa-clock"></i> ${minStr}:${segStr}`;
+  }, 1000);
+};
 
 formChat.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -49,10 +87,12 @@ formChat.addEventListener("submit", async (e) => {
 
   if (mensaje === "/cambiar") {
     //placeholder, lo haremos con el reverb
-    dia = !dia;
-    actualizarFaseVisual();
-    inputMensaje.value = "";
-    return;
+    try {
+      await cambiarFasePartida(partida_id, !dia);
+      mensaje = "";
+    } catch {
+      console.error;
+    }
   }
   try {
     await enviarMensaje(mensaje, partida_id);
