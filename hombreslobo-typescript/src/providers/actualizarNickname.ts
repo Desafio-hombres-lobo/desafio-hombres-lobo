@@ -1,6 +1,10 @@
+import { construirApi } from "../autenticacion/ts/apiFetch";
+import { getJugadorPath, getToken } from "../autenticacion/ts/auth";
+import { getJSONHeaders } from "../autenticacion/ts/header";
+
 export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
   // Obtener token usuario
-  const token = sessionStorage.getItem("auth_token");
+  const token = getToken();
 
   if (!token) {
     alert("Error: No estás autenticado. Por favor, inicia sesión.");
@@ -8,18 +12,13 @@ export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
   }
 
   try {
-    const response = await fetch(
-      "http://127.0.0.1:8000/api/cambiarNicknameUsuario",
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(datosNuevoNickname),
-      }
-    );
+    const header = getJSONHeaders();
+    const endpoint = "/cambiarNicknameUsuario";
+    const response = await fetch(construirApi(endpoint), {
+      method: "POST",
+      headers: header,
+      body: JSON.stringify(datosNuevoNickname),
+    });
 
     const data = await response.json();
 
@@ -36,7 +35,7 @@ export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
     alert("¡Nickname actualizado con éxito a: " + data.nickname + "!");
 
     // Actualizar el nickname guardado en sesión
-    sessionStorage.setItem("auth_jugador", data.nickname);
+    sessionStorage.setItem(getJugadorPath(), data.nickname);
 
     return true;
   } catch (error) {

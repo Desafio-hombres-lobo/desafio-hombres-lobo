@@ -1,3 +1,4 @@
+import { getToken } from "../../autenticacion/ts/auth";
 import { enviarFotoPerfil } from "../../providers/envioFotoPerfil";
 import { cargarFoto } from "./cargarFotoPerfil";
 export function subirFoto() {
@@ -8,7 +9,7 @@ export function subirFoto() {
 
   const form = document.getElementById("form-cambiar-foto") as HTMLFormElement;
 
-  const token = sessionStorage.getItem("auth_token");
+  const token = getToken();
   if (inputFoto && btnCambiar && form && token) {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -20,7 +21,7 @@ export function subirFoto() {
 
       if (archivo) {
         try {
-          const respuesta = await enviarFotoPerfil(archivo, token);
+          const respuesta = await enviarFotoPerfil(archivo);
           if (respuesta.exito) {
             cargarFoto();
           }

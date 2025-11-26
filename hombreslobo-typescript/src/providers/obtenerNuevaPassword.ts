@@ -1,5 +1,9 @@
+import { construirApi } from "../autenticacion/ts/apiFetch";
+import { getToken } from "../autenticacion/ts/auth";
+import { getJSONHeaders } from "../autenticacion/ts/header";
+
 export const obtenerNuevaPassword = async () => {
-  const token = sessionStorage.getItem("auth_token");
+  const token = getToken();
 
   if (!token) {
     alert("Error: No estás autenticado. Por favor, inicia sesión.");
@@ -7,17 +11,12 @@ export const obtenerNuevaPassword = async () => {
   }
 
   try {
-    const response = await fetch(
-      "http://127.0.0.1:8000/api/cambiarPasswordJugador",
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const header = getJSONHeaders();
+    const endpoint = "/cambiarPasswordJugador";
+    const response = await fetch(construirApi(endpoint), {
+      method: "POST",
+      headers: header,
+    });
 
     const data = await response.json();
     console.log("Cambio contraseña: " + JSON.stringify(data));

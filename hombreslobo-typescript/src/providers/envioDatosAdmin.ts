@@ -1,19 +1,9 @@
-const api = "http://127.0.0.1:8000/api/users";
-const SESSIONSTORAGE = "auth_token";
+import { getJSONHeaders } from "../autenticacion/ts/header";
 
 export const cogerUsuarios = () => {};
 
-function getToken(): string | null {
-  return sessionStorage.getItem(SESSIONSTORAGE);
-}
-
 async function apiFetch(endpoint: string, options: RequestInit = {}) {
-  const token = getToken();
-
-  const headers = new Headers(options.headers || {});
-  headers.set("Authorization", `Bearer ${token}`);
-  headers.set("Accept", "application/json");
-  headers.set("Content-Type", "application/json");
+  const headers = getJSONHeaders();
 
   const response = await fetch(`http://127.0.0.1:8000/api${endpoint}`, {
     ...options,

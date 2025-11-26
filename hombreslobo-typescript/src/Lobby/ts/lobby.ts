@@ -16,10 +16,6 @@ export const initLobby = () => {
     console.error("No existe esa partida");
     return;
   }
-  if(!token) {
-    console.error("No hay token de autenticación");
-    return;
-  }
 
   const codigoPartida = document.getElementById("codigo-partida") as HTMLElement;
   const codigoLabel = document.querySelector(".code strong") as HTMLElement;
@@ -148,6 +144,8 @@ export const initLobby = () => {
   });
 
   if (partidaId) {
+    cargarPartida();
+  }
     cargarPartida();
   }
 };

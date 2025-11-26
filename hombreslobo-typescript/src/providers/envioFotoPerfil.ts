@@ -1,14 +1,15 @@
-export async function enviarFotoPerfil(file: File, token: string) {
+import { construirApi } from "../autenticacion/ts/apiFetch";
+import { getFileHeaders } from "../autenticacion/ts/header";
+
+export async function enviarFotoPerfil(file: File) {
   const formData = new FormData();
 
   formData.append("foto", file);
 
-  const headers = new Headers();
-  headers.set("Authorization", `Bearer ${token}`);
-  headers.set("Accept", "application/json");
-
+  const headers = getFileHeaders();
+  const endpoint = "/cambiarFoto";
   try {
-    const response = await fetch(`http://127.0.0.1:8000/api/cambiarFoto`, {
+    const response = await fetch(construirApi(endpoint), {
       method: "POST",
       headers: headers,
       body: formData,

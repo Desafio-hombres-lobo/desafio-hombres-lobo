@@ -1,12 +1,21 @@
+import { construirApi } from "../autenticacion/ts/apiFetch";
+import {
+  getCredencialesPath,
+  getJugadorPath,
+  getRolPath,
+  getTokenPath,
+  getUsuarioPath,
+} from "../autenticacion/ts/auth";
+import { getJSONHeaders } from "../autenticacion/ts/header";
+
 export const enviarDatosLogin = async (datosUsuario: any) => {
   try {
     document.body.style.cursor = "wait";
-    const response = await fetch("http://127.0.0.1:8000/api/login", {
+    const header = getJSONHeaders();
+    const endpoint = "/login";
+    const response = await fetch(construirApi(endpoint), {
       method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Accept: "application/json",
-      },
+      headers: header,
       body: JSON.stringify(datosUsuario),
     });
 
@@ -16,20 +25,15 @@ export const enviarDatosLogin = async (datosUsuario: any) => {
     }
 
     const data = await response.json();
-    const SESSIONSTORAGE = "auth_token";
-    const ROL_USUARIO = "auth_rol";
-    const LOCALSTORAGE = "credenciales";
-    const CLAVE_USUARIO = "auth_usuario";
-    const CLAVE_JUGADOR = "auth_jugador";
 
     if (datosUsuario["recordarme"]) {
-      localStorage.setItem(LOCALSTORAGE, datosUsuario["usuario"]);
+      localStorage.setItem(getCredencialesPath(), datosUsuario["usuario"]);
     }
     if (data.token && data.usuario) {
-      sessionStorage.setItem(SESSIONSTORAGE, data.token);
-      sessionStorage.setItem(CLAVE_USUARIO, data.usuario);
-      sessionStorage.setItem(ROL_USUARIO, data.rol);
-      sessionStorage.setItem(CLAVE_JUGADOR, data.jugador);
+      sessionStorage.setItem(getTokenPath(), data.token);
+      sessionStorage.setItem(getUsuarioPath(), data.usuario);
+      sessionStorage.setItem(getRolPath(), data.rol);
+      sessionStorage.setItem(getJugadorPath(), data.jugador);
       return true;
     }
   } finally {
