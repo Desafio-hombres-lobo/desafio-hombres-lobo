@@ -1,7 +1,3 @@
-// import { votarAJugador } from "../../providers/votarAJugador";
-// import { obtenerJugadorMasVotado } from "../../providers/obtenerVotos";
-// import { obtenerDatosJugadorPartida } from "../../providers/obtenerDatosJugador";
-
 // Ejecutar acción
 export const ejecutarAccion = async (
   contenedorCarta: HTMLElement,
@@ -30,4 +26,3 @@ export const ejecutarAccion = async (
       console.warn("Acción no reconocida: ", idAccion);
   }
 };
-

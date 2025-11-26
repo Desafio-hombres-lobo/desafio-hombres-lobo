@@ -3,16 +3,11 @@ import { ejecutarAccion } from "./accionesCartaPersonaje";
 import "../css/styles.css";
 import loboImg from "../../imagenes/cartas/lobo.png";
 import aldeanoImg from "../../imagenes/cartas/aldeano.png";
-// BORRAR PRUEBAS
-import { obtenerDatosJugadorPartida } from "../../providers/obtenerDatosJugador";
 
 const ID_ALDEANO = 1;
 const ID_LOBO = 2;
 const IMG_HOMBRE_LOBO = loboImg;
 const IMG_ALDEANO = aldeanoImg;
-// BORRAR PRUEBAS
-const idPartida = sessionStorage.getItem("partida_id");
-const intIdPartida = Number(idPartida);
 
 export const renderizarCartaLobo = async (
   contenedor: HTMLElement
@@ -42,12 +37,6 @@ export const renderizarCartaLobo = async (
 
   contenedor.appendChild(contenedorCarta);
   ejecutarAccion(contenedorCarta, idAccion, idJugador, idPersonaje);
-  // Datos Jugador Partida
-  const datosJugadorPartida = await obtenerDatosJugadorPartida(
-    idJugador,
-    intIdPartida
-  );
-  console.log(datosJugadorPartida);
 };
 
 export const renderizarCartaAldeano = async (

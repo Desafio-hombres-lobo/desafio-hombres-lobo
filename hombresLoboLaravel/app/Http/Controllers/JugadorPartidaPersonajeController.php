@@ -69,7 +69,7 @@ class JugadorPartidaPersonajeController extends Controller
 
     public function cambiarEstadoPersonaje(Request $request){
         $request->validate([
-            'id_jugador' => 'required|exists:jugadors,id',
+            'id_jugador' => 'required|exists:jugadores,id',
             'id_partida' => 'required|exists:partidas,id',
             'estado' => 'required|in:0,1,2',
         ]);

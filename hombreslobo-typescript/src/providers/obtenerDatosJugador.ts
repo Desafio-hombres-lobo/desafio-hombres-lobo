@@ -32,9 +32,6 @@ export const obtenerDatosJugadorPartida = async (
     const json = await response.json();
     const datosJugadorPartida = json.data;
 
-    // BORRAR
-    console.log(datosJugadorPartida);
-
     return datosJugadorPartida;
   } catch (error) {
     console.error("Error en la solicitud: " + error);
