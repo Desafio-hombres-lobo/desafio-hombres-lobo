@@ -39,6 +39,7 @@ class PersonajeController extends Controller
 
         foreach ($acciones_personaje as $accion) {
             $datos[] = [
+                'id_jugador' => $jugador->id,
                 'jugador' => $jugador->nickname,
                 'id_accion' => $accion->id,
                 'nombre_accion' => $accion->nombre,

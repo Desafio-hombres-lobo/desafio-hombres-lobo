@@ -10,6 +10,32 @@ use App\Models\Personaje;
 
 class JugadorPartidaPersonajeController extends Controller
 {
+
+    public function obtenerDatosJugadorPartida(Request $request){
+        $request->validate([
+            'id_jugador' => 'required|integer',
+            'id_partida' => 'required|integer',
+        ]);
+
+        $datos = JugadorPartidaPersonaje::query()
+            ->where('id_jugador', $request->id_jugador)
+            ->where('id_partida', $request->id_partida)
+            ->select('id_jugador', 'id_partida', 'id_personaje', 'estado')
+            ->first();
+
+        if (!$datos) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Registro no encontrado para este jugador y partida.'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $datos
+        ], 200);
+    }
+
     public function asignarJugadorPartida(Request $request){
         $request->validate([
             'id_partida' => 'required|exists:partidas,id',

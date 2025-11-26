@@ -9,7 +9,7 @@ class JugadorPartidaPersonaje extends Model
 {
     use HasFactory;
 
-    protected $table = 'jugador_partida_personaje';
+    protected $table = 'jugador_partida_personajes';
 
     protected $fillable = [
         'id_jugador',

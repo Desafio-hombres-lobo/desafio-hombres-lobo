@@ -21,6 +21,7 @@ const headerChat = document.getElementById("h3-chat")!;
 
 // PRUEBAS BORRAR LUEGO
 renderizarCartaLobo(tablero);
+renderizarCartaAldeano(tablero);
 renderizarCartaAldeano(centroInfo);
 
 const partida_id = getPartidaId();

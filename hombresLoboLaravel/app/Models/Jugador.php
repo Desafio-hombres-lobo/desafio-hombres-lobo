@@ -27,14 +27,14 @@ class Jugador extends Model
 
     // Todas las partidas en las que participa un jugador
     public function partidasEstado(): BelongsToMany {
-        return $this->belongsToMany(Partida::class, 'jugador_partida_personaje')
+        return $this->belongsToMany(Partida::class, 'jugador_partida_personajes')
                 ->withPivot('id_personaje', 'estado')
                 ->withTimestamps();
     }
 
     // Personajes que tiene el jugador en cada partida
     public function personajesEnPartidas(): BelongsToMany {
-        return $this->belongsToMany(Personaje::class, 'jugador_partida_personaje')
+        return $this->belongsToMany(Personaje::class, 'jugador_partida_personajes')
                     ->withPivot('id_partida', 'estado')
                     ->withTimestamps();
     }
