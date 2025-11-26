@@ -22,13 +22,14 @@ header p {
 }
 
 .circulo {
-  width: 320px;
-  height: 320px;
+  width: 350px;
+  aspect-ratio: 1 / 1;
+  transform: scale(0.85);  
   border-radius: 50%;
   position: absolute;
-  border:12px, solid var(--borde-espiral);
+  border:12px solid var(--borde-espiral);
   top: 35%;
-  left: 40%;
+  right:39%;
   background: var(--amarillo);
   display: flex;
   justify-content: center;
@@ -51,8 +52,9 @@ header p {
 
 .centro-circulo {
   position: absolute;
-  top: 40%;
-  left: 25%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .contador {
@@ -61,7 +63,7 @@ header p {
   left:42%;
   background: var(--negro);
   padding: 10px 0px;
-  width:15%;
+  width:16%;
   border-radius: 12px;
   font-size: 2rem;
   font-family:var(--fuente-titulo);
@@ -101,7 +103,7 @@ aside {
   position:absolute;
   top:7%;
   right:2%;
-  width: 380px;
+  width: 25%;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -170,7 +172,7 @@ aside {
 
 .btn.jugar:hover{
   transform: scale(1.05);
-  box-shadow: 0 0 20px white;
+  box-shadow: 0 0 20px var(--borde-espiral);
 }
 
 .btn-3 {
@@ -191,8 +193,15 @@ a {
   font-family:var(--fuente-titulo);
   font-weight:lighter;
   font-size:2rem;
+  padding: 12px 24px;
+  font-size: 1.8rem;
+  border-radius: 12px;
+  font-family: var(--fuente-titulo);
+  color: var(--beige);
+  box-shadow: 0 0 12px rgba(171,111,160,0.3);
+  border: none;
+  cursor: pointer;
 }
-
 
 .chat-input {
   display: flex;
@@ -212,7 +221,7 @@ a {
 }
 
 .btn.enviar {
-  width: 48px;
+  width: 20%;
 }
 
 .mensajes {
@@ -251,6 +260,7 @@ span{
 .input-row input {
   flex: 1;
   padding: 10px;
+  min-width: 0;
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 8px;
@@ -308,11 +318,11 @@ span{
 .panel.jugadores {
   position:absolute;
   left:40px;
-  margin-top: 20px;
+  top: 80px;
 }
 
 .jugadores-lista {
-  max-height: 200px;
+  max-height: 500px;
   overflow-y: auto;
   padding: 5px;
   background-color:none;
@@ -330,8 +340,52 @@ span{
 }
 
 .lleno {
-   background-color:#81b887;
-  transition: background-color 0.3s ease;
+  background-color:#81b887;
+  transition: background-color 1s ease;
 }
 
 
+@media (max-width: 800px) {
+  header h1 { font-size: 1.8rem; }
+  
+  .circulo, .contador, .panel.jugadores, aside {
+    position: relative;
+    transform: translateX(-50%);
+    margin: 20px auto;
+  }
+  
+  .circulo { 
+    width: 200px; 
+    height: 200px;
+    left:15%;
+    top: 0;
+  }
+  
+  .contador { 
+    left:25%;
+    width: 50%; 
+    top: 0;
+  }
+  
+  .panel.jugadores, aside { 
+    left: 45%;
+    width: 90%;
+    top: 0;
+  }
+  
+  .btn.jugar { font-size: 1.4rem; }
+
+  .btn-abandon{
+    height:50px;
+    left:10px;
+    top:10px;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 { font-size: 1.5rem; }
+  .circulo { width: 180px; height: 180px; border-width: 8px; }
+  #espiral { stroke-width: 8; }
+  .btn.jugar { font-size: 1.2rem; }
+  aside, .panel.jugadores { width: 95%; }
+}
