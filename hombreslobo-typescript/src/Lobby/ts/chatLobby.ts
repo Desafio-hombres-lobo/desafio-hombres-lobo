@@ -1,4 +1,5 @@
 import Pusher from "pusher-js";
+import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 
 
 const txtMensaje = document.querySelector<HTMLInputElement>('.chat-input input');
@@ -17,6 +18,10 @@ const wsHost = 'localhost';
 const wsPort = 8080;
 const apiPort = 8000;
 const apiUrl = `http://${wsHost}:${apiPort}/api/chat/send`;
+const resJugador = await obtenerJugadorActual(token);
+const jugador = await resJugador.json();
+
+
 
 
 const pusher = new Pusher('cw5xkporz11sccbkkxni', {
@@ -33,14 +38,18 @@ const channel = pusher.subscribe('lobby.'+partidaId);
 
 
     channel.bind('message.sent', (data: { message: string, username: string }) => {
+
         const li = document.createElement('li');
-
-        li.innerHTML = `
-            <span>${data.username}:</span> ${data.message}
-        `;
-
         li.classList.add('mensaje');
 
+      if(data.username==jugador.nickname){    
+        li.classList.add('propio');
+                li.innerHTML = `</span> ${data.message}`;
+        } else {
+         li.classList.add('otros');
+            li.innerHTML = `
+            <span>${data.username}:</span> ${data.message}`;
+        }
         ulMessages.appendChild(li);
         ulMessages.scrollTop = ulMessages.scrollHeight; 
     });
