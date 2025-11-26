@@ -29,7 +29,7 @@ class PartidaController extends Controller
 
         $request->validate([
             'nombre' => 'required|string|max:20',
-            'num_jugadores' => 'required|integer|min:15|max:30',
+            'num_jugadores' => 'required|integer|min:2|max:30',
         ]);
 
         $jugador = $request->user()->jugador;
@@ -73,18 +73,22 @@ class PartidaController extends Controller
 
         $jugador = Jugador::where('id_usuario', $user->id)->firstOrFail();
 
-
         $partida = Partida::findOrFail($gameId);
+
+        $Uniendo = false;
 
         if (!$partida->jugadoresLobby()->where('jugador_id', $jugador->id)->exists()) {
             $partida->jugadoresLobby()->attach($jugador->id);
+            $Uniendo = true;
         }
 
-
-        event(new PlayerJoined($player, $gameId));
+        if ($Uniendo) {
+            event(new PlayerJoined($player, $gameId));
+        }
 
         return response()->json(['status' => 'ok']);
     }
+
 
     public function jugadores($id){
         $partida = Partida::find($id);

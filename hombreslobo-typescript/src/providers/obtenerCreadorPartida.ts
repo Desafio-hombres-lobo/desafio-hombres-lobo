@@ -5,7 +5,9 @@ export const obtenerCreadorPartida = async (token: string, idPartida: string | n
       Accept: "application/json"
     }
   });
-};import { construirApi } from "../autenticacion/ts/apiFetch";
+};
+
+import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getToken } from "../autenticacion/ts/auth";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 

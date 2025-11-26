@@ -1,4 +1,3 @@
-import { getToken } from "../../autenticacion/ts/auth";
 import { enviarDatosCrearPartida } from "../../providers/enviarDatosPartida";
 
 export const initModalCrearPartida = (): void => {
@@ -8,7 +7,7 @@ export const initModalCrearPartida = (): void => {
   const modalCrear = document.getElementById("modalCrear") as HTMLDivElement;
   const modalUnirse = document.getElementById("modalUnirse") as HTMLDivElement;
 
-  const MIN_JUGADORES = 15;
+  const MIN_JUGADORES = 2;
   const MAX_JUGADORES = 30;
   const MAX_NOMBRE = 20;
 

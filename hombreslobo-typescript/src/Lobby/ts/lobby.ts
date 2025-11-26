@@ -1,6 +1,6 @@
 import Pusher from "pusher-js";
 import { obtenerPartida } from "../../providers/obtenerPartida";
-import { obtenerCreador } from "../../providers/obtenerCreadorPartida";
+import { obtenerCreadorPartida } from "../../providers/obtenerCreadorPartida";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { obtenerJugador } from "../../providers/obtenerJugador";
 import { unirsePartida } from "../../providers/unirsePartida";
@@ -14,6 +14,10 @@ export const initLobby = () => {
 
   if (!partidaId) {
     console.error("No existe esa partida");
+    return;
+  }
+  if(!token) {
+    console.error("No hay token de autenticación");
     return;
   }
 
@@ -65,6 +69,12 @@ export const initLobby = () => {
   };
 
   channel.bind('player.joined', (data: any) => {
+    const notificacion = document.createElement('div');
+    notificacion.textContent = `${data.player} se unió a la partida`;
+    notificacion.classList.add('notificacion');
+    document.body.appendChild(notificacion);
+    setTimeout(() => notificacion.remove(), 3000);
+
     jugadoresActuales++;
     jugadoresArray.push(data.player);
     actualizarContador();
@@ -79,24 +89,31 @@ export const initLobby = () => {
     document.body.appendChild(notificacion);
     setTimeout(() => notificacion.remove(), 3000);
 
-    jugadoresActuales--;
-    if (jugadoresActuales < 0) jugadoresActuales = 0;
+    jugadoresArray = jugadoresArray.filter(j => j !== data.jugador);
+
+    jugadoresActuales = jugadoresArray.length;
     actualizarContador();
     actualizarListaJugadores();
   });
 
-  const cargarPartida = async () => {
-    const res = await obtenerPartida(token, partidaId);
-    const datos = res.datos;
-    jugadoresMaximos = datos.num_jugadores;
 
-    const respuestaCreador = await obtenerCreador(token, partidaId);
-    const idCreador = await respuestaCreador.json();
-    const respuestaNombreCreador = await obtenerJugador(token, idCreador);
+  const cargarPartida = async () => {
+    jugadoresArray = [];
+    const datos = await obtenerPartida(partidaId);
+    if (!datos) return;
+
+    jugadoresMaximos = datos.num_jugadores;
+    codigoLabel.textContent = datos.codigo;
+
+    const resCreador = await obtenerCreadorPartida(token, partidaId);
+    const idCreador = await resCreador.json(); 
+
+    const respuestaNombreCreador = await obtenerJugador(idCreador);
     const creador = await respuestaNombreCreador.json();
 
     codigoPartida.textContent = `Lobby de partida de: ${creador.nickname}`;
     codigoLabel.textContent = datos.codigo;
+
 
     notificarUnion();
   };
@@ -104,6 +121,8 @@ export const initLobby = () => {
   const notificarUnion = async () => {
     const resJugador = await obtenerJugadorActual(token);
     const jugador = await resJugador.json();
+
+    if (jugadoresArray.includes(jugador.nickname)) return;
 
     const payload = {
       game_id: partidaId,
@@ -129,6 +148,7 @@ export const initLobby = () => {
       pusher.unsubscribe('game.' + partidaId);
       localStorage.removeItem("partida_id");
       window.location.href = "/";
+      sessionStorage.removeItem("partida_id");
     } else {
       console.error('Error abandonando partida:', resultado.error);
     }
@@ -144,8 +164,6 @@ export const initLobby = () => {
   });
 
   if (partidaId) {
-    cargarPartida();
-  }
     cargarPartida();
   }
 };
