@@ -3,10 +3,6 @@ import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
 import "../css/partida.css";
 import "../../css/base.css";
-import {
-  renderizarCartaAldeano,
-  renderizarCartaLobo,
-} from "../../Personajes/ts/crearCartaPersonaje";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
 const formChat = document.getElementById("form-chat") as HTMLFormElement;

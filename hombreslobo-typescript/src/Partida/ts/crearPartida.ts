@@ -1,4 +1,4 @@
-import { getPartidaIdPath, getToken } from "../../autenticacion/ts/auth";
+import { getPartidaIdPath } from "../../autenticacion/ts/auth";
 import { enviarDatosCrearPartida } from "../../providers/enviarDatosPartida";
 
 export const initModalCrearPartida = (): void => {
