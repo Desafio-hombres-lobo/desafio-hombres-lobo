@@ -1,5 +1,8 @@
 import { obtenerPartida } from "../../providers/obtenerPartida";
-import { obtenerCreadorPartida } from "../../providers/obtenerCreadorPartida";
+import {
+  obtenerCreadorPartida,
+  verificarHost,
+} from "../../providers/obtenerCreadorPartida";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { obtenerJugador } from "../../providers/obtenerJugador";
 import { unirsePartida } from "../../providers/unirsePartida";
@@ -100,12 +103,12 @@ export const initLobby = () => {
 
   channel.bind("iniciar.juego", (data: any) => {
     console.log("Evento recibido, iniciando partida...", data);
-
+    setTimeout(
+      () => (window.location.href = "/src/Partida/htmls/partida.html"),
+      4000
+    );
     const overlay = document.getElementById("iniciando");
     overlay?.classList.add("mostrar");
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 5000);
   });
 
   const cargarPartida = async () => {
@@ -182,8 +185,10 @@ export const initLobby = () => {
   });
 
   botonIniciar.addEventListener("click", async () => {
-    await iniciarPartida(partidaId);
-    setTimeout(() => (window.location.href = "/"), 4000);
+    const host = await verificarHost(partidaId);
+    if (host) {
+      await iniciarPartida(partidaId);
+    }
   });
 
   if (partidaId) {
