@@ -195,7 +195,9 @@
   background-color: white;
   box-shadow: var(--negro) 0px 0px 10px;
   color:var(--negro);
-  font-family: var(--fuente-texto);
+  font-weight:50;
+  letter-spacing:1px;
+  font-family:var(--fuente-titulo);
 }
 .modal{
   border-radius:20px;
@@ -223,6 +225,32 @@
   background-color: #2a2a3d;
   color: #fff;
   font-size: 0.65rem;;
+}
+
+
+#listaPartidas::-webkit-scrollbar {
+  width: 8px;
+}
+
+#listaPartidas::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+#listaPartidas::-webkit-scrollbar-thumb {
+  background: var(--texto-suave);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+#listaPartidas::-webkit-scrollbar-thumb:hover {
+  background: var(--rosa-claro);
+}
+
+
+#listaPartidas {
+  scrollbar-width: thin;
+  scrollbar-color: var(--morado) rgba(255, 255, 255, 0.05);
 }
 
 

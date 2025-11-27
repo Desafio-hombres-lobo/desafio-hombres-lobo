@@ -36,35 +36,71 @@
         a70,70   0 1,1 0,140
         a50,50   0 1,1 0,-100
         a30,30   0 1,1 0,60
-      "
-            fill="none"
-          />
-        </svg>
-        <div class="centro-circulo">
-          <button class="btn jugar">Iniciar Juego</button>
-          <a href="/src/partida/htmls/partida.html">placeholder partida</a>
-        </div>
-      </div>
+      " 
+      fill="none" 
+    />
+  </svg>
+    <div class="centro-circulo">
+      <button class="btn jugar" id="btnJugar"></button>
+    </div>
+  </div>
 
       <button class="btn-abandon" id="abandonar">Abandonar Partida</button>
+   
 
-      <aside>
-        <div class="panel info">
-          <h3>Información de la Partida</h3>
-          <label class="code">Código de Partida: <strong></strong></label>
-          <button class="btn btn2" id="copiarCodigo">Copiar Código</button>
-
-          <button class="btn">⚙️ Configuración de Partida</button>
-          <a
-            class="btn btn3"
-            href="../../../reglas-hombres-lobo-castronegro.pdf"
-            download
-            >📜 Ver Reglas</a
-          >
+    <aside>
+      <div class="panel info">
+        <h3>Información de la Partida</h3>
+        <label class="code">Código de Partida: <strong></strong></label>
+        <button class="btn btn2" id="copiarCodigo">Copiar Código</button>
+        <button class="btn">⚙️ Configuración de Partida</button>
+        <a class="btn btn3" href="../../../reglas-hombres-lobo-castronegro.pdf" download>📜 Ver Reglas</a>
+      </div>
+      <div class="panel chat">
+        <h4>Chat</h4>
+        <div class="chat-input">
+          <ul class="mensajes"></ul>
+          <div class="input-row">
+            <input type="text" placeholder="Escribe un mensaje..." aria-label="Mensaje de chat" />
+            <button class="btn enviar" id="enviar">➤</button>
+          </div>
         </div>
+      </div>
+    </aside>
 
-        <div class="panel chat">
-          <h4>Chat</h4>
+    
+      <div class="panel jugadores">
+        <h3>Jugadores</h3>
+        <div class="jugadores-lista"></div>
+      </div>
+
+  </main>
+  <div class="bg-card-1"></div>
+  <div class="bg-card-2"></div>
+  <div class="bg-card-3"></div>
+  <div class="bg-card-4"></div>
+  <div class="bg-card-5"></div>
+  <div class="bg-card-6"></div>
+  <div class="bg-card-7"></div>
+  <div class="bg-card-8"></div>
+  <div class="bg-card-9"></div>
+  <div class="bg-card-10"></div>
+  <div class="bg-card-11"></div>
+  <div class="bg-card-12"></div>
+  <div class="bg-card-13"></div>
+  <div class="bg-card-14"></div>
+  <div class="bg-card-15"></div>
+  <div class="bg-card-16"></div>
+  <div class="bg-card-17"></div>
+  <div class="bg-card-18"></div>
+
+  <div id="iniciando" class="iniciando-hidden">
+  <div class="iniciando-texto">Iniciando partida…</div>
+</div>
+
+<script type="module" src="../../main.ts"></script>
+  <script src="https://js.pusher.com/8.0/pusher.min.js"></script>
+<script type="module" src="../ts/chatLobby.ts"></script>
 
           <div class="chat-input">
             <input

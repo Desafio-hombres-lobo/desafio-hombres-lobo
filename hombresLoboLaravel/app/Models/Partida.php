@@ -23,4 +23,14 @@ class Partida extends Model
                     ->withPivot('ganadas', 'perdidas')
                     ->withTimestamps();
     }
+
+    public function jugadoresLobby()
+    {
+        return $this->belongsToMany(
+            Jugador::class,         
+            'jugador_partida',
+            'partida_id',
+            'jugador_id'
+        )->withTimestamps();
+    }
 }

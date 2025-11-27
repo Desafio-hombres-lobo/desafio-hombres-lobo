@@ -24,4 +24,14 @@ class Jugador extends Model
                     ->withPivot('ganadas', 'perdidas')
                     ->withTimestamps();
     }
+
+    public function partidasActivas(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Partida::class,          
+            'jugador_partida',
+            'jugador_id',
+            'partida_id'
+        )->withTimestamps();
+    }
 }

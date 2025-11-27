@@ -9,11 +9,11 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/pusher-js": "^4.2.2",
     "typescript": "~5.9.3",
     "vite": "^7.1.7"
   },
   "dependencies": {
-    "pusher": "^5.2.0",
     "pusher-js": "^8.4.0"
   }
 }
