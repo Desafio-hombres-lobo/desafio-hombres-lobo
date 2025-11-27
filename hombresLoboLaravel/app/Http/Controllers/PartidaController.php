@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\JugadorAbandono;
 use App\Events\PlayerJoined;
+use App\Events\IniciarPartida;
 use App\Models\Jugador;
 use App\Models\Partida;
 use Illuminate\Http\Request;
@@ -176,6 +177,11 @@ class PartidaController extends Controller
         'mensaje' => "Estado actualizado a {$partida->estado}"
     ]);
 }
+
+    public function iniciarPartida($idPartida){
+    broadcast(new IniciarPartida($idPartida));
+    return response()->json(['ok' => true]);
+    }
 
 }
 

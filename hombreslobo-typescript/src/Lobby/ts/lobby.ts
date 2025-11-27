@@ -7,10 +7,12 @@ import { unirsePartida } from "../../providers/unirsePartida";
 import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
 import { salirPartida } from "../../providers/abandonarPartida";
 import { actualizarEstadoPartida } from "../../providers/actualizarEstadoPartida";
+import { iniciarPartida } from "../../providers/iniciarPartida";
 
 export const initLobby = () => {
   const partidaId = sessionStorage.getItem("partida_id");
   const token = sessionStorage.getItem("auth_token");
+  const jugadorActual = obtenerJugadorActual();
 
   if (!partidaId) {
     console.error("No existe esa partida");
@@ -27,6 +29,8 @@ export const initLobby = () => {
   const listaJugadoresEl = document.querySelector(".jugadores-lista") as HTMLElement;
   const botonAbandonar = document.getElementById("abandonar") as HTMLButtonElement;
   const btnCopiarCodigo = document.getElementById("copiarCodigo") as HTMLButtonElement;
+  const botonIniciar = document.getElementById('btnJugar') as HTMLButtonElement;
+
 
   let jugadoresActuales = 0;
   let jugadoresMaximos = 0;
@@ -44,17 +48,19 @@ export const initLobby = () => {
     disableStats: true,
   });
 
-  const channel = pusher.subscribe('game.' + partidaId);
+  const channel = pusher.subscribe('lobby.' + partidaId);
 
   const actualizarContador = () => {
     contadorJugadores.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;
 
     if (jugadoresActuales === jugadoresMaximos) {
       contadorJugadores.classList.add("lleno");
-      actualizarEstadoPartida(token, partidaId, 1);
+      actualizarEstadoPartida(partidaId, 2);
+      iniciarPartida(partidaId);
+      
     } else {
       contadorJugadores.classList.remove("lleno");
-      actualizarEstadoPartida(token, partidaId, 0);
+      actualizarEstadoPartida(partidaId, 0);
     }
   };
 
@@ -96,6 +102,18 @@ export const initLobby = () => {
     actualizarListaJugadores();
   });
 
+  channel.bind('iniciar.juego', (data: any) => {
+    console.log("Evento recibido, iniciando partida...", data);
+
+    const overlay = document.getElementById("iniciando");
+    overlay?.classList.add("mostrar");
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 5000);
+  });
+
+
+
 
   const cargarPartida = async () => {
     jugadoresArray = [];
@@ -104,35 +122,44 @@ export const initLobby = () => {
 
     jugadoresMaximos = datos.num_jugadores;
     codigoLabel.textContent = datos.codigo;
-
-    const resCreador = await obtenerCreadorPartida(token, partidaId);
-    const idCreador = await resCreador.json(); 
+    const resCreador = await obtenerCreadorPartida(partidaId);
+    if (!resCreador.ok) {
+      console.error("Error obteniendo creador:", resCreador.error);
+      return;
+    }
+    const idCreador = resCreador.datos; 
 
     const respuestaNombreCreador = await obtenerJugador(idCreador);
     const creador = await respuestaNombreCreador.json();
 
     codigoPartida.textContent = `Lobby de partida de: ${creador.nickname}`;
-    codigoLabel.textContent = datos.codigo;
+    
 
+    if((await jugadorActual).datos.nickname !== creador.nickname){
+      botonIniciar.disabled=true;
+      botonIniciar.innerHTML='Iniciando...'
+      botonIniciar.classList.add("no-hover");
+    }else{
+      botonIniciar.innerHTML='Iniciar Partida'
+    }
+    codigoLabel.textContent = datos.codigo;
 
     notificarUnion();
   };
 
   const notificarUnion = async () => {
-    const resJugador = await obtenerJugadorActual(token);
-    const jugador = await resJugador.json();
 
-    if (jugadoresArray.includes(jugador.nickname)) return;
+    if (jugadoresArray.includes((await jugadorActual).datos.nickname)) return;
 
     const payload = {
       game_id: partidaId,
-      player: jugador.nickname,
+      player: (await jugadorActual).datos.nickname,
       timestamp: new Date().toISOString(),
     };
 
-    await unirsePartida(token, payload);
+    await unirsePartida(payload);
 
-    const resultado = await obtenerJugadoresPartida(token, partidaId);
+    const resultado = await obtenerJugadoresPartida(partidaId);
     if (resultado.ok) {
       jugadoresActuales = resultado.jugadoresActuales;
       jugadoresMaximos = resultado.jugadoresMaximos;
@@ -143,7 +170,7 @@ export const initLobby = () => {
   };
 
   const abandonarPartida = async () => {
-    const resultado = await salirPartida(token, partidaId);
+    const resultado = await salirPartida(partidaId);
     if (resultado.ok) {
       pusher.unsubscribe('game.' + partidaId);
       localStorage.removeItem("partida_id");
@@ -162,6 +189,13 @@ export const initLobby = () => {
   botonAbandonar.addEventListener("click", () => {
     abandonarPartida();
   });
+
+
+  botonIniciar.addEventListener("click", async () => {
+    await iniciarPartida(partidaId);
+    setTimeout(() => window.location.href = "/", 4000);
+  });
+
 
   if (partidaId) {
     cargarPartida();

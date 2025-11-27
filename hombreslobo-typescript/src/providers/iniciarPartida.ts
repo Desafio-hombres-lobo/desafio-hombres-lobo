@@ -2,7 +2,7 @@ import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getToken } from "../autenticacion/ts/auth";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
-export const salirPartida = async (partidaId: string) => {
+export const iniciarPartida = async (partidaId: string) => {
   const token = getToken();
   if (!token) {
     alert("Error: No estás autenticado. Por favor, inicia sesión.");
@@ -10,17 +10,13 @@ export const salirPartida = async (partidaId: string) => {
   }
 
   try {
-
     const headers = getJSONHeaders();
 
-    const endpoint = "/partida/abandonar";
+    const endpoint = `/${partidaId}/iniciar`;
 
     const res = await fetch(construirApi(endpoint), {
       method: "POST",
       headers,
-      body: JSON.stringify({
-        partida_id: partidaId
-      }),
     });
 
     const datos = await res.json();
@@ -29,10 +25,10 @@ export const salirPartida = async (partidaId: string) => {
       return { ok: false, error: datos };
     }
 
-
+    console.log(`Partida ${partidaId} iniciada`, datos);
     return { ok: true, datos };
   } catch (error) {
-    console.error("Error al abandonar la partida:", error);
+    console.error("Error iniciando partida:", error);
     return { ok: false, error };
   }
 };

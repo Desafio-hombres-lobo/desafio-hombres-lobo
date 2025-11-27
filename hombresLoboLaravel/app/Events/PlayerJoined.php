@@ -24,7 +24,7 @@ class PlayerJoined implements ShouldBroadcast
 
     public function broadcastOn(): Channel
     {
-        return new Channel('game.' . $this->gameId);
+        return new Channel('lobby.' . $this->gameId);
     }
 
 
