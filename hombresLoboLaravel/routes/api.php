@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ChatPartidaController;
 use App\Http\Controllers\JugadorController;
+use App\Http\Controllers\PersonajeController;
+use App\Http\Controllers\JugadorPartidaPersonajeController;
 use App\Http\Controllers\MotorPartidaController;
 use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, App\Http\Controllers\PartidaController, App\Http\Controllers\CloudinaryController;
 use Illuminate\Http\Request;
@@ -43,6 +45,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/jugador/{id}', [JugadorController::class, 'show']);
 
+        # Rutas Acciones Personajes
+        Route::post('/accionPersonaje', [PersonajeController::class, 'accionesDelPersonaje']);
+        Route::post('/datosJugadorPartida', [JugadorPartidaPersonajeController::class, 'obtenerDatosJugadorPartida']);
+        Route::post('/asignarJugadorAPartida', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
+        Route::post('/cambiarEstadoDePersonaje', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);
+        Route::post('/resolverVotos', [JugadorPartidaPersonajeController::class, 'resolverVotos']);
         Route::post('/chat/aldea', [ChatPartidaController::class, 'enviar']);
         Route::post('/partida/cambiarFase', [MotorPartidaController::class, 'cambioFase']);
         Route::post('/partida/host', [MotorPartidaController::class, 'esHost']);
