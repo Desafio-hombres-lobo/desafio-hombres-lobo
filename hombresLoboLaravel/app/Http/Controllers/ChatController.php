@@ -12,7 +12,7 @@ class ChatController extends Controller
         $msg = $request->input('message');
         $idPartida = $request->input('partida_id');
 
-        $user = $request->user();
+        $user = $request->user()->jugador;
 
         broadcast(new MessageSent($msg, $idPartida, $user->nickname));
 
