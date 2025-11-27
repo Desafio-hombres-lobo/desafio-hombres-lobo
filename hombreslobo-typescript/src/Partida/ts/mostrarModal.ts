@@ -1,6 +1,6 @@
 import { getToken } from "../../autenticacion/ts/auth";
-import { initModalUnirse } from "../../Partida/ts/unirsePartida";
-import { initModalCrearPartida } from "../../Partida/ts/crearPartida";
+import { initModalUnirse } from "./unirsePartida";
+import { initModalCrearPartida } from "./crearPartida";
 
 export function initModal() {
   const modal = document.getElementById("modalJuego");
