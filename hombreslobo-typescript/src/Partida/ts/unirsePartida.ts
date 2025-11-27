@@ -61,7 +61,7 @@ export const initModalUnirse = (): void => {
             btnUnirse.textContent = "Unirse";
 
             btnUnirse.addEventListener("click", () => {
-              localStorage.setItem("partida_id", p.id.toString());
+              sessionStorage.setItem("partida_id", p.id.toString());
               window.location.href = "src/Lobby/html/lobby.html";
             });
 

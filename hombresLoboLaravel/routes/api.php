@@ -4,6 +4,7 @@ use App\Http\Controllers\JugadorController;
 use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, App\Http\Controllers\PartidaController, App\Http\Controllers\CloudinaryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChatController;
 
 Route::middleware('auth:sanctum')->group(function () {
     // Rutas de ADMIN (requieren token y la habilidad 'admin')
@@ -38,10 +39,29 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/partida/{id}', [PartidaController::class, 'show']);
 
-        Route::get('/jugador/{id}', [JugadorController::class, 'show']);
+        Route::get('/jugador/{id}', [JugadorController::class, 'showJugador']);
+
+        Route::post('/game/join', [PartidaController::class, 'join']);
+
+        Route::get('/creadorPartida/{id}', [PartidaController::class, 'creadorPartida']);
+
+        Route::get('/jugador', [JugadorController::class, 'jugadorActual']);
+
+        Route::get('/partida/{id}/jugadores', [PartidaController::class, 'jugadores']);
+
+        Route::post('/partida/abandonar', [PartidaController::class, 'abandonarPartida']);
+
+
+        Route::post('/chat/send', [ChatController::class, 'send']);
+
+        Route::post('/{id}/llena', [PartidaController::class, 'llenar']);
+
+        Route::post('/{partidaId}/iniciar', [PartidaController::class, 'iniciarPartida']);
+
     });
 });
 
 //Rutas publicas
 Route::post('/registrar', [AuthController::class, 'registrar']);
 Route::post('/login', [AuthController::class, 'loguear']);
+
