@@ -14,15 +14,8 @@ const inputMensaje = document.getElementById(
   "input-mensaje"
 ) as HTMLInputElement;
 const centroInfo = document.querySelector(".centro-info") as HTMLElement;
-// PRUEBAS BORRAR LUEGO
-const tablero = document.querySelector(".grid-tablero") as HTMLElement;
 const spanFase = document.getElementById("fase-partida")!;
 const headerChat = document.getElementById("h3-chat")!;
-
-// PRUEBAS BORRAR LUEGO
-renderizarCartaLobo(tablero);
-renderizarCartaAldeano(tablero);
-renderizarCartaAldeano(centroInfo);
 
 const partida_id = getPartidaId();
 
