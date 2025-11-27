@@ -2,6 +2,36 @@ import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getToken } from "../autenticacion/ts/auth";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
+
+export const obtenerCreadorPartida = async (idPartida: string | number) => {
+  const token = getToken();
+  if (!token) {
+    alert("Error: No estás autenticado. Por favor, inicia sesión.");
+    return { ok: false, error: "No autenticado" };
+  }
+
+  try {
+    const headers = getJSONHeaders();
+    const endpoint = `/creadorPartida/${idPartida}`;
+
+    const res = await fetch(construirApi(endpoint), {
+      method: "GET",
+      headers,
+    });
+
+    const datos = await res.json();
+
+    if (!res.ok) {
+      return { ok: false, error: datos };
+    }
+
+    return { ok: true, datos };
+  } catch (error) {
+    console.error("Error obteniendo creador de la partida:", error);
+    return { ok: false, error };
+  }
+};
+
 export const obtenerCreador = async (creadorId: string) => {
   const token = getToken();
 
@@ -27,5 +57,24 @@ export const obtenerCreador = async (creadorId: string) => {
   } catch (error) {
     console.error("Error cargando creador de la partida:", error);
     return null;
+  }
+};
+
+export const verificarHost = async (partida_id: any) => {
+  try {
+    const endpoint = "/partida/host";
+    const response = await fetch(construirApi(endpoint), {
+      method: "POST",
+      headers: getJSONHeaders(),
+      body: JSON.stringify({
+        partida_id: partida_id,
+      }),
+    });
+    if (!response.ok) return false;
+
+    const data = await response.json();
+    return data.esHost;
+  } catch (error) {
+    throw error;
   }
 };

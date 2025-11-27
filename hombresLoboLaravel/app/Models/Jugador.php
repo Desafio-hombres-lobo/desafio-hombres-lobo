@@ -37,5 +37,13 @@ class Jugador extends Model
         return $this->belongsToMany(Personaje::class, 'jugador_partida_personajes')
                     ->withPivot('id_partida', 'estado')
                     ->withTimestamps();
+    public function partidasActivas(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Partida::class,          
+            'jugador_partida',
+            'jugador_id',
+            'partida_id'
+        )->withTimestamps();
     }
 }
