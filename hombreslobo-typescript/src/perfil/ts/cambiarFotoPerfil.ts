@@ -21,6 +21,7 @@ export function subirFoto() {
 
       if (archivo) {
         try {
+          document.body.style.cursor = "wait";
           const respuesta = await enviarFotoPerfil(archivo);
           if (respuesta.exito) {
             cargarFoto();

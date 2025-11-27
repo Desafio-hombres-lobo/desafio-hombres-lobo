@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ChatPartidaController;
 use App\Http\Controllers\JugadorController;
+use App\Http\Controllers\MotorPartidaController;
 use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, App\Http\Controllers\PartidaController, App\Http\Controllers\CloudinaryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +41,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/partida/{id}', [PartidaController::class, 'show']);
 
+        Route::get('/jugador/{id}', [JugadorController::class, 'show']);
+
+        Route::post('/chat/aldea', [ChatPartidaController::class, 'enviar']);
+        Route::post('/partida/cambiarFase', [MotorPartidaController::class, 'cambioFase']);
+        Route::post('/partida/host', [MotorPartidaController::class, 'esHost']);
         Route::get('/jugador/{id}', [JugadorController::class, 'showJugador']);
 
         Route::post('/game/join', [PartidaController::class, 'join']);
