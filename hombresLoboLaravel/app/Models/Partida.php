@@ -20,26 +20,29 @@ class Partida extends Model
     public function jugadores(): BelongsToMany
     {
         return $this->belongsToMany(Jugador::class, 'historial_partidas_jugadores', 'id_partida', 'id_jugador')
-                    ->withPivot('ganadas', 'perdidas')
-                    ->withTimestamps();
+            ->withPivot('ganadas', 'perdidas')
+            ->withTimestamps();
     }
 
     // Jugadores de la partida con su personaje y estado
-    public function jugadoresPartidaEstado(): BelongsToMany {
+    public function jugadoresPartidaEstado(): BelongsToMany
+    {
         return $this->belongsToMany(Jugador::class, 'jugador_partida_personajes')
-                ->withPivot('id_personaje', 'estado')
-                ->withTimestamps();
+            ->withPivot('id_personaje', 'estado')
+            ->withTimestamps();
     }
 
     // Personajes de la partida con jugador y estado
-    public function personajes(): BelongsToMany {
+    public function personajes(): BelongsToMany
+    {
         return $this->belongsToMany(Personaje::class, 'jugador_partida_personajes')
-                ->withPivot('id_jugador', 'estado')
-                ->withTimestamps();
+            ->withPivot('id_jugador', 'estado')
+            ->withTimestamps();
+    }
     public function jugadoresLobby()
     {
         return $this->belongsToMany(
-            Jugador::class,         
+            Jugador::class,
             'jugador_partida',
             'partida_id',
             'jugador_id'
