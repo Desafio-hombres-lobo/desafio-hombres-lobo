@@ -1,7 +1,7 @@
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
-import { getPartidaId, getToken } from "../../autenticacion/ts/auth";
+import { getPartidaId} from "../../autenticacion/ts/auth";
 import { pusher } from "../../Partida/ts/reverb";
-import { construirApi } from "../../autenticacion/ts/apiFetch";
+import { enviarMensaje } from "../../providers/enviarMensaje";
 
 const txtMensaje =
   document.querySelector<HTMLInputElement>(".chat-input input");
@@ -15,9 +15,6 @@ if (!txtMensaje || !btnEnviar || !ulMessages) {
 }
 
 const partidaId = getPartidaId();
-const token = getToken();
-const endpoint = "/chat/send";
-const apiUrl = construirApi(endpoint);
 
 const resJugador = await obtenerJugadorActual();
 if (!resJugador.ok) {
@@ -38,32 +35,41 @@ channel.bind("message.sent", (data: { message: string; username: string }) => {
   } else {
     li.classList.add("otros");
     li.innerHTML = `
-        <span>${jugador.nickname}:</span> ${data.message}`;
+        <span>${data.username}:</span> ${data.message}`;
   }
   ulMessages.appendChild(li);
   ulMessages.scrollTop = ulMessages.scrollHeight;
 });
 
-btnEnviar.addEventListener("click", () => {
+btnEnviar.addEventListener("click", async () => {
   const mensaje = txtMensaje.value.trim();
   if (!mensaje) return;
 
-  fetch(apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      message: mensaje,
-      partida_id: partidaId,
-    }),
-  })
-    .then((res) => res.json())
-    .then((resp) => {
-      console.log("Confirmación del servidor:", resp);
-      txtMensaje.value = "";
-    })
-    .catch((err) => console.error("Error al enviar:", err));
+  const resp = await enviarMensaje({ message: mensaje, partida_id: partidaId });
+
+  if (resp.ok) {
+    console.log("Confirmación del servidor:", resp.data);
+    txtMensaje.value = "";
+  } else {
+    console.error("Error al enviar:", resp.error);
+  }
 });
+
+txtMensaje.addEventListener("keydown", async (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault(); 
+    const mensaje = txtMensaje.value.trim();
+    if (!mensaje) return;
+
+    const resp = await enviarMensaje({ message: mensaje, partida_id: partidaId });
+
+    if (resp.ok) {
+      console.log("Confirmación del servidor:", resp.data);
+      txtMensaje.value = "";
+    } else {
+      console.error("Error al enviar:", resp.error);
+    }
+  }
+});
+
+
