@@ -316,10 +316,15 @@ body {
 }
 .chat-noche {
   background-color: #000000 !important;
-  border-left-color: #111;
-  backdrop-filter: none;
-  box-shadow: none;
-  z-index: 1000;
+  border-color: #000000 !important; /* Borde negro para que desaparezca */
+  box-shadow: none !important;
+  pointer-events: none; /* IMPORTANTE: Desactiva clics y selección */
+}
+
+/* Cuando es noche, ocultamos los HIJOS del chat con opacidad 0 */
+
+.chat-noche .msg {
+  opacity: 0;
 }
 
 /* Responsive básico */

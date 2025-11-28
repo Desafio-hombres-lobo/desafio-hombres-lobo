@@ -1,8 +1,6 @@
 import { getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
 import { pintarMensaje } from "./chatAldea";
-import { formChat, inputMensaje } from "./chatAldea";
-import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
 
 const partida_id = getPartidaId();
 

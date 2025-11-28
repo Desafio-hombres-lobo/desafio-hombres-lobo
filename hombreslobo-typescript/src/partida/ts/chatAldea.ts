@@ -9,6 +9,7 @@ import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida
 import { chatLobos } from "./chatLobos";
 import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
 
+const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
 export const formChat = document.getElementById("form-chat") as HTMLFormElement;
 export const inputMensaje = document.getElementById(
@@ -26,14 +27,16 @@ let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
 let jugadores = [];
-let lobo = true; //falseo de variable lobo para comprobar funciones
+let lobo = false; //falseo de variable lobo para comprobar funciones
 
 //Se ejecuta nada más cargar el script, del que te cuento
 (async () => {
   host = await verificarHost(partida_id);
   if (host) {
     btnIniciar.classList.remove("oculto");
-    lobo = false; //host no lobo para comprobar mensajes hasta que hagamos funciones de repartir roles
+    lobo = true; //host no lobo para comprobar mensajes hasta que hagamos funciones de repartir roles
+    actualizarFaseVisual();
+    chatLobos();
   }
 })();
 
@@ -42,10 +45,6 @@ let lobo = true; //falseo de variable lobo para comprobar funciones
   jugadores = lista.listaJugadores;
 })();
 
-if (lobo) {
-  chatLobos();
-}
-
 function actualizarFaseVisual() {
   if (dia) {
     spanFase.innerHTML = "FASE: DÍA";
@@ -53,12 +52,16 @@ function actualizarFaseVisual() {
     centroInfo.classList.remove("fase-noche");
     centroInfo.classList.add("fase-dia");
     listaMensajes.classList.remove("chat-noche");
+    inputMensaje.disabled = false;
   } else {
     spanFase.innerHTML = "FASE: NOCHE";
     headerChat.innerHTML = "CHAT DE LOS LOBOS";
     centroInfo.classList.remove("fase-dia");
     centroInfo.classList.add("fase-noche");
-    if (!lobo) listaMensajes.classList.add("chat-noche");
+    if (!lobo) {
+      listaMensajes.classList.add("chat-noche");
+      inputMensaje.disabled = true;
+    }
   }
 }
 
