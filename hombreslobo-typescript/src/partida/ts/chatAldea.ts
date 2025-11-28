@@ -8,8 +8,8 @@ import { verificarHost } from "../../providers/verificarHost";
 import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
-const formChat = document.getElementById("form-chat") as HTMLFormElement;
-const inputMensaje = document.getElementById(
+export const formChat = document.getElementById("form-chat") as HTMLFormElement;
+export const inputMensaje = document.getElementById(
   "input-mensaje"
 ) as HTMLInputElement;
 const centroInfo = document.querySelector(".centro-info") as HTMLElement;
@@ -147,7 +147,7 @@ if (btnIniciar) {
   });
 }
 
-function pintarMensaje(usuario: string, texto: string) {
+export function pintarMensaje(usuario: string, texto: string) {
   const div = document.createElement("div");
 
   const miUsuario = getJugador();
