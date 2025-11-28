@@ -17,7 +17,7 @@ class ChatPartidaController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    public function enviarLobo(Request $request)
+    public function enviarLobos(Request $request)
     {
         $msg = $request->input('mensaje');
         $usuario = $request->user();
