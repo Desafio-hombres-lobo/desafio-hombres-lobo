@@ -6,6 +6,8 @@ import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
 import { verificarHost } from "../../providers/verificarHost";
 import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
+import { chatLobos } from "./chatLobos";
+import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
 export const formChat = document.getElementById("form-chat") as HTMLFormElement;
@@ -40,17 +42,23 @@ let lobo = true; //falseo de variable lobo para comprobar funciones
   jugadores = lista.listaJugadores;
 })();
 
+if (lobo) {
+  chatLobos();
+}
+
 function actualizarFaseVisual() {
   if (dia) {
     spanFase.innerHTML = "FASE: DÍA";
     headerChat.innerHTML = "CHAT DE LA ALDEA";
     centroInfo.classList.remove("fase-noche");
     centroInfo.classList.add("fase-dia");
+    listaMensajes.classList.remove("chat-noche");
   } else {
     spanFase.innerHTML = "FASE: NOCHE";
     headerChat.innerHTML = "CHAT DE LOS LOBOS";
     centroInfo.classList.remove("fase-dia");
     centroInfo.classList.add("fase-noche");
+    if (!lobo) listaMensajes.classList.add("chat-noche");
   }
 }
 
@@ -127,7 +135,11 @@ formChat.addEventListener("submit", async (e) => {
     }
   }
   try {
-    await enviarMensaje(mensaje, partida_id);
+    if (!dia && lobo) {
+      await enviarMensajeLobos(mensaje, partida_id);
+    } else {
+      await enviarMensaje(mensaje, partida_id);
+    }
   } catch {
     alert("Error");
   }

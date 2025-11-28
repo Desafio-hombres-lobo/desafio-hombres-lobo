@@ -8,6 +8,7 @@ const partida_id = getPartidaId();
 
 export const chatLobos = () => {
   const canal = conectarLobos();
+  configurarBind(canal);
 };
 
 const conectarLobos = () => {
@@ -15,19 +16,7 @@ const conectarLobos = () => {
 };
 
 const configurarBind = (canal: any) => {
-  canal.bind("nuevo-mensaje-lobos", (data: any) => {});
+  canal.bind("nuevo-mensaje-lobos", (data: any) => {
+    pintarMensaje(data.usuario, data.mensaje);
+  });
 };
-
-formChat.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const mensaje = inputMensaje.value.trim();
-  if (!mensaje) return;
-
-  inputMensaje.value = "";
-  try {
-    await enviarMensajeLobos(mensaje, partida_id);
-  } catch {
-    alert("Error");
-  }
-});

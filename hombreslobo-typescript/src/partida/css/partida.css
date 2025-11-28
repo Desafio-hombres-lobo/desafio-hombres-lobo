@@ -311,6 +311,16 @@ body {
 .chat-input-area button:hover {
   background: var(--rosa-claro);
 }
+#lista-mensajes {
+  transition: background-color 4s ease;
+}
+.chat-noche {
+  background-color: #000000 !important;
+  border-left-color: #111;
+  backdrop-filter: none;
+  box-shadow: none;
+  z-index: 1000;
+}
 
 /* Responsive básico */
 @media (max-width: 900px) {
