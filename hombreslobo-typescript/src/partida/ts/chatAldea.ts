@@ -5,6 +5,7 @@ import "../css/partida.css";
 import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
 import { verificarHost } from "../../providers/verificarHost";
+import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
 const formChat = document.getElementById("form-chat") as HTMLFormElement;
@@ -16,20 +17,25 @@ const spanFase = document.getElementById("fase-partida")!;
 const headerChat = document.getElementById("h3-chat")!;
 const reloj = document.getElementById("reloj-partida")!;
 const btnIniciar = document.getElementById("btn-iniciar")! as HTMLButtonElement;
-const partida_id = getPartidaId();
+const partida_id = getPartidaId()!;
 const textoEspera = document.getElementById("texto-espera")!;
 
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
+let jugadores = [];
 
 //Se ejecuta nada más cargar el script, del que te cuento
 (async () => {
   host = await verificarHost(partida_id);
-  console.log("¿Soy el creador de la partida?", host);
   if (host) {
     btnIniciar.classList.remove("oculto");
   }
+})();
+
+(async () => {
+  const lista = await obtenerJugadoresPartida(partida_id);
+  jugadores = lista.listaJugadores;
 })();
 
 function actualizarFaseVisual() {
