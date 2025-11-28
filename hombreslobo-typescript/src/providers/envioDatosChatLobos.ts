@@ -1,7 +1,7 @@
 import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
-export const enviarMensaje = async (mensaje: string, partida_id: any) => {
+export const enviarMensajeLobos = async (mensaje: string, partida_id: any) => {
   try {
     const endpoint = "/chat/lobos";
     const response = await fetch(construirApi(endpoint), {

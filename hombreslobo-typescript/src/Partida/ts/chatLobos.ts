@@ -2,6 +2,7 @@ import { getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
 import { pintarMensaje } from "./chatAldea";
 import { formChat, inputMensaje } from "./chatAldea";
+import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
 
 const partida_id = getPartidaId();
 
@@ -25,7 +26,7 @@ formChat.addEventListener("submit", async (e) => {
 
   inputMensaje.value = "";
   try {
-    await enviarMensaje(mensaje, partida_id);
+    await enviarMensajeLobos(mensaje, partida_id);
   } catch {
     alert("Error");
   }
