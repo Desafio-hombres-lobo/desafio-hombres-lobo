@@ -11,6 +11,7 @@ import {
   renderizarCartaLobo,
   renderizarCartaAldeano,
 } from "../../Personajes/ts/crearCartaPersonaje";
+import reversoCarta from "../../imagenes/cartas/reverso-carta.jpeg";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
 const formChat = document.getElementById("form-chat") as HTMLFormElement;
@@ -36,6 +37,21 @@ let host = false;
 const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
 const listaJugadores = datosJugadoresPartida.listaJugadores;
 const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
+const miNickname = getJugador();
+
+const renderizarReverso = (contenedor: HTMLElement) => {
+  const divReverso = document.createElement("div");
+  divReverso.className = "carta-rol carta-reverso";
+
+  divReverso.innerHTML = `
+        <div class="carta-img-container">
+            <img src="${reversoCarta}" alt="reverso-carta">
+        </div>
+        <p class="carta-titulo">Jugador</p>
+    `;
+
+  contenedor.appendChild(divReverso);
+};
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
@@ -48,6 +64,7 @@ const repartirCartasJugadores = async (
   const numAldeanos = numeroJugadoresPartida - numLobos;
   // const numAldeanos = Math.floor(numeroJugadoresPartida * porcentajeAldeanos);
 
+  console.log("Yo soy: ", miNickname);
   console.log(`Repartiendo: ${numLobos} Lobos y ${numAldeanos} Aldeanos.`);
 
   // Mazo de roles
@@ -61,17 +78,23 @@ const repartirCartasJugadores = async (
 
   for (let i = 0; i < listaJugadores.length; i++) {
     // const jugador = listaJugadores[i];
+    const nombreJugador = String(listaJugadores[i]);
     const rol = mazoRoles[i];
     const numSlot = i + 1;
 
     const slotDiv = document.createElement("div");
     slotDiv.className = `jugador slot-${numSlot}`;
+    const miUsuario = nombreJugador.trim() === miNickname?.trim();
 
     // Renderizar cartas
-    if (rol === "LOBO") {
-      await renderizarCartaLobo(slotDiv);
+    if (miUsuario) {
+      if (rol === "LOBO") {
+        await renderizarCartaLobo(slotDiv);
+      } else {
+        await renderizarCartaAldeano(slotDiv);
+      }
     } else {
-      await renderizarCartaAldeano(slotDiv);
+      renderizarReverso(slotDiv);
     }
 
     contenedorCarta.appendChild(slotDiv);
