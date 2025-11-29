@@ -76,8 +76,10 @@ canal.bind("nuevo-mensaje", (data: any) => {
 canal.bind("cambio-fase", (data: any) => {
   if (data.fase === "dia") {
     dia = true;
+    pintarMensajeSistema("La aldea despierta, es hora de debatir.");
   } else {
     dia = false;
+    pintarMensajeSistema("Los aldeanos se duermen...");
   }
   if (textoEspera) {
     textoEspera.classList.add("oculto");
@@ -183,5 +185,18 @@ export function pintarMensaje(usuario: string, texto: string) {
 
   listaMensajes.appendChild(div);
   //Autoscroll
+  listaMensajes.scrollTop = listaMensajes.scrollHeight;
+}
+
+function pintarMensajeSistema(texto: string) {
+  const div = document.createElement("div");
+
+  div.classList.add("msg", "sistema");
+
+  div.innerHTML = `${texto}`;
+
+  listaMensajes.appendChild(div);
+
+  // Autoscroll
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 }
