@@ -24,6 +24,8 @@ const reloj = document.getElementById("reloj-partida")!;
 const btnIniciar = document.getElementById("btn-iniciar")! as HTMLButtonElement;
 const partida_id = getPartidaId()!;
 const textoEspera = document.getElementById("texto-espera")!;
+
+// RENDERIZAR CARTAS AQUÍ
 const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 
 let temporizador: number | null = null;
@@ -31,46 +33,48 @@ let dia: boolean = true;
 let host = false;
 
 // PRUEBAS
-const obtenerNumeroJugadoresPartida = await obtenerJugadoresPartida(partida_id);
-const numeroJugadoresPartida = obtenerNumeroJugadoresPartida.jugadoresActuales;
+const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
+const listaJugadores = datosJugadoresPartida.listaJugadores;
+const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
 ): Promise<void> => {
   const porcentajeLobos = 0.3;
-  const porcentajeAldeanos = 0.7;
+  //const porcentajeAldeanos = 0.7;
 
   // Cantidad de cartas de cada rol
   const numLobos = Math.floor(numeroJugadoresPartida * porcentajeLobos);
-  const numAldeanos = Math.floor(numeroJugadoresPartida * porcentajeAldeanos);
+  const numAldeanos = numeroJugadoresPartida - numLobos;
+  // const numAldeanos = Math.floor(numeroJugadoresPartida * porcentajeAldeanos);
 
   console.log(`Repartiendo: ${numLobos} Lobos y ${numAldeanos} Aldeanos.`);
 
   // Mazo de roles
   const mazoRoles: string[] = [];
 
-  for (let i = 0; i < numLobos; i++) {
-    mazoRoles.push("LOBO");
-  }
-  for (let i = 0; i < numAldeanos; i++) {
-    mazoRoles.push("ALDEANO");
-  }
+  for (let i = 0; i < numLobos; i++) mazoRoles.push("LOBO");
+  for (let i = 0; i < numAldeanos; i++) mazoRoles.push("ALDEANO");
 
   // Barajar el mazo
   mazoRoles.sort(() => Math.random() - 0.5);
 
-  // Asignar rol al usuario actual (consultar al backend para esto?)
-  const miRol = mazoRoles[0];
+  for (let i = 0; i < listaJugadores.length; i++) {
+    // const jugador = listaJugadores[i];
+    const rol = mazoRoles[i];
+    const numSlot = i + 1;
 
-  // Renderizar la carta
-  contenedorCarta.innerHTML = "";
+    const slotDiv = document.createElement("div");
+    slotDiv.className = `jugador slot-${numSlot}`;
 
-  if (miRol === "LOBO") {
-    console.log("¡Te ha tocado ser HOMBRE LOBO!");
-    await renderizarCartaLobo(contenedorCarta);
-  } else {
-    console.log("Te ha tocado ser ALDEANO.");
-    await renderizarCartaAldeano(contenedorCarta);
+    // Renderizar cartas
+    if (rol === "LOBO") {
+      await renderizarCartaLobo(slotDiv);
+    } else {
+      await renderizarCartaAldeano(slotDiv);
+    }
+
+    contenedorCarta.appendChild(slotDiv);
   }
 };
 
