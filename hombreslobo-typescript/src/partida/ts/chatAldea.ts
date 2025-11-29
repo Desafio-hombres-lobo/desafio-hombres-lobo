@@ -5,6 +5,12 @@ import "../css/partida.css";
 import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
 import { verificarHost } from "../../providers/verificarHost";
+// PRUEBAS
+import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
+import {
+  renderizarCartaLobo,
+  renderizarCartaAldeano,
+} from "../../Personajes/ts/crearCartaPersonaje";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
 const formChat = document.getElementById("form-chat") as HTMLFormElement;
@@ -16,12 +22,60 @@ const spanFase = document.getElementById("fase-partida")!;
 const headerChat = document.getElementById("h3-chat")!;
 const reloj = document.getElementById("reloj-partida")!;
 const btnIniciar = document.getElementById("btn-iniciar")! as HTMLButtonElement;
-const partida_id = getPartidaId();
+const partida_id = getPartidaId()!;
 const textoEspera = document.getElementById("texto-espera")!;
+const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
+
+// PRUEBAS
+const obtenerNumeroJugadoresPartida = await obtenerJugadoresPartida(partida_id);
+const numeroJugadoresPartida = obtenerNumeroJugadoresPartida.jugadoresActuales;
+
+const repartirCartasJugadores = async (
+  numeroJugadoresPartida: number
+): Promise<void> => {
+  const porcentajeLobos = 0.3;
+  const porcentajeAldeanos = 0.7;
+
+  // Cantidad de cartas de cada rol
+  const numLobos = Math.floor(numeroJugadoresPartida * porcentajeLobos);
+  const numAldeanos = Math.floor(numeroJugadoresPartida * porcentajeAldeanos);
+
+  console.log(`Repartiendo: ${numLobos} Lobos y ${numAldeanos} Aldeanos.`);
+
+  // Mazo de roles
+  const mazoRoles: string[] = [];
+
+  for (let i = 0; i < numLobos; i++) {
+    mazoRoles.push("LOBO");
+  }
+  for (let i = 0; i < numAldeanos; i++) {
+    mazoRoles.push("ALDEANO");
+  }
+
+  // Barajar el mazo
+  mazoRoles.sort(() => Math.random() - 0.5);
+
+  // Asignar rol al usuario actual (consultar al backend para esto?)
+  const miRol = mazoRoles[0];
+
+  // Renderizar la carta
+  contenedorCarta.innerHTML = "";
+
+  if (miRol === "LOBO") {
+    console.log("¡Te ha tocado ser HOMBRE LOBO!");
+    await renderizarCartaLobo(contenedorCarta);
+  } else {
+    console.log("Te ha tocado ser ALDEANO.");
+    await renderizarCartaAldeano(contenedorCarta);
+  }
+};
+
+// PRUEBAS
+console.log("Jugadores totales partida: " + numeroJugadoresPartida);
 
 //Se ejecuta nada más cargar el script, del que te cuento
 (async () => {
@@ -52,12 +106,23 @@ canal.bind("nuevo-mensaje", (data: any) => {
   pintarMensaje(data.usuario, data.mensaje);
 });
 
-canal.bind("cambio-fase", (data: any) => {
+canal.bind("cambio-fase", async (data: any) => {
   if (data.fase === "dia") {
     dia = true;
   } else {
     dia = false;
   }
+
+  // PRUEBAS
+  const cartaYaRepartida = contenedorCarta.querySelector(".carta-rol");
+
+  if (!cartaYaRepartida) {
+    console.log(
+      "Inicio de partida detectado desde el servidor. Repartiendo carta..."
+    );
+    await repartirCartasJugadores(numeroJugadoresPartida);
+  }
+
   if (textoEspera) {
     textoEspera.classList.add("oculto");
   }
@@ -131,6 +196,10 @@ if (btnIniciar) {
     btnIniciar.innerText = "Iniciando...";
 
     try {
+      // PRUEBAS
+      // El host se reparte la carta a sí mismo inmediatamente
+      await repartirCartasJugadores(numeroJugadoresPartida);
+
       await cambiarFasePartida(partida_id, !dia);
       btnIniciar.classList.add("oculto");
     } catch (error) {
