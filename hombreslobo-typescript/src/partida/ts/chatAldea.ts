@@ -27,15 +27,17 @@ let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
 let jugadores = [];
-let lobo = false; //falseo de variable lobo para comprobar funciones
+let lobo = true; //falseo de variable lobo para comprobar funciones
 
 //Se ejecuta nada más cargar el script, del que te cuento
 (async () => {
   host = await verificarHost(partida_id);
   if (host) {
     btnIniciar.classList.remove("oculto");
-    lobo = true; //host no lobo para comprobar mensajes hasta que hagamos funciones de repartir roles
+    lobo = false; //host no lobo para comprobar mensajes hasta que hagamos funciones de repartir roles
     actualizarFaseVisual();
+    //chatLobos();
+  } else {
     chatLobos();
   }
 })();
