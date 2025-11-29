@@ -72,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/llena', [PartidaController::class, 'llenar']);
 
         Route::post('/{partidaId}/iniciar', [PartidaController::class, 'iniciarPartida']);
+        Route::post('/partida/miRol', [PartidaController::class, 'obtenerMiRol']);
 
     });
 });
