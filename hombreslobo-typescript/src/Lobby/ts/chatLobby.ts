@@ -14,7 +14,7 @@ if (!txtMensaje || !btnEnviar || !ulMessages) {
   throw new Error("No se encontraron todos los elementos del DOM necesarios.");
 }
 
-const partidaId = getPartidaId();
+const partidaId = getPartidaId()!;
 
 const resJugador = await obtenerJugadorActual();
 if (!resJugador.ok) {

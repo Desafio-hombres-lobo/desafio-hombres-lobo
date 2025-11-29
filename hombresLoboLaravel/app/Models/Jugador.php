@@ -5,13 +5,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Partida;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Jugador extends Model
 {
+    use HasFactory;
     protected $table = 'jugadores';
     protected $fillable = [
         'id_usuario',
-        'nickname'
+        'nickname',
+        'bot'
     ];
 
     public function user(): BelongsTo
