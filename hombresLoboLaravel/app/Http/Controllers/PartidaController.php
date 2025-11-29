@@ -183,6 +183,39 @@ class PartidaController extends Controller
     return response()->json(['ok' => true]);
     }
 
+    public function rellenarBots(Request $request, $idPartida)
+    {
+        $partida = Partida::findOrFail($idPartida);
+
+        $numJugadores = $request->input('numJugadores', 0);
+        $minJugadores = 15;
+
+        $faltantes = $minJugadores - $numJugadores;
+
+        if ($faltantes <= 0) {
+            return response()->json([
+                'ok' => true,
+                'botsAñadidos' => []
+            ]);
+        }
+
+        $bots = Jugador::where('bot', true)
+            ->take($faltantes)
+            ->get();
+
+        foreach ($bots as $bot) {
+            $partida->jugadoresLobby()->attach($bot->id, [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        return response()->json([
+            'ok' => true,
+        ]);
+    }
+
+
 }
 
 
