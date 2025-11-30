@@ -19,6 +19,8 @@ return new class extends Migration
 
         $table->unsignedBigInteger('partida_id');
         $table->foreign('partida_id')->references('id')->on('partidas')->onDelete('cascade');
+        $table->boolean('eliminado')->default(false);
+
 
         $table->timestamps();
 

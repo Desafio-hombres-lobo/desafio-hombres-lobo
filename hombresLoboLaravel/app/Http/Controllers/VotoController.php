@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Voto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class VotoController extends Controller
 {
@@ -40,5 +41,42 @@ class VotoController extends Controller
             'votos' => $votos,
         ]);
     }
+
+        public function resultadoVotacion($idPartida, $ronda)
+    {
+        $votos = Voto::where('id_partida', $idPartida)
+        ->where('ronda', $ronda)->get();
+
+        $conteo = $votos->groupBy('id_jugador')->map->count();
+
+        $maxVotos = $conteo->max();
+
+        $masVotados = $conteo->filter(function ($count) use ($maxVotos) {
+            return $count === $maxVotos;
+        });
+
+        // Si hay empate ¿? 
+        if ($masVotados->count() > 1) {
+            return response()->json([
+                'resultado' => 'empate',
+                'jugador_eliminado' => null
+            ]);
+        }
+
+        $idJugadorEliminado = $masVotados->keys()->first();
+
+        DB::table('jugador_partida')
+            ->where('id_partida', $idPartida)
+            ->where('id_jugador', $idJugadorEliminado)
+            ->update([
+                'estado' => 'eliminado'
+            ]);
+
+        return response()->json([
+            'resultado' => 'eliminado',
+            'jugador_eliminado' => $idJugadorEliminado
+        ]);
+    }
+
 
 }
