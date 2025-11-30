@@ -38,7 +38,7 @@ class PersonajeSeeder extends Seeder
 
         // HOMBRE LOBO
         $lobo = Personaje::create([
-            'nombre' => 'Hombre Lobo',
+            'nombre' => 'Lobo',
             'descripcion' => 'Cada noche devora a un aldeano. De día se hace pasar por uno de ellos.'
         ]);
 

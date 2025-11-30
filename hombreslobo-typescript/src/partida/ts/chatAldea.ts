@@ -1,14 +1,26 @@
 import { getJugador, getPartidaId } from "../../autenticacion/ts/auth";
+import { getJSONHeaders } from "../../autenticacion/ts/header";
+import { construirApi } from "../../autenticacion/ts/apiFetch";
 import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
 import "../css/partida.css";
 import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
 import { verificarHost } from "../../providers/verificarHost";
+import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
+import {
+  renderizarCartaLobo,
+  renderizarCartaAldeano,
+  renderizarReverso,
+} from "../../Personajes/ts/crearCartaPersonaje";
+import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
+import { chatLobos } from "./chatLobos";
+import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
 
+const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
-const formChat = document.getElementById("form-chat") as HTMLFormElement;
-const inputMensaje = document.getElementById(
+export const formChat = document.getElementById("form-chat") as HTMLFormElement;
+export const inputMensaje = document.getElementById(
   "input-mensaje"
 ) as HTMLInputElement;
 const centroInfo = document.querySelector(".centro-info") as HTMLElement;
@@ -16,20 +28,70 @@ const spanFase = document.getElementById("fase-partida")!;
 const headerChat = document.getElementById("h3-chat")!;
 const reloj = document.getElementById("reloj-partida")!;
 const btnIniciar = document.getElementById("btn-iniciar")! as HTMLButtonElement;
-const partida_id = getPartidaId();
+const partida_id = getPartidaId()!;
 const textoEspera = document.getElementById("texto-espera")!;
+const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
+let jugadores = [];
+let lobo = true; //falseo de variable lobo para comprobar funciones
+
+const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
+const listaJugadores = datosJugadoresPartida.listaJugadores;
+const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
+const miNickname = getJugador();
+
+const repartirCartasJugadores = async (
+  numeroJugadoresPartida: number
+): Promise<void> => {
+  // Obtener rol jugador
+  const miRolId = await obtenerRolPersonajeJugador();
+
+  for (let i = 0; i < listaJugadores.length; i++) {
+    let nombreJugador = String(listaJugadores[i]).trim();
+
+    const numSlot = i + 1;
+    const slotDiv = document.createElement("div");
+    slotDiv.className = `jugador slot-${numSlot}`;
+
+    const esMiUsuario = nombreJugador.trim() === miNickname?.trim();
+
+    if (esMiUsuario) {
+      slotDiv.classList.add("mi-jugador");
+
+      if (miRolId === 2) {
+        await renderizarCartaLobo(slotDiv);
+      } else if (miRolId === 1) {
+        await renderizarCartaAldeano(slotDiv);
+      } else {
+        renderizarReverso(slotDiv, nombreJugador);
+      }
+    } else {
+      renderizarReverso(slotDiv, nombreJugador);
+    }
+
+    contenedorCarta.appendChild(slotDiv);
+  }
+};
 
 //Se ejecuta nada más cargar el script, del que te cuento
 (async () => {
   host = await verificarHost(partida_id);
-  console.log("¿Soy el creador de la partida?", host);
   if (host) {
     btnIniciar.classList.remove("oculto");
+    lobo = false; //host no lobo para comprobar mensajes hasta que hagamos funciones de repartir roles
+    actualizarFaseVisual();
+    //chatLobos();
+  } else {
+    chatLobos();
   }
+})();
+
+(async () => {
+  const lista = await obtenerJugadoresPartida(partida_id);
+  jugadores = lista.listaJugadores;
 })();
 
 function actualizarFaseVisual() {
@@ -38,11 +100,17 @@ function actualizarFaseVisual() {
     headerChat.innerHTML = "CHAT DE LA ALDEA";
     centroInfo.classList.remove("fase-noche");
     centroInfo.classList.add("fase-dia");
+    listaMensajes.classList.remove("chat-noche");
+    inputMensaje.disabled = false;
   } else {
     spanFase.innerHTML = "FASE: NOCHE";
     headerChat.innerHTML = "CHAT DE LOS LOBOS";
     centroInfo.classList.remove("fase-dia");
     centroInfo.classList.add("fase-noche");
+    if (!lobo) {
+      listaMensajes.classList.add("chat-noche");
+      inputMensaje.disabled = true;
+    }
   }
 }
 
@@ -52,12 +120,25 @@ canal.bind("nuevo-mensaje", (data: any) => {
   pintarMensaje(data.usuario, data.mensaje);
 });
 
-canal.bind("cambio-fase", (data: any) => {
+canal.bind("cambio-fase", async (data: any) => {
   if (data.fase === "dia") {
     dia = true;
+    pintarMensajeSistema("La aldea despierta, es hora de debatir.");
   } else {
     dia = false;
+    pintarMensajeSistema("Los aldeanos se duermen...");
   }
+
+  // PRUEBAS
+  const cartaYaRepartida = contenedorCarta.querySelector(".carta-rol");
+
+  if (!cartaYaRepartida) {
+    console.log(
+      "Inicio de partida detectado desde el servidor. Repartiendo carta..."
+    );
+    await repartirCartasJugadores(numeroJugadoresPartida);
+  }
+
   if (textoEspera) {
     textoEspera.classList.add("oculto");
   }
@@ -119,7 +200,11 @@ formChat.addEventListener("submit", async (e) => {
     }
   }
   try {
-    await enviarMensaje(mensaje, partida_id);
+    if (!dia && lobo) {
+      await enviarMensajeLobos(mensaje, partida_id);
+    } else {
+      await enviarMensaje(mensaje, partida_id);
+    }
   } catch {
     alert("Error");
   }
@@ -131,6 +216,17 @@ if (btnIniciar) {
     btnIniciar.innerText = "Iniciando...";
 
     try {
+      const headers = getJSONHeaders();
+      const response = await fetch(construirApi(`/${partida_id}/iniciar`), {
+        method: "POST",
+        headers: headers,
+      });
+
+      if (!response.ok) throw new Error("Error al iniciar en servidor");
+
+      // El host se reparte la carta a sí mismo inmediatamente
+      await repartirCartasJugadores(numeroJugadoresPartida);
+
       await cambiarFasePartida(partida_id, !dia);
       btnIniciar.classList.add("oculto");
     } catch (error) {
@@ -141,7 +237,7 @@ if (btnIniciar) {
   });
 }
 
-function pintarMensaje(usuario: string, texto: string) {
+export function pintarMensaje(usuario: string, texto: string) {
   const div = document.createElement("div");
 
   const miUsuario = getJugador();
@@ -158,5 +254,18 @@ function pintarMensaje(usuario: string, texto: string) {
 
   listaMensajes.appendChild(div);
   //Autoscroll
+  listaMensajes.scrollTop = listaMensajes.scrollHeight;
+}
+
+function pintarMensajeSistema(texto: string) {
+  const div = document.createElement("div");
+
+  div.classList.add("msg", "sistema");
+
+  div.innerHTML = `${texto}`;
+
+  listaMensajes.appendChild(div);
+
+  // Autoscroll
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 }

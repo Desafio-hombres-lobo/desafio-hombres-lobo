@@ -311,6 +311,21 @@ body {
 .chat-input-area button:hover {
   background: var(--rosa-claro);
 }
+#lista-mensajes {
+  transition: background-color 4s ease;
+}
+.chat-noche {
+  background-color: #000000 !important;
+  border-color: #000000 !important; /* Borde negro para que desaparezca */
+  box-shadow: none !important;
+  pointer-events: none; /* IMPORTANTE: Desactiva clics y selección */
+}
+
+/* Cuando es noche, ocultamos los HIJOS del chat con opacidad 0 */
+
+.chat-noche .msg {
+  opacity: 0;
+}
 
 /* Responsive básico */
 @media (max-width: 900px) {
@@ -324,4 +339,76 @@ body {
   .contenedor-chat {
     height: 300px;
   }
+}
+
+/* ESTILOS DE FICHAS DE JUGADORES */
+
+/* El contenedor del slot (carta + nombre) */
+.grid-tablero .jugador {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.grid-tablero .jugador:hover {
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+/* La etiqueta del nombre */
+.nombre-jugador-etiqueta {
+  position: absolute;
+  bottom: -30px;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  font-family: "Bahiana", cursive;
+  white-space: nowrap;
+  border: 1px solid #444;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  z-index: 5;
+}
+
+/* ESTILOS DEL REVERSO CARTA */
+.carta-reverso {
+  background-color: #777776;
+  border: 3px solid #1a1a1a;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 140px;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.carta-reverso .carta-img-container {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #444;
+  background: #000;
+}
+
+.carta-reverso .carta-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.7;
+}
+
+.carta-reverso .carta-titulo {
+  color: #202020;
+  margin: 0;
+  font-size: 1.2rem;
+  font-family: "Bahiana", cursive;
 }

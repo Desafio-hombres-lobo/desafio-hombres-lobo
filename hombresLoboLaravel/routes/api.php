@@ -47,12 +47,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/jugador/{id}', [JugadorController::class, 'show']);
 
         # Rutas Acciones Personajes
+        Route::get('/personajes', [PersonajeController::class, 'index']);
         Route::post('/accionPersonaje', [PersonajeController::class, 'accionesDelPersonaje']);
         Route::post('/datosJugadorPartida', [JugadorPartidaPersonajeController::class, 'obtenerDatosJugadorPartida']);
         Route::post('/asignarJugadorAPartida', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
         Route::post('/cambiarEstadoDePersonaje', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);
         Route::post('/resolverVotos', [JugadorPartidaPersonajeController::class, 'resolverVotos']);
         Route::post('/chat/aldea', [ChatPartidaController::class, 'enviar']);
+        Route::post('/chat/lobos', [ChatPartidaController::class, 'enviarLobos']);
         Route::post('/partida/cambiarFase', [MotorPartidaController::class, 'cambioFase']);
         Route::post('/partida/host', [MotorPartidaController::class, 'esHost']);
         Route::get('/jugador/{id}', [JugadorController::class, 'showJugador']);
@@ -73,6 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/llena', [PartidaController::class, 'llenar']);
 
         Route::post('/{partidaId}/iniciar', [PartidaController::class, 'iniciarPartida']);
+        Route::post('/partida/miRol', [PartidaController::class, 'obtenerMiRol']);
 
         Route::post('/partidas/{idPartida}/votar', [VotoController::class, 'votar']);
         Route::get('/partidas/{idPartida}/votos/{ronda}', [VotoController::class, 'obtenerVotos']);
