@@ -316,9 +316,9 @@ body {
 }
 .chat-noche {
   background-color: #000000 !important;
-  border-color: #000000 !important; /* Borde negro para que desaparezca */
+  border-color: #000000 !important;
   box-shadow: none !important;
-  pointer-events: none; /* IMPORTANTE: Desactiva clics y selección */
+  pointer-events: none;
 }
 
 /* Cuando es noche, ocultamos los HIJOS del chat con opacidad 0 */
@@ -411,4 +411,41 @@ body {
   margin: 0;
   font-size: 1.2rem;
   font-family: "Bahiana", cursive;
+}
+
+.mi-jugador {
+  border: 2px solid var(--amarillo);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  z-index: 20;
+  transform: scale(1.05);
+}
+
+.mi-jugador::before {
+  content: "TÚ";
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--amarillo);
+  color: var(--negro);
+  font-family: var(--fuente-titulo, sans-serif);
+  font-weight: bold;
+  font-size: larger;
+  padding: 2px 8px;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  animation: flotar 2s infinite ease-in-out;
+}
+
+@keyframes flotar {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
 }
