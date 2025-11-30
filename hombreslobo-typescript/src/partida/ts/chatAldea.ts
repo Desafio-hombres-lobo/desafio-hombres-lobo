@@ -1,4 +1,6 @@
 import { getJugador, getPartidaId } from "../../autenticacion/ts/auth";
+import { getJSONHeaders } from "../../autenticacion/ts/header";
+import { construirApi } from "../../autenticacion/ts/apiFetch";
 import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
 import "../css/partida.css";
@@ -6,6 +8,12 @@ import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
 import { verificarHost } from "../../providers/verificarHost";
 import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
+import {
+  renderizarCartaLobo,
+  renderizarCartaAldeano,
+  renderizarReverso,
+} from "../../Personajes/ts/crearCartaPersonaje";
+import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
 import { chatLobos } from "./chatLobos";
 import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
 
@@ -22,12 +30,51 @@ const reloj = document.getElementById("reloj-partida")!;
 const btnIniciar = document.getElementById("btn-iniciar")! as HTMLButtonElement;
 const partida_id = getPartidaId()!;
 const textoEspera = document.getElementById("texto-espera")!;
+const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
 let jugadores = [];
 let lobo = true; //falseo de variable lobo para comprobar funciones
+
+const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
+const listaJugadores = datosJugadoresPartida.listaJugadores;
+const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
+const miNickname = getJugador();
+
+const repartirCartasJugadores = async (
+  numeroJugadoresPartida: number
+): Promise<void> => {
+  // Obtener rol jugador
+  const miRolId = await obtenerRolPersonajeJugador();
+
+  for (let i = 0; i < listaJugadores.length; i++) {
+    let nombreJugador = String(listaJugadores[i]).trim();
+
+    const numSlot = i + 1;
+    const slotDiv = document.createElement("div");
+    slotDiv.className = `jugador slot-${numSlot}`;
+
+    const esMiUsuario = nombreJugador.trim() === miNickname?.trim();
+
+    if (esMiUsuario) {
+      slotDiv.classList.add("mi-jugador");
+
+      if (miRolId === 2) {
+        await renderizarCartaLobo(slotDiv);
+      } else if (miRolId === 1) {
+        await renderizarCartaAldeano(slotDiv);
+      } else {
+        renderizarReverso(slotDiv, nombreJugador);
+      }
+    } else {
+      renderizarReverso(slotDiv, nombreJugador);
+    }
+
+    contenedorCarta.appendChild(slotDiv);
+  }
+};
 
 //Se ejecuta nada más cargar el script, del que te cuento
 (async () => {
@@ -73,7 +120,7 @@ canal.bind("nuevo-mensaje", (data: any) => {
   pintarMensaje(data.usuario, data.mensaje);
 });
 
-canal.bind("cambio-fase", (data: any) => {
+canal.bind("cambio-fase", async (data: any) => {
   if (data.fase === "dia") {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
@@ -81,6 +128,17 @@ canal.bind("cambio-fase", (data: any) => {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
   }
+
+  // PRUEBAS
+  const cartaYaRepartida = contenedorCarta.querySelector(".carta-rol");
+
+  if (!cartaYaRepartida) {
+    console.log(
+      "Inicio de partida detectado desde el servidor. Repartiendo carta..."
+    );
+    await repartirCartasJugadores(numeroJugadoresPartida);
+  }
+
   if (textoEspera) {
     textoEspera.classList.add("oculto");
   }
@@ -158,6 +216,17 @@ if (btnIniciar) {
     btnIniciar.innerText = "Iniciando...";
 
     try {
+      const headers = getJSONHeaders();
+      const response = await fetch(construirApi(`/${partida_id}/iniciar`), {
+        method: "POST",
+        headers: headers,
+      });
+
+      if (!response.ok) throw new Error("Error al iniciar en servidor");
+
+      // El host se reparte la carta a sí mismo inmediatamente
+      await repartirCartasJugadores(numeroJugadoresPartida);
+
       await cambiarFasePartida(partida_id, !dia);
       btnIniciar.classList.add("oculto");
     } catch (error) {

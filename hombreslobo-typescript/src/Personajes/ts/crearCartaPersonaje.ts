@@ -3,11 +3,15 @@ import { ejecutarAccion } from "./accionesCartaPersonaje";
 import "../css/styles.css";
 import loboImg from "../../imagenes/cartas/lobo.png";
 import aldeanoImg from "../../imagenes/cartas/aldeano.png";
+import reversoCarta from "../../imagenes/cartas/reverso-carta.jpeg";
+import { obtenerPersonajes } from "../../providers/obtenerPersonajes";
 
-const ID_ALDEANO = 1;
-const ID_LOBO = 2;
+let ID_ALDEANO = 1;
+let ID_LOBO = 2;
 const IMG_HOMBRE_LOBO = loboImg;
 const IMG_ALDEANO = aldeanoImg;
+const contenedorCarta = document.createElement("div");
+const personajes = await obtenerPersonajes();
 
 export const renderizarCartaLobo = async (
   contenedor: HTMLElement
@@ -15,16 +19,15 @@ export const renderizarCartaLobo = async (
   const datosAccionesPersonaje: any = await obtenerAccionesPersonaje(ID_LOBO);
 
   if (!datosAccionesPersonaje) {
-    contenedor.innerHTML = "<p>Error al cargar Hombre Lobo</p>";
+    contenedor.innerHTML = "<p>Error al cargar Lobo</p>";
     return;
   }
 
   const listaAcciones = datosAccionesPersonaje.acciones;
-  const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Hombre Lobo";
+  const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Lobo";
   const idAccion = listaAcciones[0]?.id_accion;
   const idJugador = listaAcciones[0]?.id_jugador;
   const idPersonaje = listaAcciones[0]?.id_personaje;
-  const contenedorCarta = document.createElement("div");
 
   contenedorCarta.innerHTML = `
         <div class="carta-rol carta-lobo" data-id="${idAccion}"> <div class="carta-img-container">
@@ -56,7 +59,6 @@ export const renderizarCartaAldeano = async (
   const idAccion = listaAcciones[0]?.id_accion;
   const idJugador = listaAcciones[0]?.id_jugador;
   const idPersonaje = listaAcciones[0]?.id_personaje;
-  const contenedorCarta = document.createElement("div");
 
   contenedorCarta.innerHTML = `
         <div class="carta-rol carta-aldeano" data-id=""${idAccion}> <div class="carta-img-container">
@@ -69,4 +71,22 @@ export const renderizarCartaAldeano = async (
 
   contenedor.appendChild(contenedorCarta);
   ejecutarAccion(contenedorCarta, idAccion, idJugador, idPersonaje);
+};
+
+export const renderizarReverso = async (
+  contenedor: HTMLElement,
+  nombreJugador: string
+) => {
+  const divReverso = document.createElement("div");
+  divReverso.className = "carta-rol carta-reverso";
+
+  divReverso.innerHTML = `
+        <div class="carta-img-container">
+            <img src="${reversoCarta}" alt="reverso-carta">
+        </div>
+        <p class="carta-titulo">${nombreJugador}</p>
+    `;
+
+  contenedor.appendChild(divReverso);
+  // ejecutarAccion(contenedorCarta, idAccion, idJugador, idPersonaje);
 };

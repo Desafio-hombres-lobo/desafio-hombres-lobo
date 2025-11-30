@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/jugador/{id}', [JugadorController::class, 'show']);
 
         # Rutas Acciones Personajes
+        Route::get('/personajes', [PersonajeController::class, 'index']);
         Route::post('/accionPersonaje', [PersonajeController::class, 'accionesDelPersonaje']);
         Route::post('/datosJugadorPartida', [JugadorPartidaPersonajeController::class, 'obtenerDatosJugadorPartida']);
         Route::post('/asignarJugadorAPartida', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
@@ -73,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/llena', [PartidaController::class, 'llenar']);
 
         Route::post('/{partidaId}/iniciar', [PartidaController::class, 'iniciarPartida']);
+        Route::post('/partida/miRol', [PartidaController::class, 'obtenerMiRol']);
 
     });
 });

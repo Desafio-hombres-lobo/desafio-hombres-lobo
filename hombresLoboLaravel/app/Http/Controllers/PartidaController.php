@@ -7,7 +7,9 @@ use App\Events\PlayerJoined;
 use App\Events\IniciarPartida;
 use App\Models\Jugador;
 use App\Models\Partida;
+use App\Models\JugadorPartidaPersonaje;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PartidaController extends Controller
@@ -179,8 +181,96 @@ class PartidaController extends Controller
 }
 
     public function iniciarPartida($idPartida){
-    broadcast(new IniciarPartida($idPartida));
-    return response()->json(['ok' => true]);
+        // broadcast(new IniciarPartida($idPartida));
+        // return response()->json(['ok' => true]);
+        $partida = Partida::find($idPartida);
+
+        if(!$partida){
+            return response()->json(['error' => 'Partida no encontrada', 400]);
+        }
+
+        // Obtener jugadores de la lobby
+        $jugadores = $partida->jugadoresLobby()->get();
+        $totalJugadores = $jugadores->count();
+
+        $numLobos = floor($totalJugadores * 0.3);
+
+        // Mínimo un lobo siempre
+        if($numLobos < 1){
+            $numLobos = 1;
+        }
+
+        $numAldeanos = $totalJugadores - $numLobos;
+
+        // Crear mazo con ID´s
+        $mazo = [];
+        for($i = 0; $i < $numLobos; $i++){
+            $mazo[] = 2;
+        }
+
+        for($i = 0; $i < $numAldeanos; $i++){
+            $mazo[] = 1;
+        }
+
+        shuffle($mazo);
+
+        // Guardar en la BD (ayuda IA)
+        DB::beginTransaction();
+        try {
+            foreach ($jugadores as $index => $jugador) {
+                // updateOrCreate para evitar duplicados si se le da dos veces
+                JugadorPartidaPersonaje::updateOrCreate(
+                    [
+                        'id_partida' => $partida->id,
+                        'id_jugador' => $jugador->id
+                    ],
+                    [
+                        'id_personaje' => $mazo[$index],
+                        'estado' => 1, // 1 = Vivo
+                        'votos' => 0
+                    ]
+                );
+            }
+
+            // Cambiar estado partida a "Iniciada"
+            $partida->estado = 1;
+            $partida->save();
+
+            DB::commit();
+
+            // Avisar a todos
+            broadcast(new IniciarPartida($idPartida));
+
+            return response()->json(['ok' => true, 'mensaje' => 'Roles repartidos y partida iniciada']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Error repartiendo roles: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function obtenerMiRol(Request $request)
+    {
+        $user = $request->user();
+        $jugador = $user->jugador;
+
+        $request->validate([
+            'partida_id' => 'required|exists:partidas,id'
+        ]);
+
+        $asignacion = JugadorPartidaPersonaje::where('id_partida', $request->partida_id)
+                        ->where('id_jugador', $jugador->id)
+                        ->first();
+
+        if (!$asignacion) {
+            // Si la partida no ha empezado, no tiene rol aún
+            return response()->json(['rol_id' => null], 200);
+        }
+
+        return response()->json([
+            'rol_id' => $asignacion->id_personaje,
+            'estado' => $asignacion->estado
+        ]);
     }
 
 }
