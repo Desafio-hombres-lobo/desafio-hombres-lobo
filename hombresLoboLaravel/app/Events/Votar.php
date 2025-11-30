@@ -27,7 +27,7 @@ class Votar implements ShouldBroadcast
 
         public function broadcastOn()
         {
-            return new Channel("aldea.{$this->idPartida}");
+            return new Channel('aldea' . $this->idPartida);
         }
 
         public function broadcastAs()

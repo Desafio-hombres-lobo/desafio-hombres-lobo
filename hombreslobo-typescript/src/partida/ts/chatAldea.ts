@@ -89,10 +89,8 @@ const repartirCartasJugadores = async (
 
       const resultado = await votar(partida_id, payload);
 
-      if (resultado.ok) {
-        pintarMensajeSistema(`Has votado a ${nombreJugador}`);
-      } else {
-        pintarMensajeSistema(`Error al votar: ${resultado.error}`);
+      if (!resultado.ok) {
+        alert(`Error al votar: ${resultado.error}`);
       }
     });
 

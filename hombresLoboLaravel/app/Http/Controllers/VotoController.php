@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\VotacionTerminada;
 use App\Events\Votar;
+use App\Models\Jugador;
 use App\Models\Voto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,10 +26,13 @@ class VotoController extends Controller
             'ronda' => $validated['ronda'],
         ]);
 
+        $jugador = Jugador::find($validated['id_jugador']);
+        $jugadoVotado = Jugador::find($validated['id_jugador_votado']);
+
         event(new Votar(
-        $idPartida,
-        $validated['id_jugador'],
-        $validated['id_jugador_votado']
+            $idPartida,
+            $jugador->nickname,
+            $jugadoVotado->nickname
         ));
 
         return response()->json([
