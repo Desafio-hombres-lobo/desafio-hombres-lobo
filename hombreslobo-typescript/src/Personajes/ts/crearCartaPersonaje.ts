@@ -4,11 +4,14 @@ import "../css/styles.css";
 import loboImg from "../../imagenes/cartas/lobo.png";
 import aldeanoImg from "../../imagenes/cartas/aldeano.png";
 import reversoCarta from "../../imagenes/cartas/reverso-carta.jpeg";
+import { obtenerPersonajes } from "../../providers/obtenerPersonajes";
 
-const ID_ALDEANO = 1;
-const ID_LOBO = 2;
+let ID_ALDEANO = 1;
+let ID_LOBO = 2;
 const IMG_HOMBRE_LOBO = loboImg;
 const IMG_ALDEANO = aldeanoImg;
+const contenedorCarta = document.createElement("div");
+const personajes = await obtenerPersonajes();
 
 export const renderizarCartaLobo = async (
   contenedor: HTMLElement
@@ -25,7 +28,6 @@ export const renderizarCartaLobo = async (
   const idAccion = listaAcciones[0]?.id_accion;
   const idJugador = listaAcciones[0]?.id_jugador;
   const idPersonaje = listaAcciones[0]?.id_personaje;
-  const contenedorCarta = document.createElement("div");
 
   contenedorCarta.innerHTML = `
         <div class="carta-rol carta-lobo" data-id="${idAccion}"> <div class="carta-img-container">
@@ -57,7 +59,6 @@ export const renderizarCartaAldeano = async (
   const idAccion = listaAcciones[0]?.id_accion;
   const idJugador = listaAcciones[0]?.id_jugador;
   const idPersonaje = listaAcciones[0]?.id_personaje;
-  const contenedorCarta = document.createElement("div");
 
   contenedorCarta.innerHTML = `
         <div class="carta-rol carta-aldeano" data-id=""${idAccion}> <div class="carta-img-container">
@@ -72,7 +73,7 @@ export const renderizarCartaAldeano = async (
   ejecutarAccion(contenedorCarta, idAccion, idJugador, idPersonaje);
 };
 
-export const renderizarReverso = (
+export const renderizarReverso = async (
   contenedor: HTMLElement,
   nombreJugador: string
 ) => {
@@ -87,4 +88,5 @@ export const renderizarReverso = (
     `;
 
   contenedor.appendChild(divReverso);
+  // ejecutarAccion(contenedorCarta, idAccion, idJugador, idPersonaje);
 };

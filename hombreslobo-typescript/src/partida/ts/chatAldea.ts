@@ -27,8 +27,6 @@ const reloj = document.getElementById("reloj-partida")!;
 const btnIniciar = document.getElementById("btn-iniciar")! as HTMLButtonElement;
 const partida_id = getPartidaId()!;
 const textoEspera = document.getElementById("texto-espera")!;
-
-// RENDERIZAR CARTAS AQUÍ
 const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 
 let temporizador: number | null = null;

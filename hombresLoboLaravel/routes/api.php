@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/jugador/{id}', [JugadorController::class, 'show']);
 
         # Rutas Acciones Personajes
+        Route::get('/personajes', [PersonajeController::class, 'index']);
         Route::post('/accionPersonaje', [PersonajeController::class, 'accionesDelPersonaje']);
         Route::post('/datosJugadorPartida', [JugadorPartidaPersonajeController::class, 'obtenerDatosJugadorPartida']);
         Route::post('/asignarJugadorAPartida', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
