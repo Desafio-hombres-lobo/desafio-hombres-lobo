@@ -16,6 +16,8 @@ import {
 import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
 import { chatLobos } from "./chatLobos";
 import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
+import { votar } from "../../providers/votos/enviarDatosVoto";
+import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -37,30 +39,34 @@ let dia: boolean = true;
 let host = false;
 let jugadores = [];
 let lobo = true; //falseo de variable lobo para comprobar funciones
+let ronda=0;
 
 const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
 const listaJugadores = datosJugadoresPartida.listaJugadores;
 const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
 const miNickname = getJugador();
+const jugadorActual = await obtenerJugadorActual();
+const idJugador = jugadorActual.datos?.id
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
 ): Promise<void> => {
-  // Obtener rol jugador
   const miRolId = await obtenerRolPersonajeJugador();
 
   for (let i = 0; i < listaJugadores.length; i++) {
     let nombreJugador = String(listaJugadores[i]).trim();
-
     const numSlot = i + 1;
+
     const slotDiv = document.createElement("div");
     slotDiv.className = `jugador slot-${numSlot}`;
+    slotDiv.dataset.jugador = nombreJugador; 
+    slotDiv.dataset.id = (i + 1).toString(); 
+
 
     const esMiUsuario = nombreJugador.trim() === miNickname?.trim();
 
     if (esMiUsuario) {
       slotDiv.classList.add("mi-jugador");
-
       if (miRolId === 2) {
         await renderizarCartaLobo(slotDiv);
       } else if (miRolId === 1) {
@@ -71,10 +77,31 @@ const repartirCartasJugadores = async (
     } else {
       renderizarReverso(slotDiv, nombreJugador);
     }
+    
+    if(dia){
+    slotDiv.addEventListener("click", async () => {
+      const idVotado = parseInt(slotDiv.dataset.id!); 
+      const payload = {
+        id_jugador: idJugador,
+        id_jugador_votado: idVotado,
+        ronda: ronda,
+      };
+
+      const resultado = await votar(partida_id, payload);
+
+      if (resultado.ok) {
+        pintarMensajeSistema(`Has votado a ${nombreJugador}`);
+      } else {
+        pintarMensajeSistema(`Error al votar: ${resultado.error}`);
+      }
+    });
+
 
     contenedorCarta.appendChild(slotDiv);
   }
 };
+}
+
 
 //Se ejecuta nada más cargar el script, del que te cuento
 (async () => {
@@ -112,6 +139,7 @@ function actualizarFaseVisual() {
       inputMensaje.disabled = true;
     }
   }
+  ronda++
 }
 
 const canal = pusher.subscribe("aldea" + partida_id);
@@ -129,6 +157,7 @@ canal.bind("cambio-fase", async (data: any) => {
     pintarMensajeSistema("Los aldeanos se duermen...");
   }
 
+
   // PRUEBAS
   const cartaYaRepartida = contenedorCarta.querySelector(".carta-rol");
 
@@ -144,6 +173,12 @@ canal.bind("cambio-fase", async (data: any) => {
   }
   actualizarFaseVisual();
   iniciarCuentaAtras(data.tiempoFin);
+});
+
+canal.bind("voto", (data: any) => {
+  pintarMensajeSistema(
+    `${data.idVotante} ha votado a ${data.idVotado}`
+  );
 });
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {
