@@ -12,8 +12,7 @@ import {
   renderizarCartaAldeano,
 } from "../../Personajes/ts/crearCartaPersonaje";
 import reversoCarta from "../../imagenes/cartas/reverso-carta.jpeg";
-import { getJSONHeaders } from "../../autenticacion/ts/header";
-import { construirApi } from "../../autenticacion/ts/apiFetch";
+import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
 const formChat = document.getElementById("form-chat") as HTMLFormElement;
@@ -59,22 +58,7 @@ const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
 ): Promise<void> => {
   // Obtener rol jugador
-  let miRolId = null;
-  try {
-    const headers = getJSONHeaders();
-    const response = await fetch(construirApi(`/partida/miRol`), {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({ partida_id: partida_id }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      miRolId = data.rol_id;
-    }
-  } catch (error) {
-    console.error(error);
-  }
+  const miRolId = await obtenerRolPersonajeJugador();
 
   for (let i = 0; i < listaJugadores.length; i++) {
     let nombreJugador = String(listaJugadores[i]).trim();
