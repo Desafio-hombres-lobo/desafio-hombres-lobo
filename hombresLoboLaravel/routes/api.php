@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, Ap
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\VotoController;
 
 Route::middleware('auth:sanctum')->group(function () {
     // Rutas de ADMIN (requieren token y la habilidad 'admin')
@@ -72,6 +73,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/llena', [PartidaController::class, 'llenar']);
 
         Route::post('/{partidaId}/iniciar', [PartidaController::class, 'iniciarPartida']);
+
+        Route::post('/partidas/{idPartida}/votar', [VotoController::class, 'votar']);
+        Route::get('/partidas/{idPartida}/votos/{ronda}', [VotoController::class, 'obtenerVotos']);
 
     });
 });
