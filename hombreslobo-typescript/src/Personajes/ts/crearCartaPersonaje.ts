@@ -15,12 +15,12 @@ export const renderizarCartaLobo = async (
   const datosAccionesPersonaje: any = await obtenerAccionesPersonaje(ID_LOBO);
 
   if (!datosAccionesPersonaje) {
-    contenedor.innerHTML = "<p>Error al cargar Hombre Lobo</p>";
+    contenedor.innerHTML = "<p>Error al cargar Lobo</p>";
     return;
   }
 
   const listaAcciones = datosAccionesPersonaje.acciones;
-  const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Hombre Lobo";
+  const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Lobo";
   const idAccion = listaAcciones[0]?.id_accion;
   const idJugador = listaAcciones[0]?.id_jugador;
   const idPersonaje = listaAcciones[0]?.id_personaje;
