@@ -3,6 +3,7 @@ import { ejecutarAccion } from "./accionesCartaPersonaje";
 import "../css/styles.css";
 import loboImg from "../../imagenes/cartas/lobo.png";
 import aldeanoImg from "../../imagenes/cartas/aldeano.png";
+import reversoCarta from "../../imagenes/cartas/reverso-carta.jpeg";
 
 const ID_ALDEANO = 1;
 const ID_LOBO = 2;
@@ -69,4 +70,21 @@ export const renderizarCartaAldeano = async (
 
   contenedor.appendChild(contenedorCarta);
   ejecutarAccion(contenedorCarta, idAccion, idJugador, idPersonaje);
+};
+
+export const renderizarReverso = (
+  contenedor: HTMLElement,
+  nombreJugador: string
+) => {
+  const divReverso = document.createElement("div");
+  divReverso.className = "carta-rol carta-reverso";
+
+  divReverso.innerHTML = `
+        <div class="carta-img-container">
+            <img src="${reversoCarta}" alt="reverso-carta">
+        </div>
+        <p class="carta-titulo">${nombreJugador}</p>
+    `;
+
+  contenedor.appendChild(divReverso);
 };

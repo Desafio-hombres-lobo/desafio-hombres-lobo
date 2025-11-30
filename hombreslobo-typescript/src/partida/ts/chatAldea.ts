@@ -1,17 +1,18 @@
 import { getJugador, getPartidaId } from "../../autenticacion/ts/auth";
+import { getJSONHeaders } from "../../autenticacion/ts/header";
+import { construirApi } from "../../autenticacion/ts/apiFetch";
 import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
 import "../css/partida.css";
 import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
 import { verificarHost } from "../../providers/verificarHost";
-// PRUEBAS
 import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
 import {
   renderizarCartaLobo,
   renderizarCartaAldeano,
+  renderizarReverso,
 } from "../../Personajes/ts/crearCartaPersonaje";
-import reversoCarta from "../../imagenes/cartas/reverso-carta.jpeg";
 import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -34,25 +35,10 @@ let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
 
-// PRUEBAS
 const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
 const listaJugadores = datosJugadoresPartida.listaJugadores;
 const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
 const miNickname = getJugador();
-
-const renderizarReverso = (contenedor: HTMLElement, nombreJugador: string) => {
-  const divReverso = document.createElement("div");
-  divReverso.className = "carta-rol carta-reverso";
-
-  divReverso.innerHTML = `
-        <div class="carta-img-container">
-            <img src="${reversoCarta}" alt="reverso-carta">
-        </div>
-        <p class="carta-titulo">${nombreJugador}</p>
-    `;
-
-  contenedor.appendChild(divReverso);
-};
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
@@ -206,7 +192,6 @@ if (btnIniciar) {
     btnIniciar.innerText = "Iniciando...";
 
     try {
-      // PRUEBAS
       const headers = getJSONHeaders();
       const response = await fetch(construirApi(`/${partida_id}/iniciar`), {
         method: "POST",
