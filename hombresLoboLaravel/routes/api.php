@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/cambiarEstadoDePersonaje', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);
         Route::post('/resolverVotos', [JugadorPartidaPersonajeController::class, 'resolverVotos']);
         Route::post('/chat/aldea', [ChatPartidaController::class, 'enviar']);
+        Route::post('/chat/lobos', [ChatPartidaController::class, 'enviarLobos']);
         Route::post('/partida/cambiarFase', [MotorPartidaController::class, 'cambioFase']);
         Route::post('/partida/host', [MotorPartidaController::class, 'esHost']);
         Route::get('/jugador/{id}', [JugadorController::class, 'showJugador']);
