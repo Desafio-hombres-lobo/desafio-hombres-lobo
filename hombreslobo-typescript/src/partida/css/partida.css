@@ -311,6 +311,21 @@ body {
 .chat-input-area button:hover {
   background: var(--rosa-claro);
 }
+#lista-mensajes {
+  transition: background-color 4s ease;
+}
+.chat-noche {
+  background-color: #000000 !important;
+  border-color: #000000 !important; /* Borde negro para que desaparezca */
+  box-shadow: none !important;
+  pointer-events: none; /* IMPORTANTE: Desactiva clics y selección */
+}
+
+/* Cuando es noche, ocultamos los HIJOS del chat con opacidad 0 */
+
+.chat-noche .msg {
+  opacity: 0;
+}
 
 /* Responsive básico */
 @media (max-width: 900px) {
