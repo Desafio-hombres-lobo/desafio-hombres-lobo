@@ -41,7 +41,7 @@ let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
 let jugadores = [];
-
+let muerto = false;
 let ronda = 0;
 let rondaFinalizada = false;
 let votos = 0;
@@ -188,6 +188,9 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+    if (data.eliminado === miNickname) {
+      muerto = true;
+    }
     if (data.idPersonaje) {
       await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
     }
@@ -255,10 +258,10 @@ formChat.addEventListener("submit", async (e) => {
     }
   }
   try {
-    if (!dia && lobo) {
+    if (!dia && lobo && !muerto) {
       await enviarMensajeLobos(mensaje, partida_id);
     } else {
-      await enviarMensaje(mensaje, partida_id);
+      if (!muerto) await enviarMensaje(mensaje, partida_id);
     }
   } catch {
     alert("Error");
