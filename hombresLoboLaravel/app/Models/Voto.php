@@ -27,4 +27,10 @@ class Voto extends Model
     {
         return $this->belongsTo(Jugador::class, 'id_jugador_votado');
     }
+
+    public static function votosPartida($idPartida)
+    {
+        return self::where('id_partida', $idPartida)->get();
+    }
+
 }

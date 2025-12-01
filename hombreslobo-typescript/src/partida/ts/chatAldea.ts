@@ -20,6 +20,7 @@ import { votar } from "../../providers/votos/enviarDatosVoto";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { cerrarVotacion, mostrarVotacion } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
+import { votarYHablarBot } from "../../providers/votos/obtenerVotoBot";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -39,11 +40,18 @@ const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
-let jugadores = [];
+type Jugador = {
+  id: number;
+  nickname: string;
+  esBot: boolean;
+  [key: string]: any; // si tiene más campos
+};
 
-let ronda=0;
-let rondaFinalizada=false;
-let votos =0;
+let jugadores: Jugador[] = [];
+
+let ronda = 0;
+let rondaFinalizada = false;
+let votos = 0;
 let lobo = false;
 
 const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
@@ -51,13 +59,12 @@ const listaJugadores = datosJugadoresPartida.listaJugadores;
 const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
 const miNickname = getJugador();
 const jugadorActual = await obtenerJugadorActual();
-const idJugador = jugadorActual.datos?.id
+const idJugador = jugadorActual.datos?.id;
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
 ): Promise<void> => {
   const miRolId = await obtenerRolPersonajeJugador();
-  contenedorCarta.innerHTML = "";
 
   for (let i = 0; i < listaJugadores.length; i++) {
     const jugador = listaJugadores[i];
@@ -87,9 +94,9 @@ const repartirCartasJugadores = async (
       renderizarReverso(slotDiv, nombreJugador);
     }
 
-
     slotDiv.addEventListener("click", async () => {
       if (!dia) return;
+      if (esMiUsuario) return;
       const idVotado = parseInt(slotDiv.dataset.id!);
       const payload = {
         id_jugador: idJugador,
@@ -107,17 +114,11 @@ const repartirCartasJugadores = async (
   }
 };
 
-
-
 //Se ejecuta nada más cargar el script, del que te cuento
 (async () => {
   host = await verificarHost(partida_id);
   if (host) {
     btnIniciar.classList.remove("oculto");
-    if(listaJugadores.length === votos || rondaFinalizada){
-              await finalizarVotacion(partida_id, ronda); 
-            await cambiarFasePartida(partida_id, !dia);
-            }
   }
 })();
 
@@ -144,8 +145,8 @@ function actualizarFaseVisual() {
       inputMensaje.disabled = true;
     }
   }
-  ronda++
-  rondaFinalizada = true
+  ronda++;
+  rondaFinalizada = false;
 }
 
 const canal = pusher.subscribe("aldea" + partida_id);
@@ -158,11 +159,18 @@ canal.bind("cambio-fase", async (data: any) => {
   if (data.fase === "dia") {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
+    const bots = jugadores.filter(j => j.esBot); 
+
+  for (const bot of bots) {
+    setTimeout(() => {
+      votarYHablarBot(partida_id, bot.id);
+    }, Math.random() * 2000 + 1000); 
+  }
+
   } else {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
   }
-
 
   // PRUEBAS
   const cartaYaRepartida = contenedorCarta.querySelector(".carta-rol");
@@ -182,10 +190,14 @@ canal.bind("cambio-fase", async (data: any) => {
 });
 
 canal.bind("voto", (data: any) => {
-  pintarMensajeSistema(
-    `${data.idVotante} ha votado a ${data.idVotado}`
-  );
-  votos++
+  pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
+  votos++;
+  if (host && votos >= numeroJugadoresPartida) {
+    setTimeout(async () => {
+      await finalizarVotacion(partida_id, ronda);
+      await cambiarFasePartida(partida_id, !dia);
+    }, 1000);
+  }
 });
 
 canal.bind("votacion-terminada", (data: any) => {
@@ -194,10 +206,8 @@ canal.bind("votacion-terminada", (data: any) => {
   } else {
     mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
   }
-  setTimeout(() => cerrarVotacion(), 5000);
+  setTimeout(() => cerrarVotacion(), 3000);
 });
-
-
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {
   if (temporizador) {
@@ -209,14 +219,24 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
     const distancia = fechaObjetivo - ahora;
 
     if (distancia < 0) {
-      
       if (temporizador) {
         window.clearInterval(temporizador);
+        temporizador = null; // Importante limpiar la variable
         reloj.innerHTML = '<i class="fas fa-clock"></i> 00:00';
-        rondaFinalizada=true;
-      }
-    }
+        rondaFinalizada = true;
 
+        if (host) {
+          console.log("Tiempo agotado. Como host, cambio la fase.");
+          try {
+            await finalizarVotacion(partida_id, ronda);
+            await cambiarFasePartida(partida_id, !dia);
+          } catch (error) {
+            console.error("Error al cambiar fase por tiempo:", error);
+          }
+        }
+      }
+      return;
+    }
     const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
     const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
 
@@ -237,7 +257,9 @@ formChat.addEventListener("submit", async (e) => {
   if (mensaje === "/cambiar") {
     if (host) {
       try {
+        await finalizarVotacion(partida_id, ronda);
         await cambiarFasePartida(partida_id, !dia);
+        ronda++;
         return;
       } catch {
         console.error;

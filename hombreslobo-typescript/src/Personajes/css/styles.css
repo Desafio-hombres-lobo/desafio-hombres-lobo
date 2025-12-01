@@ -5,7 +5,8 @@
   border: 3px solid #1a1a1a;
   border-radius: 15px;
   padding: 10px;
-  width: 150px;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,6 +18,7 @@
 
 .carta-img-container {
   width: 100%;
+  flex: 1;
   background-color: #000;
   border: 3px solid #1a1a1a;
   border-radius: 8px;

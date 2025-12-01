@@ -10,7 +10,7 @@ let ID_ALDEANO = 1;
 let ID_LOBO = 2;
 const IMG_HOMBRE_LOBO = loboImg;
 const IMG_ALDEANO = aldeanoImg;
-const contenedorCarta = document.createElement("div");
+
 const personajes = await obtenerPersonajes();
 
 export const renderizarCartaLobo = async (
@@ -29,17 +29,16 @@ export const renderizarCartaLobo = async (
   const idJugador = listaAcciones[0]?.id_jugador;
   const idPersonaje = listaAcciones[0]?.id_personaje;
 
-  contenedorCarta.innerHTML = `
-        <div class="carta-rol carta-lobo" data-id="${idAccion}"> <div class="carta-img-container">
-                <img src="${IMG_HOMBRE_LOBO}" alt="${nombrePersonaje}">
-            </div>
+  const carta = document.createElement("div");
+  carta.classList.add("carta-rol", "carta-lobo");
+  carta.innerHTML = `
+      <div class="carta-img-container">
+          <img src="${IMG_HOMBRE_LOBO}" alt="${nombrePersonaje}">
+      </div>
+      <p class="carta-titulo">${nombrePersonaje}</p>
+  `;
 
-            <p class="carta-titulo">${nombrePersonaje}</p>
-        </div>
-    `;
-
-  contenedor.appendChild(contenedorCarta);
-  ejecutarAccion(contenedorCarta, idAccion, idJugador, idPersonaje);
+  contenedor.appendChild(carta);
 };
 
 export const renderizarCartaAldeano = async (
@@ -60,17 +59,16 @@ export const renderizarCartaAldeano = async (
   const idJugador = listaAcciones[0]?.id_jugador;
   const idPersonaje = listaAcciones[0]?.id_personaje;
 
-  contenedorCarta.innerHTML = `
-        <div class="carta-rol carta-aldeano" data-id=""${idAccion}> <div class="carta-img-container">
-              <img src="${IMG_ALDEANO}" alt="${nombrePersonaje}">
-          </div>
-
-          <p class="carta-titulo">${nombrePersonaje}</p>
+  const carta = document.createElement("div");
+  carta.classList.add("carta-rol", "carta-aldeano");
+  carta.innerHTML = `
+      <div class="carta-img-container">
+          <img src="${IMG_ALDEANO}" alt="${nombrePersonaje}">
       </div>
-    `;
+      <p class="carta-titulo">${nombrePersonaje}</p>
+  `;
 
-  contenedor.appendChild(contenedorCarta);
-  ejecutarAccion(contenedorCarta, idAccion, idJugador, idPersonaje);
+  contenedor.appendChild(carta);
 };
 
 export const renderizarReverso = async (
@@ -88,5 +86,4 @@ export const renderizarReverso = async (
     `;
 
   contenedor.appendChild(divReverso);
-  // ejecutarAccion(contenedorCarta, idAccion, idJugador, idPersonaje);
 };

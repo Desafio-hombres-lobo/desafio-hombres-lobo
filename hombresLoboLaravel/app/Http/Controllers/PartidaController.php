@@ -8,6 +8,7 @@ use App\Events\IniciarPartida;
 use App\Models\Jugador;
 use App\Models\Partida;
 use App\Models\JugadorPartidaPersonaje;
+use App\Models\Voto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -101,7 +102,7 @@ class PartidaController extends Controller
         }
 
         $jugadores = $partida->jugadoresLobby()
-        ->select('jugadores.id', 'jugadores.nickname')
+        ->select('jugadores.id', 'jugadores.nickname', 'jugadores.bot')
         ->get();
 
         return response()->json([
@@ -306,6 +307,15 @@ class PartidaController extends Controller
             'ok' => true,
         ]);
     }
+
+    public function obtenerBots(Partida $partida): array
+    {
+        return $partida->jugadoresLobby()
+            ->where('bot', true)
+            ->get()
+            ->all();
+    }
+
 
 
 }
