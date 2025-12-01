@@ -1,5 +1,6 @@
 import { construirApi } from "../../autenticacion/ts/apiFetch";
 import { getToken } from "../../autenticacion/ts/auth";
+import { getJSONHeaders } from "../../autenticacion/ts/header";
 
 export const obtenerResultadoVotacion = async (
   idPartida: number,
@@ -13,9 +14,7 @@ export const obtenerResultadoVotacion = async (
 
     const res = await fetch(construirApi(endpoint), {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getJSONHeaders(),
     });
 
     const datos = await res.json();
