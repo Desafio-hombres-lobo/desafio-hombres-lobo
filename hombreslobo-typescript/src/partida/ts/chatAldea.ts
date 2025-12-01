@@ -114,10 +114,6 @@ const repartirCartasJugadores = async (
   host = await verificarHost(partida_id);
   if (host) {
     btnIniciar.classList.remove("oculto");
-    if(listaJugadores.length === votos || rondaFinalizada){
-              await finalizarVotacion(partida_id, ronda); 
-            await cambiarFasePartida(partida_id, !dia);
-            }
   }
 })();
 
@@ -186,6 +182,12 @@ canal.bind("voto", (data: any) => {
     `${data.idVotante} ha votado a ${data.idVotado}`
   );
   votos++
+  if (host && votos >= numeroJugadoresPartida) {
+     setTimeout(async () => {
+        await finalizarVotacion(partida_id, ronda);
+        await cambiarFasePartida(partida_id, !dia); 
+     }, 1000);
+    }
 });
 
 canal.bind("votacion-terminada", (data: any) => {
@@ -214,6 +216,16 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
         window.clearInterval(temporizador);
         reloj.innerHTML = '<i class="fas fa-clock"></i> 00:00';
         rondaFinalizada=true;
+        if(host){
+          try{
+              await finalizarVotacion(partida_id, ronda); 
+              await cambiarFasePartida(partida_id, !dia);
+          }catch(error){
+              console.error(error)
+            }
+          }
+          
+        }
       }
     }
 
