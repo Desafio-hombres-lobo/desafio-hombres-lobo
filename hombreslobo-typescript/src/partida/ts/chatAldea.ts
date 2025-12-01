@@ -18,8 +18,9 @@ import { chatLobos } from "./chatLobos";
 import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
 import { votar } from "../../providers/votos/enviarDatosVoto";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
-import { cerrarVotacion, mostrarVotacion } from "./votacion";
+import { cerrarVotacion, mostrarVotacion, voto } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
+import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -40,7 +41,7 @@ let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
 let jugadores = [];
-
+let muerto = false;
 let ronda = 0;
 let rondaFinalizada = false;
 let votos = 0;
@@ -93,6 +94,7 @@ const repartirCartasJugadores = async (
       // Votar si es de día, o si es de noche y soy lobo
       if (!dia && !lobo) return;
 
+      if (muerto) return;
       const idVotado = parseInt(slotDiv.dataset.id!);
       const payload = {
         id_jugador: idJugador,
@@ -124,27 +126,26 @@ const repartirCartasJugadores = async (
 })();
 
 function actualizarFaseVisual() {
-  // Reiniciar contadores al cambiar de fase
-  votos = 0;
-  votosLobos = 0;
-
-  if (dia) {
-    spanFase.innerHTML = "FASE: DÍA";
-    headerChat.innerHTML = "CHAT DE LA ALDEA";
-    centroInfo.classList.remove("fase-noche");
-    centroInfo.classList.add("fase-dia");
-    listaMensajes.classList.remove("chat-noche");
-    inputMensaje.disabled = false;
+  if (muerto) {
+    inputMensaje.disabled = true;
+    inputMensaje.placeholder = "No puedes hablar, estás muerto.";
   } else {
-    spanFase.innerHTML = "FASE: NOCHE";
-    headerChat.innerHTML = "CHAT DE LOS LOBOS";
-    centroInfo.classList.remove("fase-dia");
-    centroInfo.classList.add("fase-noche");
-    if (!lobo) {
-      listaMensajes.classList.add("chat-noche");
-      inputMensaje.disabled = true;
-    } else {
+    if (dia) {
+      spanFase.innerHTML = "FASE: DÍA";
+      headerChat.innerHTML = "CHAT DE LA ALDEA";
+      centroInfo.classList.remove("fase-noche");
+      centroInfo.classList.add("fase-dia");
+      listaMensajes.classList.remove("chat-noche");
       inputMensaje.disabled = false;
+    } else {
+      spanFase.innerHTML = "FASE: NOCHE";
+      headerChat.innerHTML = "CHAT DE LOS LOBOS";
+      centroInfo.classList.remove("fase-dia");
+      centroInfo.classList.add("fase-noche");
+      if (!lobo) {
+        listaMensajes.classList.add("chat-noche");
+        inputMensaje.disabled = true;
+      }
     }
   }
   ronda++;
@@ -188,12 +189,6 @@ canal.bind("voto", (data: any) => {
 
   pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
   votos++;
-  if (host && votos >= numeroJugadoresPartida) {
-    setTimeout(async () => {
-      await finalizarVotacion(partida_id, ronda);
-      await cambiarFasePartida(partida_id, !dia);
-    }, 1000);
-  }
 });
 
 canal.bind("votos-lobos", (data: any) => {
@@ -217,10 +212,22 @@ canal.bind("votos-lobos", (data: any) => {
 canal.bind("votacion-terminada", (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+    if (data.eliminado === miNickname) {
+      muerto = true;
+    }
+    if (data.idPersonaje) {
+      await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
+    }
   } else {
     mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
   }
-  setTimeout(() => cerrarVotacion(), 3000);
+  setTimeout(async () => {
+    cerrarVotacion();
+    if (host) {
+      await cambiarFasePartida(partida_id, !dia);
+    }
+  }, 3000);
+  votos = 0;
 });
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {
@@ -243,7 +250,7 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
           console.log("Tiempo agotado. Como host, cambio la fase.");
           try {
             await finalizarVotacion(partida_id, ronda);
-            await cambiarFasePartida(partida_id, !dia);
+            //await cambiarFasePartida(partida_id, !dia);
           } catch (error) {
             console.error("Error al cambiar fase por tiempo:", error);
           }
@@ -281,10 +288,10 @@ formChat.addEventListener("submit", async (e) => {
     }
   }
   try {
-    if (!dia && lobo) {
+    if (!dia && lobo && !muerto) {
       await enviarMensajeLobos(mensaje, partida_id);
     } else {
-      await enviarMensaje(mensaje, partida_id);
+      if (!muerto) await enviarMensaje(mensaje, partida_id);
     }
   } catch {
     alert("Error");
