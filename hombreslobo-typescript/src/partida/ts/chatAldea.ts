@@ -40,8 +40,11 @@ let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
 let jugadores = [];
-let lobo = true; //falseo de variable lobo para comprobar funciones
+
 let ronda=0;
+let rondaFinalizada=false;
+let votos =0;
+let lobo = false;
 
 const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
 const listaJugadores = datosJugadoresPartida.listaJugadores;
@@ -72,7 +75,9 @@ const repartirCartasJugadores = async (
     if (esMiUsuario) {
       slotDiv.classList.add("mi-jugador");
       if (miRolId === 2) {
+        lobo = true;
         await renderizarCartaLobo(slotDiv);
+        await chatLobos();
       } else if (miRolId === 1) {
         await renderizarCartaAldeano(slotDiv);
       } else {
@@ -109,11 +114,10 @@ const repartirCartasJugadores = async (
   host = await verificarHost(partida_id);
   if (host) {
     btnIniciar.classList.remove("oculto");
-    lobo = false; //host no lobo para comprobar mensajes hasta que hagamos funciones de repartir roles
-    actualizarFaseVisual();
-    //chatLobos();
-  } else {
-    chatLobos();
+    if(listaJugadores.length === votos || rondaFinalizada){
+              await finalizarVotacion(partida_id, ronda); 
+            await cambiarFasePartida(partida_id, !dia);
+            }
   }
 })();
 
@@ -141,6 +145,7 @@ function actualizarFaseVisual() {
     }
   }
   ronda++
+  rondaFinalizada = true
 }
 
 const canal = pusher.subscribe("aldea" + partida_id);
@@ -180,6 +185,7 @@ canal.bind("voto", (data: any) => {
   pintarMensajeSistema(
     `${data.idVotante} ha votado a ${data.idVotado}`
   );
+  votos++
 });
 
 canal.bind("votacion-terminada", (data: any) => {
@@ -192,6 +198,7 @@ canal.bind("votacion-terminada", (data: any) => {
 });
 
 
+
 const iniciarCuentaAtras = (fechaFinIso: string) => {
   if (temporizador) {
     window.clearInterval(temporizador);
@@ -202,17 +209,11 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
     const distancia = fechaObjetivo - ahora;
 
     if (distancia < 0) {
+      
       if (temporizador) {
         window.clearInterval(temporizador);
         reloj.innerHTML = '<i class="fas fa-clock"></i> 00:00';
-        if (host) {
-          try {
-            await finalizarVotacion(partida_id, ronda); 
-            await cambiarFasePartida(partida_id, !dia);
-          } catch (error) {
-            console.error(error);
-          }
-        }
+        rondaFinalizada=true;
       }
     }
 
@@ -234,7 +235,6 @@ formChat.addEventListener("submit", async (e) => {
   inputMensaje.value = "";
 
   if (mensaje === "/cambiar") {
-    //placeholder, lo haremos con el reverb
     if (host) {
       try {
         await cambiarFasePartida(partida_id, !dia);
