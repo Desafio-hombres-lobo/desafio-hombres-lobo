@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\VotacionTerminada;
 use App\Events\Votar;
 use App\Models\Jugador;
+use App\Models\Partida;
 use App\Models\Voto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,12 +36,82 @@ class VotoController extends Controller
             $jugadoVotado->nickname
         ));
 
+        $partida = Partida::find($idPartida);
+        $jugadoresVivos = $partida->jugadoresLobby()->wherePivot('eliminado', false)->count();
+        $votosRonda = Voto::where('id_partida', $idPartida)
+                            ->where('ronda', $validated['ronda'])
+                            ->get();
+
+        if ($votosRonda->count() >= $jugadoresVivos) {
+            $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
+                                    ->map(fn($votos) => count($votos));
+
+            $maxVotos = $conteoVotos->max();
+
+            $jugadoresConMax = $conteoVotos->filter(fn($v) => $v === $maxVotos)->keys();
+
+            if ($jugadoresConMax->count() === 1) {
+                $idEliminado = $jugadoresConMax->first();
+                $eliminado = Jugador::find($idEliminado)->nickname;
+                $resultado = "eliminado";
+
+                $partida->jugadoresLobby()->updateExistingPivot($idEliminado, ['eliminado' => true]);
+            } else {
+                $eliminado = null;
+                $resultado = "empate";
+            }
+
+            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado));
+        }
+
         return response()->json([
             'ok' => true,
             'voto' => $voto,
         ]);
     }
 
+    public function finalizarVotacion($idPartida, $ronda)
+    {
+        $partida = Partida::find($idPartida);
+        if (!$partida) {
+            return response()->json(['error' => 'Partida no encontrada'], 404);
+        }
+
+        $votosRonda = Voto::where('id_partida', $idPartida)
+                            ->where('ronda', $ronda)
+                            ->get();
+
+        $jugadoresVivos = $partida->jugadoresLobby()->wherePivot('eliminado', false)->get();
+
+        if ($votosRonda->isEmpty()) {
+            $resultado = "empate";
+            $eliminado = null;
+        } else {
+            $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
+                                    ->map(fn($v) => count($v));
+            $maxVotos = $conteoVotos->max();
+            $jugadoresConMax = $conteoVotos->filter(fn($v) => $v === $maxVotos)->keys();
+
+            if ($jugadoresConMax->count() === 1) {
+                $idEliminado = $jugadoresConMax->first();
+                $eliminado = Jugador::find($idEliminado)->nickname;
+                $resultado = "eliminado";
+
+                $partida->jugadoresLobby()->updateExistingPivot($idEliminado, ['eliminado' => true]);
+            } else {
+                $resultado = "empate";
+                $eliminado = null;
+            }
+        }
+
+        broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado));
+
+        return response()->json([
+            'ok' => true,
+            'resultado' => $resultado,
+            'eliminado' => $eliminado,
+        ]);
+    }
 
     public function obtenerVotos($idPartida, $ronda)
     {
@@ -89,17 +160,25 @@ class VotoController extends Controller
         }
 
         $idJugadorEliminado = $masVotados->keys()->first();
+        $jugadorEliminado = Jugador::find($idJugadorEliminado);
 
         DB::table('jugador_partida')
             ->where('id_partida', $idPartida)
             ->where('id_jugador', $idJugadorEliminado)
             ->update([
-                'estado' => 'eliminado'
+                'eliminado' => true
             ]);
+
+            event(new VotacionTerminada(
+                $idPartida,
+                'eliminado',
+                $jugadorEliminado->nickname
+            ));
+
 
         return response()->json([
             'resultado' => 'eliminado',
-            'jugador_eliminado' => $idJugadorEliminado
+            'jugador_eliminado' => $jugadorEliminado->nickname
         ]);
     }
 

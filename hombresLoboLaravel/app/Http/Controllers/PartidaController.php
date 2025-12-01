@@ -100,7 +100,9 @@ class PartidaController extends Controller
             return response()->json(['error' => 'Partida no encontrada'], 404);
         }
 
-        $jugadores = $partida->jugadoresLobby()->get(['nickname'])->pluck('nickname');
+        $jugadores = $partida->jugadoresLobby()
+        ->select('jugadores.id', 'jugadores.nickname')
+        ->get();
 
         return response()->json([
             'partida_id' => $id,

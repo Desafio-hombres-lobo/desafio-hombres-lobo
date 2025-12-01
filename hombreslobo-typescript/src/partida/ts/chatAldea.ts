@@ -18,6 +18,8 @@ import { chatLobos } from "./chatLobos";
 import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
 import { votar } from "../../providers/votos/enviarDatosVoto";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
+import { cerrarVotacion, mostrarVotacion } from "./votacion";
+import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -52,18 +54,20 @@ const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
 ): Promise<void> => {
   const miRolId = await obtenerRolPersonajeJugador();
+  contenedorCarta.innerHTML = "";
 
   for (let i = 0; i < listaJugadores.length; i++) {
-    let nombreJugador = String(listaJugadores[i]).trim();
+    const jugador = listaJugadores[i];
+    const nombreJugador = String(jugador.nickname).trim();
     const numSlot = i + 1;
+    const idJugadorCarta = jugador.id;
 
     const slotDiv = document.createElement("div");
     slotDiv.className = `jugador slot-${numSlot}`;
-    slotDiv.dataset.jugador = nombreJugador; 
-    slotDiv.dataset.id = (i + 1).toString(); 
+    slotDiv.dataset.jugador = nombreJugador;
+    slotDiv.dataset.id = idJugadorCarta.toString();
 
-
-    const esMiUsuario = nombreJugador.trim() === miNickname?.trim();
+    const esMiUsuario = nombreJugador === miNickname;
 
     if (esMiUsuario) {
       slotDiv.classList.add("mi-jugador");
@@ -77,28 +81,27 @@ const repartirCartasJugadores = async (
     } else {
       renderizarReverso(slotDiv, nombreJugador);
     }
-    
-    if(dia){
+
+
     slotDiv.addEventListener("click", async () => {
-      const idVotado = parseInt(slotDiv.dataset.id!); 
+      if (!dia) return;
+      const idVotado = parseInt(slotDiv.dataset.id!);
       const payload = {
         id_jugador: idJugador,
         id_jugador_votado: idVotado,
-        ronda: ronda,
+        ronda,
       };
 
       const resultado = await votar(partida_id, payload);
-
       if (!resultado.ok) {
         alert(`Error al votar: ${resultado.error}`);
       }
     });
 
-
     contenedorCarta.appendChild(slotDiv);
   }
 };
-}
+
 
 
 //Se ejecuta nada más cargar el script, del que te cuento
@@ -179,6 +182,16 @@ canal.bind("voto", (data: any) => {
   );
 });
 
+canal.bind("votacion-terminada", (data: any) => {
+  if (data.resultado === "eliminado") {
+    mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+  } else {
+    mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
+  }
+  setTimeout(() => cerrarVotacion(), 5000);
+});
+
+
 const iniciarCuentaAtras = (fechaFinIso: string) => {
   if (temporizador) {
     window.clearInterval(temporizador);
@@ -194,19 +207,18 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
         reloj.innerHTML = '<i class="fas fa-clock"></i> 00:00';
         if (host) {
           try {
+            await finalizarVotacion(partida_id, ronda); 
             await cambiarFasePartida(partida_id, !dia);
           } catch (error) {
-            console.error();
+            console.error(error);
           }
         }
       }
     }
 
-    // Cálculos matemáticos
     const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
     const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
 
-    // Formato con ceros a la izquierda (02:05)
     const minStr = minutos < 10 ? "0" + minutos : minutos;
     const segStr = segundos < 10 ? "0" + segundos : segundos;
     reloj.innerHTML = `<i class="fas fa-clock"></i> ${minStr}:${segStr}`;
