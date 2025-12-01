@@ -90,6 +90,7 @@ const repartirCartasJugadores = async (
     slotDiv.addEventListener("click", async () => {
       if (!dia) return;
       if (esMiUsuario) return;
+      if (muerto) return;
       const idVotado = parseInt(slotDiv.dataset.id!);
       const payload = {
         id_jugador: idJugador,
@@ -190,6 +191,7 @@ canal.bind("votacion-terminada", async (data: any) => {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
     if (data.eliminado === miNickname) {
       muerto = true;
+      inputMensaje.disabled = true;
     }
     if (data.idPersonaje) {
       await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
