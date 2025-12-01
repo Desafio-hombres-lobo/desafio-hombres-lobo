@@ -137,7 +137,7 @@ function actualizarFaseVisual() {
     }
   }
   ronda++;
-  rondaFinalizada = true;
+  rondaFinalizada = false;
 }
 
 const canal = pusher.subscribe("aldea" + partida_id);
@@ -208,14 +208,10 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
         reloj.innerHTML = '<i class="fas fa-clock"></i> 00:00';
         rondaFinalizada = true;
 
-        // --- CORRECCIÓN AQUÍ ---
-        // Si soy el HOST, yo me encargo de avisar al servidor
         if (host) {
           console.log("Tiempo agotado. Como host, cambio la fase.");
           try {
-            // Opcional: Si es de día, quizás quieras cerrar votación antes
-            // if (dia) await finalizarVotacion(partida_id, ronda);
-
+            await finalizarVotacion(partida_id, ronda);
             await cambiarFasePartida(partida_id, !dia);
           } catch (error) {
             console.error("Error al cambiar fase por tiempo:", error);
@@ -244,7 +240,9 @@ formChat.addEventListener("submit", async (e) => {
   if (mensaje === "/cambiar") {
     if (host) {
       try {
+        await finalizarVotacion(partida_id, ronda);
         await cambiarFasePartida(partida_id, !dia);
+        ronda++;
         return;
       } catch {
         console.error;
