@@ -60,9 +60,11 @@ class Jugador extends Model
                      ->get();
 
         // Jugadores vivos
-        $jugadoresVivos = Jugador::where('id_partida', $idPartida)
-                                 ->where('eliminado', false)
-                                 ->get();
+        $jugadoresVivos = Jugador::whereHas('partidasActivas', function ($query) use ($idPartida) {
+            $query->where('partida_id', $idPartida)
+                ->where('eliminado', false); 
+        })->get();
+
 
         // No puede votarse a sí mismo
         $jugadoresVivos = $jugadoresVivos->where('id', '!=', $bot->id);

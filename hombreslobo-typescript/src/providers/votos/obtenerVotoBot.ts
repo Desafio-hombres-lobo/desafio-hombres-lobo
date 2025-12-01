@@ -10,7 +10,7 @@ const mensajesBot = [
   "No sé, pero alguien no me cuadra."
 ];
 
-export const votarYHablarBot = async (idPartida: number | string, idBot: number) => {
+export const votarYHablarBot = async (idPartida: number | string, idBot: number, ronda:number) => {
   try {
 
     const cantidadMensajes = Math.random() < -1 ? 1 : 2;
@@ -19,13 +19,13 @@ export const votarYHablarBot = async (idPartida: number | string, idBot: number)
       const mensajeRandom =
         mensajesBot[Math.floor(Math.random() * mensajesBot.length)];
 
-      await enviarMensaje(`[BOT ${idBot}]: ${mensajeRandom}`, idPartida);
+      await enviarMensaje(`${mensajeRandom}`, idPartida);
       await new Promise((res) => setTimeout(res, 800)); 
     }
 
     const headers = getJSONHeaders();
     const response = await fetch(
-      construirApi(`/partida/${idPartida}/votarBot/${idBot}`),
+      construirApi(`/partida/${idPartida}/votarBot/${idBot}/${ronda}`),
       {
         method: "POST",
         headers: headers,

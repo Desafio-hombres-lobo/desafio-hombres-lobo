@@ -43,7 +43,7 @@ let host = false;
 type Jugador = {
   id: number;
   nickname: string;
-  esBot: boolean;
+  bot: boolean;
   [key: string]: any; // si tiene más campos
 };
 
@@ -159,12 +159,13 @@ canal.bind("cambio-fase", async (data: any) => {
   if (data.fase === "dia") {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
-    const bots = jugadores.filter(j => j.esBot); 
+    const bots = jugadores.filter(j => j.bot);
+    console.log(bots.length) 
 
   for (const bot of bots) {
     setTimeout(() => {
-      votarYHablarBot(partida_id, bot.id);
-    }, Math.random() * 2000 + 1000); 
+      votarYHablarBot(partida_id, bot.id, ronda);
+    }, Math.random() * 3000 + 1000); 
   }
 
   } else {

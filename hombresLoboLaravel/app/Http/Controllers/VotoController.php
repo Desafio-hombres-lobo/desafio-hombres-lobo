@@ -180,7 +180,7 @@ class VotoController extends Controller
         ]);
     }
 
-       public function calcularVoto($idPartida, $idBot)
+       public function calcularVoto($idPartida, $idBot, $ronda)
     {
         $bot = Jugador::findOrFail($idBot);
 
@@ -192,7 +192,7 @@ class VotoController extends Controller
                 'id_partida' => $idPartida,
                 'id_jugador' => $bot->id,
                 'id_jugador_votado' => $idVotado,
-                'ronda' => $bot->rondaActual,
+                'ronda' => $ronda,
             ]);
         }
 
