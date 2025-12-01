@@ -11,10 +11,11 @@ export const voltearCartaPersonaje = async (
     `.jugador[data-jugador="${nickname}"]`
   ) as HTMLElement;
   slotDiv.innerHTML = "";
+  const id = Number(idPersonaje);
 
-  if (idPersonaje === 1) {
+  if (id === 1) {
     await renderizarCartaAldeano(slotDiv);
-  } else if (idPersonaje === 2) {
+  } else if (id === 2) {
     await renderizarCartaLobo(slotDiv);
   }
 

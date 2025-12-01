@@ -66,7 +66,7 @@ class VotoController extends Controller
                 $resultado = "empate";
             }
 
-            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idEliminado));
+            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje));
         }
 
         return response()->json([
