@@ -88,6 +88,7 @@ const repartirCartasJugadores = async (
 
     slotDiv.addEventListener("click", async () => {
       if (!dia) return;
+      if (esMiUsuario) return;
       const idVotado = parseInt(slotDiv.dataset.id!);
       const payload = {
         id_jugador: idJugador,
@@ -189,7 +190,7 @@ canal.bind("votacion-terminada", (data: any) => {
   } else {
     mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
   }
-  setTimeout(() => cerrarVotacion(), 5000);
+  setTimeout(() => cerrarVotacion(), 3000);
 });
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {

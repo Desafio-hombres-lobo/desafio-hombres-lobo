@@ -39,7 +39,6 @@ export const renderizarCartaLobo = async (
   `;
 
   contenedor.appendChild(carta);
-  ejecutarAccion(carta, idAccion, idJugador, idPersonaje);
 };
 
 export const renderizarCartaAldeano = async (
@@ -70,7 +69,6 @@ export const renderizarCartaAldeano = async (
   `;
 
   contenedor.appendChild(carta);
-  ejecutarAccion(carta, idAccion, idJugador, idPersonaje);
 };
 
 export const renderizarReverso = async (
@@ -88,5 +86,4 @@ export const renderizarReverso = async (
     `;
 
   contenedor.appendChild(divReverso);
-  // ejecutarAccion(contenedorCarta, idAccion, idJugador, idPersonaje);
 };

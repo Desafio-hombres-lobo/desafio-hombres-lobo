@@ -25,7 +25,6 @@ export const voto = (
   contenedorCarta.addEventListener("click", async () => {
     if (yaHasVotado) return;
 
-
     const resultado = await votar(idPartida, {
       id_jugador: idJugador,
       id_jugador_votado: idVotado,
@@ -33,9 +32,7 @@ export const voto = (
     });
 
     if (!resultado.ok) {
-      mostrarVotacion(
-        resultado.error?.message || "No puedes votar dos veces."
-      );
+      mostrarVotacion(resultado.error?.message || "No puedes votar dos veces.");
       return;
     }
 
@@ -43,4 +40,3 @@ export const voto = (
     mostrarVotacion("Tu voto ha sido registrado.");
   });
 };
-

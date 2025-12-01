@@ -19,7 +19,7 @@ export const votar = async (
 
     const res = await fetch(construirApi(endpoint), {
       method: "POST",
-      headers,
+      headers: headers,
       body: JSON.stringify(payload),
     });
 
