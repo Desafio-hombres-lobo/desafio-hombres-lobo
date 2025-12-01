@@ -1,45 +1,56 @@
 import { getJSONHeaders } from "../../autenticacion/ts/header";
 import { construirApi } from "../../autenticacion/ts/apiFetch";
-import { enviarMensaje } from "../envioDatosChat";
+import { enviarMensajeBot } from "../enviarMensaje"; 
+import { pintarMensaje } from "../../Partida/ts/chatAldea"; 
 
-const mensajesBot = [
-  "Creo que ya sé quién es...",
-  "Tengo mis sospechas.",
-  "No me fío nada de este...",
-  "Creo que estamos en peligro.",
-  "No sé, pero alguien no me cuadra."
-];
+const esperar = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-export const votarYHablarBot = async (idPartida: number | string, idBot: number, ronda:number) => {
+export const votarYHablarBot = async (
+  idPartida: number | string,
+  idBot: number,
+  ronda: number
+) => {
   try {
+    const resVoto = await fetch(
+      construirApi(`/partida/${idPartida}/calcularVoto/${idBot}/${ronda}`),
+      { method: "POST", headers: getJSONHeaders() }
+    );
 
-    const cantidadMensajes = Math.random() < -1 ? 1 : 2;
+    if (!resVoto.ok) return console.error("Error calculando voto del bot");
+
+    const dataVoto = await resVoto.json();
+    const objetivo = dataVoto.voto_bot;
+    const nicknameBot = dataVoto.bot_nickname;
+
+    await esperar(3500);
+
+
+    const cantidadMensajes = Math.floor(Math.random() * 3);
+    const mensajesBot = [
+      "Creo que ya sé quién es...",
+      "Tengo mis sospechas de",
+      "No me fío nada de",
+      "Creo que estamos en peligro por",
+      "No sé, pero alguien no me cuadra:"
+    ];
 
     for (let i = 0; i < cantidadMensajes; i++) {
       const mensajeRandom =
         mensajesBot[Math.floor(Math.random() * mensajesBot.length)];
 
-      await enviarMensaje(`${mensajeRandom}`, idPartida);
-      await new Promise((res) => setTimeout(res, 800)); 
+      const mensajeFinal = `${mensajeRandom} ${objetivo}`;
+
+      await esperar(Math.random() * 6000 + 1000); 
+      pintarMensaje(nicknameBot, mensajeFinal);
+
+      await enviarMensajeBot({
+        message: mensajeFinal,
+        partida_id: idPartida.toString(),
+        bot: idBot
+      });
     }
 
-    const headers = getJSONHeaders();
-    const response = await fetch(
-      construirApi(`/partida/${idPartida}/votarBot/${idBot}/${ronda}`),
-      {
-        method: "POST",
-        headers: headers,
-      }
-    );
-
-    if (!response.ok) {
-      console.error("Error votando bot");
-      return;
-    }
-
-    const data = await response.json();
-    console.log("Bot ha votado a:", data.voto_bot);
-
+    console.log(`Bot ${nicknameBot} ha votado correctamente a ${objetivo}`);
   } catch (error) {
     console.error("Error en votarYHablarBot:", error);
   }

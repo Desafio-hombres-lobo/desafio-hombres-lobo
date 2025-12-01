@@ -71,6 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
         Route::post('/chat/send', [ChatController::class, 'send']);
+        Route::post('/chat/send/{bot}', [ChatController::class, 'sendMensajeBot']);
 
         Route::post('/{id}/llena', [PartidaController::class, 'llenar']);
 
@@ -92,6 +93,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/partida/{id}/finalizar-votacion/{ronda}', [VotoController::class, 'finalizarVotacion']);
 
         Route::post('/partida/{idPartida}/votarBot/{bot}/{ronda}', [VotoController::class, 'calcularVoto']);
+
+        Route::post('/partida/{idPartida}/calcularVoto/{idBot}/{ronda}', [VotoController::class, 'calcularVoto']);
+
 
     });
 });

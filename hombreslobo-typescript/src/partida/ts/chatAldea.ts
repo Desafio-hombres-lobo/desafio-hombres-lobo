@@ -2,7 +2,8 @@ import { getJugador, getPartidaId } from "../../autenticacion/ts/auth";
 import { getJSONHeaders } from "../../autenticacion/ts/header";
 import { construirApi } from "../../autenticacion/ts/apiFetch";
 import { pusher } from "./reverb";
-import { enviarMensaje } from "../../providers/envioDatosChat";
+import { enviarMensaje} from "../../providers/envioDatosChat";
+import { enviarMensajeBot } from "../../providers/enviarMensaje";
 import "../css/partida.css";
 import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
@@ -134,14 +135,16 @@ function actualizarFaseVisual() {
   if (muerto) {
     inputMensaje.disabled = true;
     inputMensaje.placeholder = "No puedes hablar, estás muerto.";
-  } else {
+  }
     if (dia) {
       spanFase.innerHTML = "FASE: DÍA";
       headerChat.innerHTML = "CHAT DE LA ALDEA";
       centroInfo.classList.remove("fase-noche");
       centroInfo.classList.add("fase-dia");
       listaMensajes.classList.remove("chat-noche");
+      if(!muerto){
       inputMensaje.disabled = false;
+      }
     } else {
       spanFase.innerHTML = "FASE: NOCHE";
       headerChat.innerHTML = "CHAT DE LOS LOBOS";
@@ -152,7 +155,7 @@ function actualizarFaseVisual() {
         inputMensaje.disabled = true;
       }
     }
-  }
+  
   ronda++;
   rondaFinalizada = false;
 }
@@ -167,6 +170,7 @@ canal.bind("cambio-fase", async (data: any) => {
   if (data.fase === "dia") {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
+    if(host){
     const bots = jugadores.filter(j => j.bot);
     console.log(bots.length) 
 
@@ -174,6 +178,7 @@ canal.bind("cambio-fase", async (data: any) => {
     setTimeout(() => {
       votarYHablarBot(partida_id, bot.id, ronda);
     }, Math.random() * 3000 + 1000); 
+  }
   }
 
   } else {

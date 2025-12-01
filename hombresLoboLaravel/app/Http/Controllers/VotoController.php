@@ -228,7 +228,8 @@ class VotoController extends Controller
             $jugadorVotado->nickname
         ));
 
-        return response()->json(['voto_bot' => $idVotado]);
+        return response()->json(['voto_bot' => $jugadorVotado->nickname,
+    'bot_nickname'=> $bot->nickname]);
     }
 
 
