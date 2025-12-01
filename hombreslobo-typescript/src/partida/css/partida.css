@@ -495,9 +495,9 @@ body {
 }
 
 .jugador-eliminado {
-  filter: grayscale(100%); /* Lo pone en blanco y negro */
-  opacity: 0.6; /* Lo hace un poco transparente */
-  cursor: not-allowed; /* Cambia el cursor para indicar que no se puede interactuar */
-  pointer-events: none; /* Evita que se le pueda volver a hacer click */
+  filter: grayscale(100%);
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
   transition: all 0.5s ease;
 }
