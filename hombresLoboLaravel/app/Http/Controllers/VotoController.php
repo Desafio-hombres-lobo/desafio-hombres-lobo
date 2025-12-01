@@ -127,9 +127,7 @@ class VotoController extends Controller
 
         public function resultadoVotacion($idPartida, $ronda)
     {
-        $votos = Voto::where('id_partida', $idPartida)
-            ->where('ronda', $ronda)
-            ->get();
+        $votos = Voto::votosPartida($idPartida);
 
         if ($votos->isEmpty()) {
             event(new VotacionTerminada(
@@ -180,6 +178,25 @@ class VotoController extends Controller
             'resultado' => 'eliminado',
             'jugador_eliminado' => $jugadorEliminado->nickname
         ]);
+    }
+
+       public function calcularVoto($idPartida, $idBot)
+    {
+        $bot = Jugador::findOrFail($idBot);
+
+        $idVotado = $bot->calcularVoto($idPartida, $bot);
+
+        // Registrar el voto del bot
+        if ($idVotado) {
+            Voto::create([
+                'id_partida' => $idPartida,
+                'id_jugador' => $bot->id,
+                'id_jugador_votado' => $idVotado,
+                'ronda' => $bot->rondaActual,
+            ]);
+        }
+
+        return response()->json(['voto_bot' => $idVotado]);
     }
 
 

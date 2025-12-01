@@ -20,6 +20,7 @@ import { votar } from "../../providers/votos/enviarDatosVoto";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { cerrarVotacion, mostrarVotacion } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
+import { votarYHablarBot } from "../../providers/votos/obtenerVotoBot";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -39,7 +40,14 @@ const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
-let jugadores = [];
+type Jugador = {
+  id: number;
+  nickname: string;
+  esBot: boolean;
+  [key: string]: any; // si tiene más campos
+};
+
+let jugadores: Jugador[] = [];
 
 let ronda = 0;
 let rondaFinalizada = false;
@@ -151,6 +159,14 @@ canal.bind("cambio-fase", async (data: any) => {
   if (data.fase === "dia") {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
+    const bots = jugadores.filter(j => j.esBot); 
+
+  for (const bot of bots) {
+    setTimeout(() => {
+      votarYHablarBot(partida_id, bot.id);
+    }, Math.random() * 2000 + 1000); 
+  }
+
   } else {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");

@@ -89,6 +89,8 @@ Route::middleware('auth:sanctum')->group(function () {
         //Finalizar votación cuando se acabe el tiempo
         Route::post('/partida/{id}/finalizar-votacion/{ronda}', [VotoController::class, 'finalizarVotacion']);
 
+        Route::post('/partida/{idPartida}/votoBot/{bot}', [VotoController::class, 'calcularVoto']);
+
     });
 });
 
