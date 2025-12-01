@@ -191,25 +191,7 @@ canal.bind("voto", (data: any) => {
   votos++;
 });
 
-canal.bind("votos-lobos", (data: any) => {
-  if (!lobo) return;
-
-  pintarVotoLobo(data.idVotante, data.idVotado);
-
-  votosLobos++;
-
-  if (host && votosLobos >= numeroDeLobos) {
-    console.log("Todos los lobos han votado. Cerrando noche...");
-    setTimeout(async () => {
-      // Finalizamos votación (backend calculará muerto)
-      await finalizarVotacion(partida_id, ronda);
-      // Pasamos a Día
-      await cambiarFasePartida(partida_id, !dia);
-    }, 1000);
-  }
-});
-
-canal.bind("votacion-terminada", (data: any) => {
+canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
     if (data.eliminado === miNickname) {
@@ -357,17 +339,3 @@ function pintarMensajeSistema(texto: string) {
   // Autoscroll
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 }
-
-const pintarVotoLobo = (votante: string, votado: string) => {
-  const listaMensajes = document.getElementById("lista-mensajes")!;
-  const div = document.createElement("div");
-
-  div.classList.add("msg", "sistema");
-  div.style.borderLeft = "3px solid #d9534f"; // Rojo borde
-  div.style.color = "#ff9999"; // Texto rojizo
-
-  div.innerHTML = `(MANADA) <strong>${votante}</strong> quiere comerse a <strong>${votado}</strong>`;
-
-  listaMensajes.appendChild(div);
-  listaMensajes.scrollTop = listaMensajes.scrollHeight;
-};
