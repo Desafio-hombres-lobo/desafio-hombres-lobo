@@ -17,17 +17,19 @@ class VotacionTerminada implements ShouldBroadcast
     public $resultado; // "eliminado" | "empate"
     public $eliminado;
     public $idPartida;
+    public $idPersonaje;
 
-    public function __construct($idPartida, $resultado, $eliminado)
+    public function __construct($idPartida, $resultado, $eliminado, $idPersonaje)
     {
         $this->idPartida = $idPartida;
         $this->resultado = $resultado;
         $this->eliminado = $eliminado;
+        $this->idPersonaje = $idPersonaje;
     }
 
     public function broadcastOn()
     {
-       return new Channel('aldea' . $this->idPartida);
+        return new Channel('aldea' . $this->idPartida);
     }
 
     public function broadcastAs()
