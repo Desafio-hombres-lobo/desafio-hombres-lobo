@@ -41,9 +41,9 @@ let dia: boolean = true;
 let host = false;
 let jugadores = [];
 
-let ronda=0;
-let rondaFinalizada=false;
-let votos =0;
+let ronda = 0;
+let rondaFinalizada = false;
+let votos = 0;
 let lobo = false;
 
 const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
@@ -51,13 +51,12 @@ const listaJugadores = datosJugadoresPartida.listaJugadores;
 const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
 const miNickname = getJugador();
 const jugadorActual = await obtenerJugadorActual();
-const idJugador = jugadorActual.datos?.id
+const idJugador = jugadorActual.datos?.id;
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
 ): Promise<void> => {
   const miRolId = await obtenerRolPersonajeJugador();
-  contenedorCarta.innerHTML = "";
 
   for (let i = 0; i < listaJugadores.length; i++) {
     const jugador = listaJugadores[i];
@@ -87,7 +86,6 @@ const repartirCartasJugadores = async (
       renderizarReverso(slotDiv, nombreJugador);
     }
 
-
     slotDiv.addEventListener("click", async () => {
       if (!dia) return;
       const idVotado = parseInt(slotDiv.dataset.id!);
@@ -106,8 +104,6 @@ const repartirCartasJugadores = async (
     contenedorCarta.appendChild(slotDiv);
   }
 };
-
-
 
 //Se ejecuta nada más cargar el script, del que te cuento
 (async () => {
@@ -140,8 +136,8 @@ function actualizarFaseVisual() {
       inputMensaje.disabled = true;
     }
   }
-  ronda++
-  rondaFinalizada = true
+  ronda++;
+  rondaFinalizada = true;
 }
 
 const canal = pusher.subscribe("aldea" + partida_id);
@@ -158,7 +154,6 @@ canal.bind("cambio-fase", async (data: any) => {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
   }
-
 
   // PRUEBAS
   const cartaYaRepartida = contenedorCarta.querySelector(".carta-rol");
@@ -178,16 +173,14 @@ canal.bind("cambio-fase", async (data: any) => {
 });
 
 canal.bind("voto", (data: any) => {
-  pintarMensajeSistema(
-    `${data.idVotante} ha votado a ${data.idVotado}`
-  );
-  votos++
+  pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
+  votos++;
   if (host && votos >= numeroJugadoresPartida) {
-     setTimeout(async () => {
-        await finalizarVotacion(partida_id, ronda);
-        await cambiarFasePartida(partida_id, !dia); 
-     }, 1000);
-    }
+    setTimeout(async () => {
+      await finalizarVotacion(partida_id, ronda);
+      await cambiarFasePartida(partida_id, !dia);
+    }, 1000);
+  }
 });
 
 canal.bind("votacion-terminada", (data: any) => {
@@ -199,8 +192,6 @@ canal.bind("votacion-terminada", (data: any) => {
   setTimeout(() => cerrarVotacion(), 5000);
 });
 
-
-
 const iniciarCuentaAtras = (fechaFinIso: string) => {
   if (temporizador) {
     window.clearInterval(temporizador);
@@ -211,24 +202,28 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
     const distancia = fechaObjetivo - ahora;
 
     if (distancia < 0) {
-      
       if (temporizador) {
         window.clearInterval(temporizador);
+        temporizador = null; // Importante limpiar la variable
         reloj.innerHTML = '<i class="fas fa-clock"></i> 00:00';
-        rondaFinalizada=true;
-        if(host){
-          try{
-              await finalizarVotacion(partida_id, ronda); 
-              await cambiarFasePartida(partida_id, !dia);
-          }catch(error){
-              console.error(error)
-            }
+        rondaFinalizada = true;
+
+        // --- CORRECCIÓN AQUÍ ---
+        // Si soy el HOST, yo me encargo de avisar al servidor
+        if (host) {
+          console.log("Tiempo agotado. Como host, cambio la fase.");
+          try {
+            // Opcional: Si es de día, quizás quieras cerrar votación antes
+            // if (dia) await finalizarVotacion(partida_id, ronda);
+
+            await cambiarFasePartida(partida_id, !dia);
+          } catch (error) {
+            console.error("Error al cambiar fase por tiempo:", error);
           }
-          
         }
       }
+      return;
     }
-
     const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
     const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
 
