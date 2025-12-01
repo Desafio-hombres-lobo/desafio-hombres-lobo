@@ -199,14 +199,16 @@ canal.bind("voto", (data: any) => {
 canal.bind("votos-lobos", (data: any) => {
   if (!lobo) return;
 
-  // PINTAR MENSAJE
+  pintarVotoLobo(data.idVotante, data.idVotado);
 
   votosLobos++;
 
   if (host && votosLobos >= numeroDeLobos) {
     console.log("Todos los lobos han votado. Cerrando noche...");
     setTimeout(async () => {
+      // Finalizamos votación (backend calculará muerto)
       await finalizarVotacion(partida_id, ronda);
+      // Pasamos a Día
       await cambiarFasePartida(partida_id, !dia);
     }, 1000);
   }
@@ -349,6 +351,16 @@ function pintarMensajeSistema(texto: string) {
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 }
 
-// const pintarMensajeVotoLobo = (votante: string, votado: string) => {
+const pintarVotoLobo = (votante: string, votado: string) => {
+  const listaMensajes = document.getElementById("lista-mensajes")!;
+  const div = document.createElement("div");
 
-// };
+  div.classList.add("msg", "sistema");
+  div.style.borderLeft = "3px solid #d9534f"; // Rojo borde
+  div.style.color = "#ff9999"; // Texto rojizo
+
+  div.innerHTML = `(MANADA) <strong>${votante}</strong> quiere comerse a <strong>${votado}</strong>`;
+
+  listaMensajes.appendChild(div);
+  listaMensajes.scrollTop = listaMensajes.scrollHeight;
+};

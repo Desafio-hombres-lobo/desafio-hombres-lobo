@@ -7,6 +7,7 @@ const partida_id = getPartidaId();
 export const chatLobos = () => {
   const canal = conectarLobos();
   configurarBind(canal);
+  configurarVotos(canal);
 };
 
 const conectarLobos = () => {
@@ -16,5 +17,11 @@ const conectarLobos = () => {
 const configurarBind = (canal: any) => {
   canal.bind("nuevo-mensaje-lobos", (data: any) => {
     pintarMensaje(data.usuario, data.mensaje);
+  });
+};
+
+const configurarVotos = (canal: any) => {
+  canal.bind("votos-lobos", (data: any) => {
+    console.log("Mensaje lobo ha votado");
   });
 };

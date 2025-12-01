@@ -25,7 +25,7 @@ class VotoLobo implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new Channel('aldea' . $this->idPartida);
+        return new Channel('lobos' . $this->idPartida);
     }
 
 
