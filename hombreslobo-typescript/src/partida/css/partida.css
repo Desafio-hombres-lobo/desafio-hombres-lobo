@@ -493,3 +493,11 @@ body {
     transform: translateX(-50%) translateY(-10px);
   }
 }
+
+.jugador-eliminado {
+  filter: grayscale(100%); /* Lo pone en blanco y negro */
+  opacity: 0.6; /* Lo hace un poco transparente */
+  cursor: not-allowed; /* Cambia el cursor para indicar que no se puede interactuar */
+  pointer-events: none; /* Evita que se le pueda volver a hacer click */
+  transition: all 0.5s ease;
+}

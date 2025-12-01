@@ -39,12 +39,12 @@ class VotoController extends Controller
         $partida = Partida::find($idPartida);
         $jugadoresVivos = $partida->jugadoresLobby()->wherePivot('eliminado', false)->count();
         $votosRonda = Voto::where('id_partida', $idPartida)
-                            ->where('ronda', $validated['ronda'])
-                            ->get();
+            ->where('ronda', $validated['ronda'])
+            ->get();
 
         if ($votosRonda->count() >= $jugadoresVivos) {
             $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
-                                    ->map(fn($votos) => count($votos));
+                ->map(fn($votos) => count($votos));
 
             $maxVotos = $conteoVotos->max();
 
@@ -61,7 +61,7 @@ class VotoController extends Controller
                 $resultado = "empate";
             }
 
-            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado));
+            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, null));
         }
 
         return response()->json([
@@ -78,8 +78,8 @@ class VotoController extends Controller
         }
 
         $votosRonda = Voto::where('id_partida', $idPartida)
-                            ->where('ronda', $ronda)
-                            ->get();
+            ->where('ronda', $ronda)
+            ->get();
 
         $jugadoresVivos = $partida->jugadoresLobby()->wherePivot('eliminado', false)->get();
 
@@ -88,12 +88,16 @@ class VotoController extends Controller
             $eliminado = null;
         } else {
             $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
-                                    ->map(fn($v) => count($v));
+                ->map(fn($v) => count($v));
             $maxVotos = $conteoVotos->max();
             $jugadoresConMax = $conteoVotos->filter(fn($v) => $v === $maxVotos)->keys();
 
             if ($jugadoresConMax->count() === 1) {
                 $idEliminado = $jugadoresConMax->first();
+                $idPersonaje = DB::table('jugador_partida_personajes')
+                    ->where('id_partida', $idPartida)
+                    ->where('id_jugador', $idEliminado)
+                    ->value('id_personaje');
                 $eliminado = Jugador::find($idEliminado)->nickname;
                 $resultado = "eliminado";
 
@@ -101,10 +105,11 @@ class VotoController extends Controller
             } else {
                 $resultado = "empate";
                 $eliminado = null;
+                $idPersonaje = null;
             }
         }
 
-        broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado));
+        broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje));
 
         return response()->json([
             'ok' => true,
@@ -125,7 +130,7 @@ class VotoController extends Controller
         ]);
     }
 
-        public function resultadoVotacion($idPartida, $ronda)
+    public function resultadoVotacion($idPartida, $ronda)
     {
         $votos = Voto::where('id_partida', $idPartida)
             ->where('ronda', $ronda)
@@ -133,9 +138,10 @@ class VotoController extends Controller
 
         if ($votos->isEmpty()) {
             event(new VotacionTerminada(
-            $idPartida,
-            'empate',
-             null
+                $idPartida,
+                'empate',
+                null,
+                null
             ));
             return response()->json([
                 'resultado' => 'empate',
@@ -153,15 +159,25 @@ class VotoController extends Controller
 
         // Si hay empate ¿?
         if ($masVotados->count() > 1) {
+            event(new VotacionTerminada(
+                $idPartida,
+                'empate',
+                null,
+                null
+            ));
             return response()->json([
                 'resultado' => 'empate',
-                'jugador_eliminado' => null
+                'jugador_eliminado' => null,
+                'id_personaje_eliminado' => null
             ]);
         }
 
         $idJugadorEliminado = $masVotados->keys()->first();
         $jugadorEliminado = Jugador::find($idJugadorEliminado);
-
+        $idPersonaje = DB::table('jugador_partida_personajes')
+            ->where('id_partida', $idPartida)
+            ->where('id_jugador', $idJugadorEliminado)
+            ->value('id_personaje');
         DB::table('jugador_partida')
             ->where('id_partida', $idPartida)
             ->where('id_jugador', $idJugadorEliminado)
@@ -169,16 +185,18 @@ class VotoController extends Controller
                 'eliminado' => true
             ]);
 
-            event(new VotacionTerminada(
-                $idPartida,
-                'eliminado',
-                $jugadorEliminado->nickname
-            ));
+        event(new VotacionTerminada(
+            $idPartida,
+            'eliminado',
+            $jugadorEliminado->nickname,
+            $idPersonaje
+        ));
 
 
         return response()->json([
             'resultado' => 'eliminado',
-            'jugador_eliminado' => $jugadorEliminado->nickname
+            'jugador_eliminado' => $jugadorEliminado->nickname,
+            'id_personaje_eliminado' => $idPersonaje
         ]);
     }
 

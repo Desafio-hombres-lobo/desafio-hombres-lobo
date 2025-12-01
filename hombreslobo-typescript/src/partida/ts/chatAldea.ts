@@ -20,6 +20,7 @@ import { votar } from "../../providers/votos/enviarDatosVoto";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { cerrarVotacion, mostrarVotacion } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
+import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -184,9 +185,12 @@ canal.bind("voto", (data: any) => {
   }
 });
 
-canal.bind("votacion-terminada", (data: any) => {
+canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+    if (data.idPersonaje) {
+      await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
+    }
   } else {
     mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
   }
