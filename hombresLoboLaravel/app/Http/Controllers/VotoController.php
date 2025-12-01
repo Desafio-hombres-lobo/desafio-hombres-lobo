@@ -28,12 +28,12 @@ class VotoController extends Controller
         ]);
 
         $jugador = Jugador::find($validated['id_jugador']);
-        $jugadoVotado = Jugador::find($validated['id_jugador_votado']);
+        $jugadorVotado = Jugador::find($validated['id_jugador_votado']);
 
         event(new Votar(
             $idPartida,
             $jugador->nickname,
-            $jugadoVotado->nickname
+            $jugadorVotado->nickname
         ));
 
         $partida = Partida::find($idPartida);
@@ -186,7 +186,6 @@ class VotoController extends Controller
 
         $idVotado = $bot->calcularVoto($idPartida, $bot);
 
-        // Registrar el voto del bot
         if ($idVotado) {
             Voto::create([
                 'id_partida' => $idPartida,
@@ -195,6 +194,14 @@ class VotoController extends Controller
                 'ronda' => $ronda,
             ]);
         }
+
+        $jugadorVotado =  Jugador::find($idVotado);
+
+         event(new Votar(
+            $idPartida,
+            $bot->nickname,
+            $jugadorVotado->nickname
+        ));
 
         return response()->json(['voto_bot' => $idVotado]);
     }
