@@ -64,6 +64,7 @@ class VotoController extends Controller
             } else {
                 $eliminado = null;
                 $resultado = "empate";
+                $idPersonaje = null;
             }
 
             broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje));
