@@ -44,6 +44,7 @@ let jugadores = [];
 let ronda = 0;
 let rondaFinalizada = false;
 let votos = 0;
+let votosLobos = 0;
 let lobo = false;
 
 const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
@@ -52,6 +53,7 @@ const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
 const miNickname = getJugador();
 const jugadorActual = await obtenerJugadorActual();
 const idJugador = jugadorActual.datos?.id;
+const numeroDeLobos = Math.floor(numeroJugadoresPartida / 3) || 1; // filtrar según roles lobo que haya
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
@@ -87,8 +89,10 @@ const repartirCartasJugadores = async (
     }
 
     slotDiv.addEventListener("click", async () => {
-      if (!dia) return;
       if (esMiUsuario) return;
+      // Votar si es de día, o si es de noche y soy lobo
+      if (!dia && !lobo) return;
+
       const idVotado = parseInt(slotDiv.dataset.id!);
       const payload = {
         id_jugador: idJugador,
@@ -120,6 +124,10 @@ const repartirCartasJugadores = async (
 })();
 
 function actualizarFaseVisual() {
+  // Reiniciar contadores al cambiar de fase
+  votos = 0;
+  votosLobos = 0;
+
   if (dia) {
     spanFase.innerHTML = "FASE: DÍA";
     headerChat.innerHTML = "CHAT DE LA ALDEA";
@@ -135,6 +143,8 @@ function actualizarFaseVisual() {
     if (!lobo) {
       listaMensajes.classList.add("chat-noche");
       inputMensaje.disabled = true;
+    } else {
+      inputMensaje.disabled = false;
     }
   }
   ronda++;
@@ -174,9 +184,27 @@ canal.bind("cambio-fase", async (data: any) => {
 });
 
 canal.bind("voto", (data: any) => {
+  if (!dia) return;
+
   pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
   votos++;
   if (host && votos >= numeroJugadoresPartida) {
+    setTimeout(async () => {
+      await finalizarVotacion(partida_id, ronda);
+      await cambiarFasePartida(partida_id, !dia);
+    }, 1000);
+  }
+});
+
+canal.bind("votos-lobos", (data: any) => {
+  if (!lobo) return;
+
+  // PINTAR MENSAJE
+
+  votosLobos++;
+
+  if (host && votosLobos >= numeroDeLobos) {
+    console.log("Todos los lobos han votado. Cerrando noche...");
     setTimeout(async () => {
       await finalizarVotacion(partida_id, ronda);
       await cambiarFasePartida(partida_id, !dia);
@@ -320,3 +348,7 @@ function pintarMensajeSistema(texto: string) {
   // Autoscroll
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 }
+
+// const pintarMensajeVotoLobo = (votante: string, votado: string) => {
+
+// };

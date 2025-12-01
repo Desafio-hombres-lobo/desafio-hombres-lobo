@@ -7,6 +7,8 @@ use App\Models\JugadorPartidaPersonaje;
 use App\Models\Jugador;
 use App\Models\Partida;
 use App\Models\Personaje;
+use App\Events\Votar;
+use App\Events\VotoLobo;
 
 class JugadorPartidaPersonajeController extends Controller
 {
@@ -82,6 +84,23 @@ class JugadorPartidaPersonajeController extends Controller
         if ($request->estado == 2) {
             $registro->votos += 1;
             $registro->save();
+
+            // Recuperar la partida para saber fase
+            $partida = Partida::find($request->id_partida);
+
+            // Obtener nombres para el chat
+            $nombreVotante = $request->user()->jugador->nickname;
+            $nombreVotado = $registro->jugador->nickname;
+
+            // Lanzar evento según fase
+            if ($partida->fase_dia) {
+                // Día
+                broadcast(new Votar($partida->id, $nombreVotante, $nombreVotado));
+            } else {
+                // Noche
+                broadcast(new VotoLobo($partida->id, $nombreVotante, $nombreVotado));
+            }
+            // -----------------------------------
 
             return response()->json([
                 'mensaje' => 'Voto registrado',
