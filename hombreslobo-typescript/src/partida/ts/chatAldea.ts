@@ -125,25 +125,27 @@ function actualizarFaseVisual() {
   if (muerto) {
     inputMensaje.disabled = true;
     inputMensaje.placeholder = "No puedes hablar, estás muerto.";
-  } else {
-    if (dia) {
-      spanFase.innerHTML = "FASE: DÍA";
-      headerChat.innerHTML = "CHAT DE LA ALDEA";
-      centroInfo.classList.remove("fase-noche");
-      centroInfo.classList.add("fase-dia");
-      listaMensajes.classList.remove("chat-noche");
+  }
+  if (dia) {
+    spanFase.innerHTML = "FASE: DÍA";
+    headerChat.innerHTML = "CHAT DE LA ALDEA";
+    centroInfo.classList.remove("fase-noche");
+    centroInfo.classList.add("fase-dia");
+    listaMensajes.classList.remove("chat-noche");
+    if (!muerto) {
       inputMensaje.disabled = false;
-    } else {
-      spanFase.innerHTML = "FASE: NOCHE";
-      headerChat.innerHTML = "CHAT DE LOS LOBOS";
-      centroInfo.classList.remove("fase-dia");
-      centroInfo.classList.add("fase-noche");
-      if (!lobo) {
-        listaMensajes.classList.add("chat-noche");
-        inputMensaje.disabled = true;
-      }
+    }
+  } else {
+    spanFase.innerHTML = "FASE: NOCHE";
+    headerChat.innerHTML = "CHAT DE LOS LOBOS";
+    centroInfo.classList.remove("fase-dia");
+    centroInfo.classList.add("fase-noche");
+    if (!lobo) {
+      listaMensajes.classList.add("chat-noche");
+      inputMensaje.disabled = true;
     }
   }
+
   ronda++;
   rondaFinalizada = false;
 }
