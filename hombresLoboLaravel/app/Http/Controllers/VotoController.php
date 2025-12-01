@@ -55,13 +55,18 @@ class VotoController extends Controller
                 $eliminado = Jugador::find($idEliminado)->nickname;
                 $resultado = "eliminado";
 
+                $idPersonaje = DB::table('jugador_partida_personajes')
+                    ->where('id_partida', $idPartida)
+                    ->where('id_jugador', $idEliminado)
+                    ->value('id_personaje');
+
                 $partida->jugadoresLobby()->updateExistingPivot($idEliminado, ['eliminado' => true]);
             } else {
                 $eliminado = null;
                 $resultado = "empate";
             }
 
-            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, null));
+            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idEliminado));
         }
 
         return response()->json([
@@ -86,6 +91,7 @@ class VotoController extends Controller
         if ($votosRonda->isEmpty()) {
             $resultado = "empate";
             $eliminado = null;
+            $idPersonaje = null;
         } else {
             $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
                 ->map(fn($v) => count($v));
