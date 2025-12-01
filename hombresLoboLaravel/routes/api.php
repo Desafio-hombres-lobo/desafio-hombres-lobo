@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController, App\Http\Controllers\AuthController, Ap
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\VotoController;
 
 Route::middleware('auth:sanctum')->group(function () {
     // Rutas de ADMIN (requieren token y la habilidad 'admin')
@@ -75,6 +76,18 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/{partidaId}/iniciar', [PartidaController::class, 'iniciarPartida']);
         Route::post('/partida/miRol', [PartidaController::class, 'obtenerMiRol']);
+
+        //Registrar voto de un usuario
+        Route::post('/partidas/{idPartida}/votar', [VotoController::class, 'votar']);
+
+        //Obtener los votos de la ronda ¿Es necesario?
+        Route::get('/partidas/{idPartida}/votos/{ronda}', [VotoController::class, 'obtenerVotos']);
+
+        //Obtener resultado de la votación de la ronda
+        Route::post('/partidas/{idPartida}/resultado/{ronda}', [VotoController::class, 'resultadoVotacion']);
+
+        //Finalizar votación cuando se acabe el tiempo
+        Route::post('/partida/{id}/finalizar-votacion/{ronda}', [VotoController::class, 'finalizarVotacion']);
 
     });
 });

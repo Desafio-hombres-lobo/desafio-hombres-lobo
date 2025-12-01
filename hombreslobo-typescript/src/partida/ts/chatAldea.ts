@@ -16,6 +16,10 @@ import {
 import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
 import { chatLobos } from "./chatLobos";
 import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
+import { votar } from "../../providers/votos/enviarDatosVoto";
+import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
+import { cerrarVotacion, mostrarVotacion } from "./votacion";
+import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -36,31 +40,39 @@ let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
 let jugadores = [];
+
+let ronda = 0;
+let rondaFinalizada = false;
+let votos = 0;
 let lobo = false;
 
 const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
 const listaJugadores = datosJugadoresPartida.listaJugadores;
 const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
 const miNickname = getJugador();
+const jugadorActual = await obtenerJugadorActual();
+const idJugador = jugadorActual.datos?.id;
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
 ): Promise<void> => {
-  // Obtener rol jugador
   const miRolId = await obtenerRolPersonajeJugador();
 
   for (let i = 0; i < listaJugadores.length; i++) {
-    let nombreJugador = String(listaJugadores[i]).trim();
-
+    const jugador = listaJugadores[i];
+    const nombreJugador = String(jugador.nickname).trim();
     const numSlot = i + 1;
+    const idJugadorCarta = jugador.id;
+
     const slotDiv = document.createElement("div");
     slotDiv.className = `jugador slot-${numSlot}`;
+    slotDiv.dataset.jugador = nombreJugador;
+    slotDiv.dataset.id = idJugadorCarta.toString();
 
-    const esMiUsuario = nombreJugador.trim() === miNickname?.trim();
+    const esMiUsuario = nombreJugador === miNickname;
 
     if (esMiUsuario) {
       slotDiv.classList.add("mi-jugador");
-
       if (miRolId === 2) {
         lobo = true;
         await renderizarCartaLobo(slotDiv);
@@ -73,6 +85,22 @@ const repartirCartasJugadores = async (
     } else {
       renderizarReverso(slotDiv, nombreJugador);
     }
+
+    slotDiv.addEventListener("click", async () => {
+      if (!dia) return;
+      if (esMiUsuario) return;
+      const idVotado = parseInt(slotDiv.dataset.id!);
+      const payload = {
+        id_jugador: idJugador,
+        id_jugador_votado: idVotado,
+        ronda,
+      };
+
+      const resultado = await votar(partida_id, payload);
+      if (!resultado.ok) {
+        alert(`Error al votar: ${resultado.error}`);
+      }
+    });
 
     contenedorCarta.appendChild(slotDiv);
   }
@@ -109,6 +137,8 @@ function actualizarFaseVisual() {
       inputMensaje.disabled = true;
     }
   }
+  ronda++;
+  rondaFinalizada = false;
 }
 
 const canal = pusher.subscribe("aldea" + partida_id);
@@ -143,6 +173,26 @@ canal.bind("cambio-fase", async (data: any) => {
   iniciarCuentaAtras(data.tiempoFin);
 });
 
+canal.bind("voto", (data: any) => {
+  pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
+  votos++;
+  if (host && votos >= numeroJugadoresPartida) {
+    setTimeout(async () => {
+      await finalizarVotacion(partida_id, ronda);
+      await cambiarFasePartida(partida_id, !dia);
+    }, 1000);
+  }
+});
+
+canal.bind("votacion-terminada", (data: any) => {
+  if (data.resultado === "eliminado") {
+    mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+  } else {
+    mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
+  }
+  setTimeout(() => cerrarVotacion(), 3000);
+});
+
 const iniciarCuentaAtras = (fechaFinIso: string) => {
   if (temporizador) {
     window.clearInterval(temporizador);
@@ -155,22 +205,25 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
     if (distancia < 0) {
       if (temporizador) {
         window.clearInterval(temporizador);
+        temporizador = null; // Importante limpiar la variable
         reloj.innerHTML = '<i class="fas fa-clock"></i> 00:00';
+        rondaFinalizada = true;
+
         if (host) {
+          console.log("Tiempo agotado. Como host, cambio la fase.");
           try {
+            await finalizarVotacion(partida_id, ronda);
             await cambiarFasePartida(partida_id, !dia);
           } catch (error) {
-            console.error();
+            console.error("Error al cambiar fase por tiempo:", error);
           }
         }
       }
+      return;
     }
-
-    // Cálculos matemáticos
     const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
     const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
 
-    // Formato con ceros a la izquierda (02:05)
     const minStr = minutos < 10 ? "0" + minutos : minutos;
     const segStr = segundos < 10 ? "0" + segundos : segundos;
     reloj.innerHTML = `<i class="fas fa-clock"></i> ${minStr}:${segStr}`;
@@ -188,7 +241,9 @@ formChat.addEventListener("submit", async (e) => {
   if (mensaje === "/cambiar") {
     if (host) {
       try {
+        await finalizarVotacion(partida_id, ronda);
         await cambiarFasePartida(partida_id, !dia);
+        ronda++;
         return;
       } catch {
         console.error;
