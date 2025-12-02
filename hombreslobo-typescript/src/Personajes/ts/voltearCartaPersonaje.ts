@@ -31,7 +31,7 @@ export const voltearCartasLobo = async (
   ) as HTMLElement;
   if (!slotDiv) {
     console.warn(
-      `⚠️ No se encontró la carta HTML para el jugador: "${nickname}". Tal vez aún no se ha renderizado.`
+      `No se encontró la carta HTML para el jugador: "${nickname}". Tal vez aún no se ha renderizado.`
     );
     return;
   }
@@ -42,6 +42,3 @@ export const voltearCartasLobo = async (
     console.log(`Carta de lobo volteada para ${nickname}`);
   }
 };
-
-// export const voltearCartasLobo = () =>
-//   console.log("Voltear cartas lobo está funcionando");

@@ -48,7 +48,7 @@ class VotoController extends Controller
             broadcast(new VotoLobo(
                 $idPartida,
                 $jugador->nickname,
-                $jugadoVotado->nickname
+                $jugadorVotado->nickname
             ));
         }
 
