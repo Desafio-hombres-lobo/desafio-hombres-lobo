@@ -1,11 +1,23 @@
 import { getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
 import { pintarMensaje } from "./chatAldea";
+import { voltearCartasLobo } from "../../Personajes/ts/voltearCartaPersonaje";
+import { obtenerJugadoresLobos } from "../../providers/obtenerJugadoresLobo";
 
 const partida_id = getPartidaId();
+const jugadoresLobo = await obtenerJugadoresLobos();
 
 export const chatLobos = () => {
   const canal = conectarLobos();
+  // jugadoresLobo.forEach((jugadorLobo: any) => {
+  //   if (jugadorLobo) {
+  //     voltearCartasLobo(jugadorLobo.nickname, jugadorLobo.id_personaje);
+  //   } else {
+  //     console.warn("No se encuentra al jugador lobo");
+  //   }
+  // });
+
+  console.log("Jugadores lobo: ", jugadoresLobo);
   configurarBind(canal);
   configurarVotos(canal);
 };
@@ -22,6 +34,15 @@ const configurarBind = (canal: any) => {
 
 const configurarVotos = (canal: any) => {
   canal.bind("votos-lobos", (data: any) => {
+    jugadoresLobo.forEach((jugadorLobo: any) => {
+      if (jugadorLobo) {
+        voltearCartasLobo(data.nickname, jugadorLobo.id_personaje);
+      } else {
+        console.warn("No se encuentra al jugador lobo");
+      }
+    });
+
+    console.log("Jugadores lobo: ", jugadoresLobo);
     pintarVotoLobo(data.idVotante, data.idVotado);
   });
 };
