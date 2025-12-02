@@ -28,12 +28,12 @@ class VotoController extends Controller
         ]);
 
         $jugador = Jugador::find($validated['id_jugador']);
-        $jugadoVotado = Jugador::find($validated['id_jugador_votado']);
+        $jugadorVotado = Jugador::find($validated['id_jugador_votado']);
 
         event(new Votar(
             $idPartida,
             $jugador->nickname,
-            $jugadoVotado->nickname
+            $jugadorVotado->nickname
         ));
 
         $partida = Partida::find($idPartida);
@@ -139,9 +139,7 @@ class VotoController extends Controller
 
     public function resultadoVotacion($idPartida, $ronda)
     {
-        $votos = Voto::where('id_partida', $idPartida)
-            ->where('ronda', $ronda)
-            ->get();
+        $votos = Voto::votosPartida($idPartida);
 
         if ($votos->isEmpty()) {
             event(new VotacionTerminada(
@@ -207,5 +205,43 @@ class VotoController extends Controller
         ]);
     }
 
+       public function calcularVoto($idPartida, $idBot, $ronda)
+    {
+        $bot = Jugador::findOrFail($idBot);
+
+        $idVotado = $bot->calcularVoto($idPartida, $bot);
+        $jugadorVotado = Jugador::findOrFail($idVotado);
+
+        return response()->json(['voto_bot' => $idVotado, 'nickname_votado'=>$jugadorVotado->nickname,
+        'id_bot'=> $bot->id, 'nickname_bot'=>$bot->nickname]);
+    }
+
+
+
+       public function votarBot(Request $request, $idPartida, $ronda)
+    {
+
+        $idVotado = $request->voto_bot;
+        $idBot = $request->id_bot;
+        if ($idVotado) {
+            Voto::create([
+                'id_partida' => $idPartida,
+                'id_jugador' => $idBot,
+                'id_jugador_votado' => $idVotado,
+                'ronda' => $ronda,
+            ]);
+        }
+
+        $jugadorVotado =  Jugador::find($idVotado);
+        $bot = Jugador::find($idBot);
+
+         event(new Votar(
+            $idPartida,
+            $bot->nickname,
+            $jugadorVotado->nickname
+        ));
+
+        return response()->json(['votado'=>'ok']);
+    }
 
 }

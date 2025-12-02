@@ -20,6 +20,7 @@ import { votar } from "../../providers/votos/enviarDatosVoto";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { cerrarVotacion, mostrarVotacion, voto } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
+import { votarYHablarBot } from "../../providers/votos/obtenerVotoBot";
 import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
@@ -40,7 +41,16 @@ const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
-let jugadores = [];
+type Jugador = {
+  id: number;
+  nickname: string;
+  bot: boolean;
+  [key: string]: any; // si tiene más campos
+};
+
+let jugadores: Jugador[] = [];
+
+let yaHasVotado = false;
 let muerto = false;
 let ronda = 0;
 let rondaFinalizada = false;
@@ -90,6 +100,7 @@ const repartirCartasJugadores = async (
     slotDiv.addEventListener("click", async () => {
       if (!dia) return;
       if (esMiUsuario) return;
+      if (yaHasVotado) return;
       if (muerto) return;
       const idVotado = parseInt(slotDiv.dataset.id!);
       const payload = {
@@ -99,6 +110,7 @@ const repartirCartasJugadores = async (
       };
 
       const resultado = await votar(partida_id, payload);
+      yaHasVotado = true;
       if (!resultado.ok) {
         alert(`Error al votar: ${resultado.error}`);
       }
@@ -145,6 +157,7 @@ function actualizarFaseVisual() {
       inputMensaje.disabled = true;
     }
   }
+  yaHasVotado = false;
 
   ronda++;
   rondaFinalizada = false;
@@ -160,6 +173,16 @@ canal.bind("cambio-fase", async (data: any) => {
   if (data.fase === "dia") {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
+    if (host) {
+      const bots = jugadores.filter((j) => j.bot);
+      console.log(bots.length);
+
+      for (const bot of bots) {
+        setTimeout(() => {
+          votarYHablarBot(partida_id, bot.id, ronda);
+        }, Math.random() * 3000 + 1000);
+      }
+    }
   } else {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
@@ -190,6 +213,9 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+      const index = jugadores.findIndex(j => j.nickname === data.eliminado);
+    if (index !== -1) jugadores.splice(index, 1);
+
     if (data.eliminado === miNickname) {
       muerto = true;
     }

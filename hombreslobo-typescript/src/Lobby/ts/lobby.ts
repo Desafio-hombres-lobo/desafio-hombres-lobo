@@ -12,6 +12,7 @@ import { actualizarEstadoPartida } from "../../providers/actualizarEstadoPartida
 import { iniciarPartida } from "../../providers/iniciarPartida";
 import { getPartidaId, getToken } from "../../autenticacion/ts/auth";
 import { pusher } from "../../Partida/ts/reverb";
+import { rellenarBotsPartida } from "../../providers/rellenarBots";
 
 export const initLobby = () => {
   const partidaId = getPartidaId();
@@ -103,6 +104,7 @@ export const initLobby = () => {
 
   channel.bind("iniciar.juego", (data: any) => {
     console.log("Evento recibido, iniciando partida...", data);
+    rellenarBotsPartida(partidaId, jugadoresActuales);
     setTimeout(
       () => (window.location.href = "/src/Partida/htmls/partida.html"),
       4000
