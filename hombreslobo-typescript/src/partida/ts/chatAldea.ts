@@ -198,20 +198,21 @@ canal.bind("cambio-fase", async (data: any) => {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
     if (host) {
-  const lobos = (await obtenerIdJugadoresLobos()).filter(l => l.bot !== idJugador);
+      const lobos = (await obtenerIdJugadoresLobos()).filter(l => l.id !== idJugador);
 
-  // Traemos solo los bots que son lobos
-  const botsLobo = jugadores.filter(j => j.bot && j.rolId === 2 && j.id !== idJugador);
 
-   participantes = [...botsLobo];
+      const botsLobo = jugadores.filter(j => j.bot && j.rolId === 2 && j.id !== idJugador);
 
-  console.log("Participantes (bots lobo):", participantes);
-      for (const p of participantes) {
-        setTimeout(() => {
-          votarYHablarBotLobo(partida_id, p.id, ronda);
-        }, Math.random() * 3000 + 1000);
-      }
-    }
+    
+      participantes = [...lobos, ...botsLobo];
+
+      console.log("Participantes (bots lobo):", participantes);
+          for (const p of participantes) {
+            setTimeout(() => {
+              votarYHablarBotLobo(partida_id, p.id, ronda);
+            }, Math.random() * 3000 + 1000);
+          }
+        }
 
   }
 
@@ -242,30 +243,36 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-    const index = jugadores.findIndex((j) => j.nickname === data.eliminado);
-      if (participantes) {
+
+    const jugadorEliminado = jugadores.find(j => j.nickname === data.eliminado);
+    if (jugadorEliminado) jugadorEliminado.eliminado = true;
+
+    if (participantes) {
       participantes = participantes.filter(p => p.nickname !== data.eliminado);
-      console.log("Participantes después de eliminar:", participantes);
     }
-    if (index !== -1) jugadores.splice(index, 1);
 
     if (data.eliminado === miNickname) {
       muerto = true;
     }
+
     if (data.idPersonaje) {
       await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
     }
   } else {
     mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
   }
+
+  await comprobarVictoria();
+
   setTimeout(async () => {
     cerrarVotacion();
     if (host) {
       await cambiarFasePartida(partida_id, !dia);
     }
   }, 3000);
-  votos = 0;
+
 });
+
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {
   if (temporizador) {
@@ -394,3 +401,49 @@ function pintarMensajeSistema(texto: string) {
   // Autoscroll
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 }
+
+async function comprobarVictoria() {
+  const vivos = jugadores.filter(j => !j.eliminado); 
+  console.log(vivos)
+  const lobosVivos = participantes.length;
+  console.log(lobosVivos)
+  const aldeanosVivos = vivos.length - lobosVivos;
+  console.log(aldeanosVivos)
+
+  if (lobosVivos >= aldeanosVivos) {
+    mostrarFinPartida("GANAN LOS LOBOS");
+      setTimeout(() => {
+      window.location.href = "/";
+    }, 2000);
+    return true;
+  }
+
+  if (lobosVivos === 0) {
+    mostrarFinPartida("GANAN LOS ALDEANOS");
+      setTimeout(() => {
+      window.location.href = "/";
+    }, 2000);
+   return true;
+  }
+
+  return false;
+}
+
+function mostrarFinPartida(texto: string) {
+  const overlay = document.createElement("div");
+  overlay.classList.add("fin-overlay");
+
+  overlay.innerHTML = `
+    <div class="fin-contenedor">
+      <h1>${texto}</h1>
+      <button id="btn-volver">Volver al inicio</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById("btn-volver")!.addEventListener("click", () => {
+    window.location.href = "/"; 
+  });
+}
+

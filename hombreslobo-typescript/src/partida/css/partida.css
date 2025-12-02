@@ -527,3 +527,38 @@ body {
 .mi-jugador.jugador-eliminado::before {
   display: none;
 }
+
+.fin-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.fin-contenedor {
+  background:rgba(0, 0, 0, 0.8) ;
+  color:var(--morado);
+  font-family:var(--fuente-titulo);
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  font-size: 30px;
+}
+
+#btn-volver {
+  margin-top: 25px;
+  font-size: 22px;
+  padding: 10px 25px;
+  cursor: pointer;
+  border-radius: 12px;
+  border: none;
+  background:var(--morado);
+  color: white;
+}
+
