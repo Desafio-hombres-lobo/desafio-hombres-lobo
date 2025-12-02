@@ -421,7 +421,7 @@ body {
 
 /* ESTILOS DEL REVERSO CARTA */
 .carta-reverso {
-  background-color: #777776;
+  background-color: var(--amarillo);
   border: 3px solid #1a1a1a;
   border-radius: 20px;
   width: 100%;
