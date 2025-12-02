@@ -88,10 +88,10 @@ const repartirCartasJugadores = async (
       slotDiv.classList.add("mi-jugador");
       if (miRolId === 2) {
         lobo = true;
-        await renderizarCartaLobo(slotDiv);
+        await renderizarCartaLobo(slotDiv, miNickname);
         await chatLobos();
       } else if (miRolId === 1) {
-        await renderizarCartaAldeano(slotDiv);
+        await renderizarCartaAldeano(slotDiv, miNickname);
       } else {
         renderizarReverso(slotDiv, nombreJugador);
       }

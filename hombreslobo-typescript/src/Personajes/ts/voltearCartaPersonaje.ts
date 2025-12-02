@@ -14,9 +14,9 @@ export const voltearCartaPersonaje = async (
   const id = Number(idPersonaje);
 
   if (id === 1) {
-    await renderizarCartaAldeano(slotDiv);
+    await renderizarCartaAldeano(slotDiv, nickname);
   } else if (id === 2) {
-    await renderizarCartaLobo(slotDiv);
+    await renderizarCartaLobo(slotDiv, nickname);
   }
 
   slotDiv.classList.add("jugador-eliminado");
@@ -38,7 +38,7 @@ export const voltearCartasLobo = async (
   slotDiv.innerHTML = "";
 
   if (idPersonaje === 2) {
-    await renderizarCartaLobo(slotDiv);
+    await renderizarCartaLobo(slotDiv, nickname);
     console.log(`Carta de lobo volteada para ${nickname}`);
   }
 };

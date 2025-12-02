@@ -10,7 +10,8 @@ const IMG_HOMBRE_LOBO = loboImg;
 const IMG_ALDEANO = aldeanoImg;
 
 export const renderizarCartaLobo = async (
-  contenedor: HTMLElement
+  contenedor: HTMLElement,
+  nickname: string
 ): Promise<void> => {
   const datosAccionesPersonaje: any = await obtenerAccionesPersonaje(ID_LOBO);
 
@@ -31,14 +32,15 @@ export const renderizarCartaLobo = async (
       <div class="carta-img-container">
           <img src="${IMG_HOMBRE_LOBO}" alt="${nombrePersonaje}">
       </div>
-      <p class="carta-titulo">${nombrePersonaje}</p>
+      <p class="carta-titulo">${nickname}</p>
   `;
 
   contenedor.appendChild(carta);
 };
 
 export const renderizarCartaAldeano = async (
-  contenedor: HTMLElement
+  contenedor: HTMLElement,
+  nickname: string
 ): Promise<void> => {
   const datosAccionesPersonaje: any = await obtenerAccionesPersonaje(
     ID_ALDEANO
@@ -61,7 +63,7 @@ export const renderizarCartaAldeano = async (
       <div class="carta-img-container">
           <img src="${IMG_ALDEANO}" alt="${nombrePersonaje}">
       </div>
-      <p class="carta-titulo">${nombrePersonaje}</p>
+      <p class="carta-titulo">${nickname}</p>
   `;
 
   contenedor.appendChild(carta);
