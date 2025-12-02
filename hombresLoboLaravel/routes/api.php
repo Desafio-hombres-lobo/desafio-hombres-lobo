@@ -59,6 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/partida/host', [MotorPartidaController::class, 'esHost']);
         Route::get('/jugador/{id}', [JugadorController::class, 'showJugador']);
         Route::get('/partidas/{id_partida}/lobos', [JugadorPartidaPersonajeController::class, 'obtenerLobos']);
+        Route::get('/partidas/{id_partida}/idLobos', [JugadorPartidaPersonajeController::class, 'obtenerIdLobos']);
 
 
         Route::post('/game/join', [PartidaController::class, 'join']);
@@ -97,6 +98,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/partida/{idPartida}/votarBot/{bot}/{ronda}', [VotoController::class, 'calcularVoto']);
 
         Route::get('/partida/{idPartida}/calcularVoto/{idBot}/{ronda}', [VotoController::class, 'calcularVoto']);
+
+        Route::get('/partida/{idPartida}/calcularVotoNoche/{idBot}/{ronda}', [VotoController::class, 'calcularVotoLobo']);
 
         Route::post('/partida/{idBot}/votar/{ronda}', [VotoController::class, 'votarBot']);
 

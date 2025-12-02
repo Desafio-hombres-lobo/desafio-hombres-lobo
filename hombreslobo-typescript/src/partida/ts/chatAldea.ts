@@ -22,6 +22,9 @@ import { cerrarVotacion, mostrarVotacion, voto } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
 import { votarYHablarBot } from "../../providers/votos/obtenerVotoBot";
 import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
+import { obtenerJugadoresLobos } from "../../providers/obtenerJugadoresLobo";
+import { votarYHablarBotLobo } from "../../providers/votos/obtenerVotoBotsLobo";
+import { obtenerIdJugadoresLobos } from "../../providers/obtenerIdJugadoresLobo";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -65,6 +68,8 @@ const miNickname = getJugador();
 const jugadorActual = await obtenerJugadorActual();
 const idJugador = jugadorActual.datos?.id;
 const numeroDeLobos = Math.floor(numeroJugadoresPartida / 3) || 1; // filtrar según roles lobo que haya
+let bots: Jugador[] = [];
+let botsLobo = await obtenerJugadoresLobos();
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
@@ -179,7 +184,7 @@ canal.bind("cambio-fase", async (data: any) => {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
     if (host) {
-      const bots = jugadores.filter((j) => j.bot);
+      bots = jugadores.filter((j) => j.bot);
       console.log(bots.length);
 
       for (const bot of bots) {
@@ -191,6 +196,25 @@ canal.bind("cambio-fase", async (data: any) => {
   } else {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
+    if (host) {
+      const lobos = await obtenerIdJugadoresLobos();
+      const todosBots = jugadores.filter(j => j.bot); 
+
+      const participantes = [...lobos];
+
+      for (const bot of todosBots) {
+        if (!participantes.some(j => j.id === bot.id)) {
+          participantes.push(bot);
+        }
+      }
+
+      for (const p of participantes) {
+        setTimeout(() => {
+          votarYHablarBotLobo(partida_id, p.id, ronda);
+        }, Math.random() * 3000 + 1000);
+      }
+    }
+
   }
 
   // PRUEBAS

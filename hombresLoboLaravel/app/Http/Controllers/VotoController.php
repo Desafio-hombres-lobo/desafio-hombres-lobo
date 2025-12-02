@@ -238,6 +238,17 @@ class VotoController extends Controller
     }
 
 
+       public function calcularVotoLobo($idPartida, $idBot, $ronda)
+    {
+        $bot = Jugador::findOrFail($idBot);
+
+        $idVotado = $bot->calcularVotoNoche($idPartida, $bot);
+        $jugadorVotado = Jugador::findOrFail($idVotado);
+
+        return response()->json(['voto_bot' => $idVotado, 'nickname_votado'=>$jugadorVotado->nickname,
+        'id_bot'=> $bot->id, 'nickname_bot'=>$bot->nickname]);
+    }
+
 
     public function votarBot(Request $request, $idPartida, $ronda)
     {
@@ -255,12 +266,19 @@ class VotoController extends Controller
 
         $jugadorVotado = Jugador::find($idVotado);
         $bot = Jugador::find($idBot);
-
+        if($ronda%2==0){
         event(new Votar(
             $idPartida,
             $bot->nickname,
             $jugadorVotado->nickname
         ));
+        }else{
+            event(new VotoLobo(
+            $idPartida,
+            $bot->nickname,
+            $jugadorVotado->nickname
+            ));
+        }
 
         return response()->json(['votado' => 'ok']);
     }
