@@ -70,8 +70,8 @@ class Jugador extends Model
         $jugadoresVivos = $jugadoresVivos->where('id', '!=', $bot->id);
 
         // Si es lobo no puede votar a lobos
-        if ($bot->rol === 'lobo') {
-            $jugadoresVivos = $jugadoresVivos->where('rol', '!=', 'lobo');
+        if ($bot->rol === 2) {
+            $jugadoresVivos = $jugadoresVivos->where('rol', '!=', 2);
         }
 
         // Si no hay jugadores válidos ¿Pero siempre va a haber no?
@@ -117,7 +117,7 @@ class Jugador extends Model
         })->get();
 
         $victimasPotenciales = $jugadoresVivos
-            ->where('rol', '!=', 'lobo')
+            ->where('rol', '!=', 2)
             ->where('id', '!=', $bot->id);
 
         if ($votos->count() === 0) {
