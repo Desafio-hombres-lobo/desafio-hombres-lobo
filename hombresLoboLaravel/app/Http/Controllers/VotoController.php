@@ -9,6 +9,7 @@ use App\Models\Partida;
 use App\Models\Voto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Events\VotoLobo;
 
 class VotoController extends Controller
 {
@@ -35,6 +36,21 @@ class VotoController extends Controller
             $jugador->nickname,
             $jugadorVotado->nickname
         ));
+
+        // Comprobamos si el jugador que vota es un lobo
+        $idPersonaje = DB::table('jugador_partida_personajes')
+            ->where('id_partida', $idPartida)
+            ->where('id_jugador', $validated['id_jugador'])
+            ->value('id_personaje');
+
+        // Si es lobo, emite por el canal privado
+        if ($idPersonaje == 2) {
+            broadcast(new VotoLobo(
+                $idPartida,
+                $jugador->nickname,
+                $jugadoVotado->nickname
+            ));
+        }
 
         $partida = Partida::find($idPartida);
         $jugadoresVivos = $partida->jugadoresLobby()->wherePivot('eliminado', false)->count();

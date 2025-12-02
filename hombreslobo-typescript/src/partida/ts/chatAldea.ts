@@ -55,6 +55,7 @@ let muerto = false;
 let ronda = 0;
 let rondaFinalizada = false;
 let votos = 0;
+let votosLobos = 0;
 let lobo = false;
 
 const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
@@ -63,6 +64,7 @@ const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
 const miNickname = getJugador();
 const jugadorActual = await obtenerJugadorActual();
 const idJugador = jugadorActual.datos?.id;
+const numeroDeLobos = Math.floor(numeroJugadoresPartida / 3) || 1; // filtrar según roles lobo que haya
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
@@ -98,8 +100,10 @@ const repartirCartasJugadores = async (
     }
 
     slotDiv.addEventListener("click", async () => {
-      if (!dia) return;
       if (esMiUsuario) return;
+      // Votar si es de día, o si es de noche y soy lobo
+      if (!dia && !lobo) return;
+
       if (yaHasVotado) return;
       if (muerto) return;
       const idVotado = parseInt(slotDiv.dataset.id!);
@@ -206,6 +210,8 @@ canal.bind("cambio-fase", async (data: any) => {
 });
 
 canal.bind("voto", (data: any) => {
+  if (!dia) return;
+
   pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
   votos++;
 });

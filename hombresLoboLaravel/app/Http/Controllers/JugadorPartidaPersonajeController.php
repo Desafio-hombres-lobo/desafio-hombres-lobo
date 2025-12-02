@@ -128,6 +128,15 @@ class JugadorPartidaPersonajeController extends Controller
         ]);
     }
 
+    public function obtenerLobos($id_partida){
+        // Buscar todos los jugadores lobo de la partida
+        $jugadoresLobo = JugadorPartidaPersonaje::where('id_partida', $id_partida)
+                                                ->where('id_personaje', 2)
+                                                ->get();
+
+        return response()->json($jugadoresLobo);
+    }
+
     public function mostrarJugadoresPorEstado($id_partida, $estado)
     {
         $jugadores = JugadorPartidaPersonaje::where('id_partida', $id_partida)
