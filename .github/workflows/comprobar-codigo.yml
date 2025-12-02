@@ -1,0 +1,49 @@
+name: Comprobar Proyecto (CI)
+
+# ¿Cuándo se ejecuta el robot?
+on:
+  push:
+    branches: ["main", "master"] # Cuando hacéis push a la rama principal
+  pull_request:
+    branches: ["main", "master"] # Cuando hacéis un Pull Request
+
+jobs:
+  # TAREA 1: Comprobar que el Backend (Laravel) no explota
+  backend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preparar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2" # Ajusta si usáis otra versión
+
+      - name: Copiar .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Instalar dependencias de Laravel
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Generar clave de aplicación
+        run: php artisan key:generate
+
+      - name: Comprobar que Laravel arranca
+        run: php artisan --version
+
+  # TAREA 2: Comprobar que el Frontend (TypeScript) compila bien
+  frontend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar dependencias
+        run: npm ci # Es como npm install pero más limpio para servidores
+
+      - name: Comprobar Build (Detecta errores de TypeScript)
+        run: npm run build
