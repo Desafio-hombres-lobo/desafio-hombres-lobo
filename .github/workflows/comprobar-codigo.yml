@@ -3,9 +3,9 @@ name: Comprobar Proyecto (CI)
 # ¿Cuándo se ejecuta el robot?
 on:
   push:
-    branches: ["main", "master"] # Cuando hacéis push a la rama principal
+    branches: ["main", "dev"] # Cuando hacéis push a la rama principal
   pull_request:
-    branches: ["main", "master"] # Cuando hacéis un Pull Request
+    branches: ["main", "dev"] # Cuando hacéis un Pull Request
 
 jobs:
   # TAREA 1: Comprobar que el Backend (Laravel) no explota
