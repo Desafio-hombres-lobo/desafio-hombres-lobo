@@ -3,7 +3,6 @@ import { getJSONHeaders } from "../../autenticacion/ts/header";
 import { construirApi } from "../../autenticacion/ts/apiFetch";
 import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
-import { enviarMensajeBot } from "../../providers/enviarMensaje";
 import "../css/partida.css";
 import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
