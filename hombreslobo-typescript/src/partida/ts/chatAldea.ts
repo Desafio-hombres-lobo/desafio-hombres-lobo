@@ -158,6 +158,7 @@ function actualizarFaseVisual() {
     }
   }
   yaHasVotado = false;
+
   ronda++;
   rondaFinalizada = false;
 }
