@@ -15,9 +15,11 @@ return new class extends Migration {
             $table->timestamps();
             $table->string('nickname')->unique();
             $table->foreignId('id_usuario')
+                ->nullable()
                 ->constrained('users')
                 ->onDelete('cascade')
                 ->unique();
+            $table->boolean('bot')->default(false);
         });
     }
 

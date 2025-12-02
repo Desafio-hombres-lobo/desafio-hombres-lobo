@@ -73,8 +73,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
         Route::post('/chat/send', [ChatController::class, 'send']);
+        Route::post('/chat/send/{bot}', [ChatController::class, 'sendMensajeBot']);
 
         Route::post('/{id}/llena', [PartidaController::class, 'llenar']);
+
+        Route::post('/rellenar/partida/{idPartida}', [PartidaController::class, 'rellenarBots']);
 
         Route::post('/{partidaId}/iniciar', [PartidaController::class, 'iniciarPartida']);
         Route::post('/partida/miRol', [PartidaController::class, 'obtenerMiRol']);
@@ -90,6 +93,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
         //Finalizar votación cuando se acabe el tiempo
         Route::post('/partida/{id}/finalizar-votacion/{ronda}', [VotoController::class, 'finalizarVotacion']);
+
+        Route::post('/partida/{idPartida}/votarBot/{bot}/{ronda}', [VotoController::class, 'calcularVoto']);
+
+        Route::get('/partida/{idPartida}/calcularVoto/{idBot}/{ronda}', [VotoController::class, 'calcularVoto']);
+
+        Route::post('/partida/{idBot}/votar/{ronda}', [VotoController::class, 'votarBot']);
 
     });
 });

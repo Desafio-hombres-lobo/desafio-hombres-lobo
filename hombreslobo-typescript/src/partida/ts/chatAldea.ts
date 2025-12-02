@@ -20,6 +20,7 @@ import { votar } from "../../providers/votos/enviarDatosVoto";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { cerrarVotacion, mostrarVotacion, voto } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
+import { votarYHablarBot } from "../../providers/votos/obtenerVotoBot";
 import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
@@ -40,7 +41,16 @@ const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
-let jugadores = [];
+type Jugador = {
+  id: number;
+  nickname: string;
+  bot: boolean;
+  [key: string]: any; // si tiene más campos
+};
+
+let jugadores: Jugador[] = [];
+
+let yaHasVotado = false;
 let muerto = false;
 let ronda = 0;
 let rondaFinalizada = false;
@@ -94,6 +104,7 @@ const repartirCartasJugadores = async (
       // Votar si es de día, o si es de noche y soy lobo
       if (!dia && !lobo) return;
 
+      if (yaHasVotado) return;
       if (muerto) return;
       const idVotado = parseInt(slotDiv.dataset.id!);
       const payload = {
@@ -103,6 +114,7 @@ const repartirCartasJugadores = async (
       };
 
       const resultado = await votar(partida_id, payload);
+      yaHasVotado = true;
       if (!resultado.ok) {
         alert(`Error al votar: ${resultado.error}`);
       }
@@ -129,25 +141,28 @@ function actualizarFaseVisual() {
   if (muerto) {
     inputMensaje.disabled = true;
     inputMensaje.placeholder = "No puedes hablar, estás muerto.";
-  } else {
-    if (dia) {
-      spanFase.innerHTML = "FASE: DÍA";
-      headerChat.innerHTML = "CHAT DE LA ALDEA";
-      centroInfo.classList.remove("fase-noche");
-      centroInfo.classList.add("fase-dia");
-      listaMensajes.classList.remove("chat-noche");
+  }
+  if (dia) {
+    spanFase.innerHTML = "FASE: DÍA";
+    headerChat.innerHTML = "CHAT DE LA ALDEA";
+    centroInfo.classList.remove("fase-noche");
+    centroInfo.classList.add("fase-dia");
+    listaMensajes.classList.remove("chat-noche");
+    if (!muerto) {
       inputMensaje.disabled = false;
-    } else {
-      spanFase.innerHTML = "FASE: NOCHE";
-      headerChat.innerHTML = "CHAT DE LOS LOBOS";
-      centroInfo.classList.remove("fase-dia");
-      centroInfo.classList.add("fase-noche");
-      if (!lobo) {
-        listaMensajes.classList.add("chat-noche");
-        inputMensaje.disabled = true;
-      }
+    }
+  } else {
+    spanFase.innerHTML = "FASE: NOCHE";
+    headerChat.innerHTML = "CHAT DE LOS LOBOS";
+    centroInfo.classList.remove("fase-dia");
+    centroInfo.classList.add("fase-noche");
+    if (!lobo) {
+      listaMensajes.classList.add("chat-noche");
+      inputMensaje.disabled = true;
     }
   }
+  yaHasVotado = false;
+
   ronda++;
   rondaFinalizada = false;
 }
@@ -162,6 +177,16 @@ canal.bind("cambio-fase", async (data: any) => {
   if (data.fase === "dia") {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
+    if (host) {
+      const bots = jugadores.filter((j) => j.bot);
+      console.log(bots.length);
+
+      for (const bot of bots) {
+        setTimeout(() => {
+          votarYHablarBot(partida_id, bot.id, ronda);
+        }, Math.random() * 3000 + 1000);
+      }
+    }
   } else {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
@@ -194,6 +219,9 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+      const index = jugadores.findIndex(j => j.nickname === data.eliminado);
+    if (index !== -1) jugadores.splice(index, 1);
+
     if (data.eliminado === miNickname) {
       muerto = true;
     }

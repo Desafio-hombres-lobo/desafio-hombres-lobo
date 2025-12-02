@@ -15,7 +15,7 @@ class MotorPartidaController extends Controller
         $partida_id = $request->input('partida_id');
         $fase = $request->input('fase');
 
-        $duracionTurno = 0.2; //Duracion en minutos del turno
+        $duracionTurno = 1; //Duracion en minutos del turno
 
         $final = Carbon::now()->addMinutes($duracionTurno);
         event(new CambiarFase(
