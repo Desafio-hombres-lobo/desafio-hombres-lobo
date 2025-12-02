@@ -137,6 +137,22 @@ class JugadorPartidaPersonajeController extends Controller
         return response()->json($jugadoresLobo);
     }
 
+    public function obtenerIdLobos($id_partida) {
+    $jugadoresLobo = JugadorPartidaPersonaje::where('id_partida', $id_partida)
+        ->where('id_personaje', 2)
+        ->with('jugador')
+        ->get()
+        ->map(function($jpp) {
+            return [
+                'id' => $jpp->jugador->id,      
+                'nickname' => $jpp->jugador->nickname ?? 'desconocido',
+                'bot' => $jpp->jugador->bot ?? false,
+            ];
+        });
+
+    return response()->json($jugadoresLobo);
+}
+
     public function mostrarJugadoresPorEstado($id_partida, $estado)
     {
         $jugadores = JugadorPartidaPersonaje::where('id_partida', $id_partida)

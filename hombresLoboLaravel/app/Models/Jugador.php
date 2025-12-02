@@ -62,7 +62,7 @@ class Jugador extends Model
         // Jugadores vivos
         $jugadoresVivos = Jugador::whereHas('partidasActivas', function ($query) use ($idPartida) {
             $query->where('partida_id', $idPartida)
-                ->where('eliminado', false); 
+                ->where('eliminado', false);
         })->get();
 
 
@@ -70,8 +70,8 @@ class Jugador extends Model
         $jugadoresVivos = $jugadoresVivos->where('id', '!=', $bot->id);
 
         // Si es lobo no puede votar a lobos
-        if ($bot->rol === 'lobo') {
-            $jugadoresVivos = $jugadoresVivos->where('rol', '!=', 'lobo');
+        if ($bot->rol === 2) {
+            $jugadoresVivos = $jugadoresVivos->where('rol', '!=', 2);
         }
 
         // Si no hay jugadores válidos ¿Pero siempre va a haber no?
@@ -106,4 +106,40 @@ class Jugador extends Model
 
         return $masVotados->random();
     }
+
+    public function calcularVotoNoche($idPartida, $bot)
+    {
+        $votos = Voto::where('id_partida', $idPartida)->get();
+
+        $jugadoresVivos = Jugador::whereHas('partidasActivas', function ($q) use ($idPartida) {
+            $q->where('partida_id', $idPartida)
+            ->where('eliminado', false);
+        })->get();
+
+        $victimasPotenciales = $jugadoresVivos
+            ->where('rol', '!=', 2)
+            ->where('id', '!=', $bot->id);
+
+        if ($votos->count() === 0) {
+            return $victimasPotenciales->random()->id;
+        }
+
+        $conteo = $votos->groupBy('id_jugador_votado')
+                        ->map(fn($v) => $v->count());
+
+        $maxVotos = $conteo->max();
+
+        $masVotados = $conteo->filter(fn($n) => $n === $maxVotos)->keys();
+
+        $masVotados = $masVotados->filter(function ($id) use ($victimasPotenciales) {
+            return $victimasPotenciales->contains('id', $id);
+        });
+
+        if ($masVotados->count() === 0) {
+            return $victimasPotenciales->random()->id;
+        }
+
+        return $masVotados->random();
+    }
+
 }
