@@ -13,14 +13,15 @@ export const votarYHablarBot = async (
   try {
     const resVoto = await fetch(
       construirApi(`/partida/${idPartida}/calcularVoto/${idBot}/${ronda}`),
-      { method: "POST", headers: getJSONHeaders() }
+      { method: "GET", headers: getJSONHeaders() }
     );
 
     if (!resVoto.ok) return console.error("Error calculando voto del bot");
 
     const dataVoto = await resVoto.json();
     const objetivo = dataVoto.voto_bot;
-    const nicknameBot = dataVoto.bot_nickname;
+    const nicknameBot = dataVoto.nickname_bot;
+    const nicknameObjetivo = dataVoto.nickname_votado;
 
     await esperar(3500);
 
@@ -38,7 +39,7 @@ export const votarYHablarBot = async (
       const mensajeRandom =
         mensajesBot[Math.floor(Math.random() * mensajesBot.length)];
 
-      const mensajeFinal = `${mensajeRandom} ${objetivo}`;
+      const mensajeFinal = `${mensajeRandom} ${nicknameObjetivo}`;
 
       await esperar(Math.random() * 6000 + 1000); 
       pintarMensaje(nicknameBot, mensajeFinal);
@@ -50,8 +51,23 @@ export const votarYHablarBot = async (
       });
     }
 
-    console.log(`Bot ${nicknameBot} ha votado correctamente a ${objetivo}`);
+    
+  await fetch(
+      construirApi(`/partida/${idPartida}/votar/${ronda}`),
+      {
+        method: "POST",
+        headers: getJSONHeaders(),
+        body: JSON.stringify({
+          voto_bot: objetivo,
+          id_bot: idBot,
+          ronda: ronda
+        })
+      }
+    );
+
+    console.log(`Bot ${nicknameBot} ha votado correctamente a ${nicknameObjetivo}`);
   } catch (error) {
     console.error("Error en votarYHablarBot:", error);
   }
+
 };

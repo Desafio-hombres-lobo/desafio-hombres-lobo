@@ -3,7 +3,6 @@ import { getJSONHeaders } from "../../autenticacion/ts/header";
 import { construirApi } from "../../autenticacion/ts/apiFetch";
 import { pusher } from "./reverb";
 import { enviarMensaje} from "../../providers/envioDatosChat";
-import { enviarMensajeBot } from "../../providers/enviarMensaje";
 import "../css/partida.css";
 import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
@@ -211,6 +210,9 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+      const index = jugadores.findIndex(j => j.nickname === data.eliminado);
+    if (index !== -1) jugadores.splice(index, 1);
+
     if (data.eliminado === miNickname) {
       muerto = true;
     }

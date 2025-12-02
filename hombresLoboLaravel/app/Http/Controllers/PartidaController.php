@@ -103,6 +103,7 @@ class PartidaController extends Controller
 
         $jugadores = $partida->jugadoresLobby()
         ->select('jugadores.id', 'jugadores.nickname', 'jugadores.bot')
+        ->where('eliminado', false)
         ->get();
 
         return response()->json([
@@ -307,15 +308,6 @@ class PartidaController extends Controller
             'ok' => true,
         ]);
     }
-
-    public function obtenerBots(Partida $partida): array
-    {
-        return $partida->jugadoresLobby()
-            ->where('bot', true)
-            ->get()
-            ->all();
-    }
-
 
 
 }

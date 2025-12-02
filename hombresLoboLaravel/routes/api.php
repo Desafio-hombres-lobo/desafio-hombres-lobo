@@ -94,8 +94,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/partida/{idPartida}/votarBot/{bot}/{ronda}', [VotoController::class, 'calcularVoto']);
 
-        Route::post('/partida/{idPartida}/calcularVoto/{idBot}/{ronda}', [VotoController::class, 'calcularVoto']);
+        Route::get('/partida/{idPartida}/calcularVoto/{idBot}/{ronda}', [VotoController::class, 'calcularVoto']);
 
+        Route::post('/partida/{idBot}/votar/{ronda}', [VotoController::class, 'votarBot']);
 
     });
 });

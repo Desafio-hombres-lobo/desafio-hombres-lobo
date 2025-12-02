@@ -210,17 +210,30 @@ class VotoController extends Controller
         $bot = Jugador::findOrFail($idBot);
 
         $idVotado = $bot->calcularVoto($idPartida, $bot);
+        $jugadorVotado = Jugador::findOrFail($idVotado);
 
+        return response()->json(['voto_bot' => $idVotado, 'nickname_votado'=>$jugadorVotado->nickname,
+        'id_bot'=> $bot->id, 'nickname_bot'=>$bot->nickname]);
+    }
+
+
+
+       public function votarBot(Request $request, $idPartida, $ronda)
+    {
+
+        $idVotado = $request->voto_bot;
+        $idBot = $request->id_bot;
         if ($idVotado) {
             Voto::create([
                 'id_partida' => $idPartida,
-                'id_jugador' => $bot->id,
+                'id_jugador' => $idBot,
                 'id_jugador_votado' => $idVotado,
                 'ronda' => $ronda,
             ]);
         }
 
         $jugadorVotado =  Jugador::find($idVotado);
+        $bot = Jugador::find($idBot);
 
          event(new Votar(
             $idPartida,
@@ -228,9 +241,7 @@ class VotoController extends Controller
             $jugadorVotado->nickname
         ));
 
-        return response()->json(['voto_bot' => $jugadorVotado->nickname,
-    'bot_nickname'=> $bot->nickname]);
+        return response()->json(['votado'=>'ok']);
     }
-
 
 }
