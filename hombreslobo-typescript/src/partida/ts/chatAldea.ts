@@ -111,6 +111,7 @@ const repartirCartasJugadores = async (
         id_jugador: idJugador,
         id_jugador_votado: idVotado,
         ronda,
+        fase: dia,
       };
 
       const resultado = await votar(partida_id, payload);
@@ -219,7 +220,7 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-      const index = jugadores.findIndex(j => j.nickname === data.eliminado);
+    const index = jugadores.findIndex((j) => j.nickname === data.eliminado);
     if (index !== -1) jugadores.splice(index, 1);
 
     if (data.eliminado === miNickname) {

@@ -15,6 +15,7 @@ class VotoController extends Controller
 {
     public function votar(Request $request, $idPartida)
     {
+        $fase = $request->fase;
         $validated = $request->validate([
             'id_jugador' => 'required|exists:jugadores,id',
             'id_jugador_votado' => 'required|exists:jugadores,id',
@@ -44,7 +45,7 @@ class VotoController extends Controller
             ->value('id_personaje');
 
         // Si es lobo, emite por el canal privado
-        if ($idPersonaje == 2) {
+        if ($idPersonaje == 2 && !$fase) {
             broadcast(new VotoLobo(
                 $idPartida,
                 $jugador->nickname,
@@ -221,20 +222,24 @@ class VotoController extends Controller
         ]);
     }
 
-       public function calcularVoto($idPartida, $idBot, $ronda)
+    public function calcularVoto($idPartida, $idBot, $ronda)
     {
         $bot = Jugador::findOrFail($idBot);
 
         $idVotado = $bot->calcularVoto($idPartida, $bot);
         $jugadorVotado = Jugador::findOrFail($idVotado);
 
-        return response()->json(['voto_bot' => $idVotado, 'nickname_votado'=>$jugadorVotado->nickname,
-        'id_bot'=> $bot->id, 'nickname_bot'=>$bot->nickname]);
+        return response()->json([
+            'voto_bot' => $idVotado,
+            'nickname_votado' => $jugadorVotado->nickname,
+            'id_bot' => $bot->id,
+            'nickname_bot' => $bot->nickname
+        ]);
     }
 
 
 
-       public function votarBot(Request $request, $idPartida, $ronda)
+    public function votarBot(Request $request, $idPartida, $ronda)
     {
 
         $idVotado = $request->voto_bot;
@@ -248,16 +253,16 @@ class VotoController extends Controller
             ]);
         }
 
-        $jugadorVotado =  Jugador::find($idVotado);
+        $jugadorVotado = Jugador::find($idVotado);
         $bot = Jugador::find($idBot);
 
-         event(new Votar(
+        event(new Votar(
             $idPartida,
             $bot->nickname,
             $jugadorVotado->nickname
         ));
 
-        return response()->json(['votado'=>'ok']);
+        return response()->json(['votado' => 'ok']);
     }
 
 }
