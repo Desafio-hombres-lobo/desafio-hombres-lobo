@@ -1,17 +1,13 @@
 import { obtenerAccionesPersonaje } from "../../providers/obtenerAccionesPersonaje";
-import { ejecutarAccion } from "./accionesCartaPersonaje";
 import "../css/styles.css";
 import loboImg from "../../imagenes/cartas/lobo.png";
 import aldeanoImg from "../../imagenes/cartas/aldeano.png";
 import reversoCarta from "../../imagenes/cartas/reverso-carta.jpeg";
-import { obtenerPersonajes } from "../../providers/obtenerPersonajes";
 
 let ID_ALDEANO = 1;
 let ID_LOBO = 2;
 const IMG_HOMBRE_LOBO = loboImg;
 const IMG_ALDEANO = aldeanoImg;
-
-const personajes = await obtenerPersonajes();
 
 export const renderizarCartaLobo = async (
   contenedor: HTMLElement
@@ -25,9 +21,9 @@ export const renderizarCartaLobo = async (
 
   const listaAcciones = datosAccionesPersonaje.acciones;
   const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Lobo";
-  const idAccion = listaAcciones[0]?.id_accion;
-  const idJugador = listaAcciones[0]?.id_jugador;
-  const idPersonaje = listaAcciones[0]?.id_personaje;
+  // const idAccion = listaAcciones[0]?.id_accion;
+  // const idJugador = listaAcciones[0]?.id_jugador;
+  // const idPersonaje = listaAcciones[0]?.id_personaje;
 
   const carta = document.createElement("div");
   carta.classList.add("carta-rol", "carta-lobo");
@@ -55,9 +51,9 @@ export const renderizarCartaAldeano = async (
 
   const listaAcciones = datosAccionesPersonaje.acciones;
   const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Aldeano";
-  const idAccion = listaAcciones[0]?.id_accion;
-  const idJugador = listaAcciones[0]?.id_jugador;
-  const idPersonaje = listaAcciones[0]?.id_personaje;
+  // const idAccion = listaAcciones[0]?.id_accion;
+  // const idJugador = listaAcciones[0]?.id_jugador;
+  // const idPersonaje = listaAcciones[0]?.id_personaje;
 
   const carta = document.createElement("div");
   carta.classList.add("carta-rol", "carta-aldeano");
