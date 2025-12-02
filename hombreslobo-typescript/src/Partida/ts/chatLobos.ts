@@ -6,12 +6,12 @@ import { obtenerJugadoresLobos } from "../../providers/obtenerJugadoresLobo";
 import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
 
 const partida_id = getPartidaId()!;
-const jugadoresLobo = await obtenerJugadoresLobos();
 
 export const chatLobos = async () => {
   const canal = conectarLobos();
+  const jugadoresLobo = await obtenerJugadoresLobos();
 
-  jugadoresLoboFaseNoche();
+  jugadoresLoboFaseNoche(jugadoresLobo);
   configurarBind(canal);
   configurarVotos(canal);
 };
@@ -28,12 +28,12 @@ const configurarBind = (canal: any) => {
 
 const configurarVotos = (canal: any) => {
   canal.bind("votos-lobos", (data: any) => {
-    console.log("Jugadores lobo: ", jugadoresLobo);
+    // console.log("Jugadores lobo: ", jugadoresLobo);
     pintarVotoLobo(data.idVotante, data.idVotado);
   });
 };
 
-const jugadoresLoboFaseNoche = async () => {
+const jugadoresLoboFaseNoche = async (jugadoresLobo: any[]) => {
   const respuestaPartida = await obtenerJugadoresPartida(partida_id);
   const listaDeJugadores = (respuestaPartida as any).listaJugadores || [];
 
