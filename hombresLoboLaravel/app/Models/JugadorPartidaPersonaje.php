@@ -23,4 +23,8 @@ class JugadorPartidaPersonaje extends Model
     const ESTADO_ELIMINADO = 0;
     const ESTADO_VIVO = 1;
     const ESTADO_VOTADO = 2;
+
+    public function jugador() {
+    return $this->belongsTo(Jugador::class, 'id_jugador');
+    }
 }

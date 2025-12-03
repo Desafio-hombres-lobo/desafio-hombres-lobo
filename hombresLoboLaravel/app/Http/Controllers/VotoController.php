@@ -238,6 +238,17 @@ class VotoController extends Controller
     }
 
 
+       public function calcularVotoLobo($idPartida, $idBot, $ronda)
+    {
+        $bot = Jugador::findOrFail($idBot);
+
+        $idVotado = $bot->calcularVotoNoche($idPartida, $bot);
+        $jugadorVotado = Jugador::findOrFail($idVotado);
+
+        return response()->json(['voto_bot' => $idVotado, 'nickname_votado'=>$jugadorVotado->nickname,
+        'id_bot'=> $bot->id, 'nickname_bot'=>$bot->nickname]);
+    }
+
 
     public function votarBot(Request $request, $idPartida, $ronda)
     {
@@ -255,12 +266,96 @@ class VotoController extends Controller
 
         $jugadorVotado = Jugador::find($idVotado);
         $bot = Jugador::find($idBot);
-
+        if($ronda%2==0){
         event(new Votar(
             $idPartida,
             $bot->nickname,
             $jugadorVotado->nickname
         ));
+        }else{
+            event(new VotoLobo(
+            $idPartida,
+            $bot->nickname,
+            $jugadorVotado->nickname
+            ));
+
+        }
+
+
+        if ($ronda % 2 != 0){
+            $partida = Partida::find($idPartida);
+        $votosLobo = DB::table('jugador_partida_personajes')
+                ->where('id_partida', $idPartida)
+                ->where('id_personaje', 2) // Asumimos que 2 es el ID de Lobo
+                ->where('estado', 1)       // 1 significa 'vivo' según tu migración
+                ->count();
+        $votosRonda = Voto::where('id_partida', $idPartida)
+            ->where('ronda', $ronda)
+            ->get();
+
+        if ($votosRonda->count() >= $votosLobo) {
+            $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
+                ->map(fn($votos) => count($votos));
+
+            $maxVotos = $conteoVotos->max();
+
+            $jugadoresConMax = $conteoVotos->filter(fn($v) => $v === $maxVotos)->keys();
+
+            if ($jugadoresConMax->count() === 1) {
+                $idEliminado = $jugadoresConMax->first();
+                $eliminado = Jugador::find($idEliminado)->nickname;
+                $resultado = "eliminado";
+
+                $idPersonaje = DB::table('jugador_partida_personajes')
+                    ->where('id_partida', $idPartida)
+                    ->where('id_jugador', $idEliminado)
+                    ->value('id_personaje');
+
+                $partida->jugadoresLobby()->updateExistingPivot($idEliminado, ['eliminado' => true]);
+            } else {
+                $eliminado = null;
+                $resultado = "empate";
+                $idPersonaje = null;
+            }
+
+            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje));
+        }
+        }else{
+            $partida = Partida::find($idPartida);
+        $jugadoresVivos = $partida->jugadoresLobby()->wherePivot('eliminado', false)->count();
+        $votosRonda = Voto::where('id_partida', $idPartida)
+            ->where('ronda', $ronda)
+            ->get();
+
+        if ($votosRonda->count() >= $jugadoresVivos) {
+            $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
+                ->map(fn($votos) => count($votos));
+
+            $maxVotos = $conteoVotos->max();
+
+            $jugadoresConMax = $conteoVotos->filter(fn($v) => $v === $maxVotos)->keys();
+
+            if ($jugadoresConMax->count() === 1) {
+                $idEliminado = $jugadoresConMax->first();
+                $eliminado = Jugador::find($idEliminado)->nickname;
+                $resultado = "eliminado";
+
+                $idPersonaje = DB::table('jugador_partida_personajes')
+                    ->where('id_partida', $idPartida)
+                    ->where('id_jugador', $idEliminado)
+                    ->value('id_personaje');
+
+                $partida->jugadoresLobby()->updateExistingPivot($idEliminado, ['eliminado' => true]);
+            } else {
+                $eliminado = null;
+                $resultado = "empate";
+                $idPersonaje = null;
+            }
+
+            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje));
+        }
+        }
+
 
         return response()->json(['votado' => 'ok']);
     }

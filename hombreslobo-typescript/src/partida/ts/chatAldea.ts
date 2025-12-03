@@ -22,6 +22,9 @@ import { cerrarVotacion, mostrarVotacion, voto } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
 import { votarYHablarBot } from "../../providers/votos/obtenerVotoBot";
 import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
+import { obtenerJugadoresLobos } from "../../providers/obtenerJugadoresLobo";
+import { votarYHablarBotLobo } from "../../providers/votos/obtenerVotoBotsLobo";
+import { obtenerIdJugadoresLobos } from "../../providers/obtenerIdJugadoresLobo";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -57,6 +60,7 @@ let rondaFinalizada = false;
 let votos = 0;
 let votosLobos = 0;
 let lobo = false;
+let participantes: Jugador[] = [];
 
 const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
 const listaJugadores = datosJugadoresPartida.listaJugadores;
@@ -65,6 +69,8 @@ const miNickname = getJugador();
 const jugadorActual = await obtenerJugadorActual();
 const idJugador = jugadorActual.datos?.id;
 const numeroDeLobos = Math.floor(numeroJugadoresPartida / 3) || 1; // filtrar según roles lobo que haya
+let bots: Jugador[] = [];
+let botsLobo = await obtenerJugadoresLobos();
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
@@ -179,7 +185,7 @@ canal.bind("cambio-fase", async (data: any) => {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
     if (host) {
-      const bots = jugadores.filter((j) => j.bot);
+      bots = jugadores.filter((j) => j.bot);
       console.log(bots.length);
 
       for (const bot of bots) {
@@ -191,6 +197,25 @@ canal.bind("cambio-fase", async (data: any) => {
   } else {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
+    if (host) {
+      const lobos = (await obtenerIdJugadoresLobos()).filter(
+        (l) => l.id !== idJugador
+      );
+
+      const botsLobo = jugadores.filter(
+        (j) => j.bot && j.rolId === 2 && j.id !== idJugador
+      );
+
+      participantes = [...lobos, ...botsLobo];
+
+      console.log("Participantes (bots lobo):", participantes);
+      for (const p of participantes) {
+        setTimeout(() => {
+          votarYHablarBotLobo(partida_id, p.id, ronda);
+        }, Math.random() * 3000 + 1000);
+      }
+    }
+
   }
 
   // PRUEBAS
@@ -221,6 +246,10 @@ canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
     const index = jugadores.findIndex((j) => j.nickname === data.eliminado);
+      if (participantes) {
+      participantes = participantes.filter(p => p.nickname !== data.eliminado);
+      console.log("Participantes después de eliminar:", participantes);
+    }
     if (index !== -1) jugadores.splice(index, 1);
 
     if (data.eliminado === miNickname) {
