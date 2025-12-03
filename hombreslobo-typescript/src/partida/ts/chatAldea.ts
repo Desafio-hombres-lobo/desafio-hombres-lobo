@@ -92,7 +92,7 @@ const repartirCartasJugadores = async (
 
     if (esMiUsuario) {
       slotDiv.classList.add("mi-jugador");
-      if (miRolId === 2) {
+      if (miRolId == 2) {
         lobo = true;
         await renderizarCartaLobo(slotDiv, miNickname);
         await chatLobos();
@@ -202,11 +202,11 @@ canal.bind("cambio-fase", async (data: any) => {
         (l) => l.id !== idJugador
       );
 
-      const botsLobo = jugadores.filter(
-        (j) => j.bot && j.rolId === 2 && j.id !== idJugador
+      const botsLobo = (await obtenerIdJugadoresLobos()).filter(
+        (j) => j.bot && j.id !== idJugador
       );
 
-      participantes = [...lobos, ...botsLobo];
+      participantes = [...botsLobo];
 
       console.log("Participantes (bots lobo):", participantes);
       for (const p of participantes) {
@@ -215,7 +215,6 @@ canal.bind("cambio-fase", async (data: any) => {
         }, Math.random() * 3000 + 1000);
       }
     }
-
   }
 
   // PRUEBAS
@@ -246,8 +245,10 @@ canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
     const index = jugadores.findIndex((j) => j.nickname === data.eliminado);
-      if (participantes) {
-      participantes = participantes.filter(p => p.nickname !== data.eliminado);
+    if (participantes) {
+      participantes = participantes.filter(
+        (p) => p.nickname !== data.eliminado
+      );
       console.log("Participantes después de eliminar:", participantes);
     }
     if (index !== -1) jugadores.splice(index, 1);
