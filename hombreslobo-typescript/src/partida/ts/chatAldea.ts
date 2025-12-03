@@ -198,14 +198,17 @@ canal.bind("cambio-fase", async (data: any) => {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
     if (host) {
-  const lobos = (await obtenerIdJugadoresLobos()).filter(l => l.bot !== idJugador);
+      const lobos = (await obtenerIdJugadoresLobos()).filter(
+        (l) => l.id !== idJugador
+      );
 
-  // Traemos solo los bots que son lobos
-  const botsLobo = jugadores.filter(j => j.bot && j.rolId === 2 && j.id !== idJugador);
+      const botsLobo = jugadores.filter(
+        (j) => j.bot && j.rolId === 2 && j.id !== idJugador
+      );
 
-   participantes = [...botsLobo];
+      participantes = [...lobos, ...botsLobo];
 
-  console.log("Participantes (bots lobo):", participantes);
+      console.log("Participantes (bots lobo):", participantes);
       for (const p of participantes) {
         setTimeout(() => {
           votarYHablarBotLobo(partida_id, p.id, ronda);
