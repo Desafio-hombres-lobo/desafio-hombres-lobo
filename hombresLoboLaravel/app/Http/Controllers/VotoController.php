@@ -84,7 +84,7 @@ class VotoController extends Controller
                 $idPersonaje = null;
             }
 
-            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje));
+            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
         }
 
         return response()->json([
@@ -110,6 +110,7 @@ class VotoController extends Controller
             $resultado = "empate";
             $eliminado = null;
             $idPersonaje = null;
+            $idEliminado = null;
         } else {
             $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
                 ->map(fn($v) => count($v));
@@ -130,10 +131,11 @@ class VotoController extends Controller
                 $resultado = "empate";
                 $eliminado = null;
                 $idPersonaje = null;
+                $idEliminado = null;
             }
         }
 
-        broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje));
+        broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
 
         return response()->json([
             'ok' => true,
@@ -163,6 +165,7 @@ class VotoController extends Controller
                 $idPartida,
                 'empate',
                 null,
+                null,
                 null
             ));
             return response()->json([
@@ -184,6 +187,7 @@ class VotoController extends Controller
             event(new VotacionTerminada(
                 $idPartida,
                 'empate',
+                null,
                 null,
                 null
             ));
@@ -211,7 +215,8 @@ class VotoController extends Controller
             $idPartida,
             'eliminado',
             $jugadorEliminado->nickname,
-            $idPersonaje
+            $idPersonaje,
+            $idJugadorEliminado
         ));
 
 

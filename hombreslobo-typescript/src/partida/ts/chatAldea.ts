@@ -25,6 +25,7 @@ import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje
 import { obtenerJugadoresLobos } from "../../providers/obtenerJugadoresLobo";
 import { votarYHablarBotLobo } from "../../providers/votos/obtenerVotoBotsLobo";
 import { obtenerIdJugadoresLobos } from "../../providers/obtenerIdJugadoresLobo";
+import { actualizarEstadoJugador } from "../../providers/votos/actualizarEstadoJugador";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -243,6 +244,7 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+    actualizarEstadoJugador(partida_id, data.idJugadorEliminado)
 
     const jugadorEliminado = jugadores.find(j => j.nickname === data.eliminado);
     if (jugadorEliminado) jugadorEliminado.eliminado = true;

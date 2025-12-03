@@ -309,6 +309,33 @@ class PartidaController extends Controller
         ]);
     }
 
+    public function eliminarJugador($idPartida, $idJugador)
+        {
+            $pivot = DB::table('jugador_partida')
+                ->where('partida_id', $idPartida)
+                ->where('jugador_id', $idJugador)
+                ->first();
+
+            if (!$pivot) {
+                return response()->json([
+                    'error' => 'Jugador no encontrado en esta partida'
+                ], 404);
+            }
+
+            DB::table('jugador_partida')
+                ->where('partida_id', $idPartida)
+                ->where('jugador_id', $idJugador)
+                ->update([
+                    'eliminado' => true,
+                    'updated_at' => now()
+                ]);
+
+            return response()->json([
+                'message' => 'Jugador eliminado correctamente',
+                'idJugador' => $idJugador,
+                'idPartida' => $idPartida
+            ]);
+    }
 
 }
 

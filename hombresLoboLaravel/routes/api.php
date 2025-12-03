@@ -103,6 +103,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/partida/{idBot}/votar/{ronda}', [VotoController::class, 'votarBot']);
 
+        Route::put('/partida/{idPartida}/eliminar-jugador/{idJugador}', [PartidaController::class, 'eliminarJugador']);
+
+
     });
 });
 
