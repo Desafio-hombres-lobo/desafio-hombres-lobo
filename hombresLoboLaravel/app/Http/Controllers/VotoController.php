@@ -59,7 +59,38 @@ class VotoController extends Controller
             ->where('ronda', $validated['ronda'])
             ->get();
 
-        if ($votosRonda->count() >= $jugadoresVivos) {
+        if (!$fase) {
+
+            $votosRonda = Voto::where('id_partida', $idPartida)
+                ->where('ronda', $validated['ronda'])
+                ->get();
+            $votosLobo = $request->numeroLobos;
+            if ($votosRonda->count() >= $votosLobo) {
+                $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
+                    ->map(fn($votos) => count($votos));
+                $maxVotos = $conteoVotos->max();
+                $jugadoresConMax = $conteoVotos->filter(fn($v) => $v === $maxVotos)->keys();
+                if ($jugadoresConMax->count() === 1) {
+                    $idEliminado = $jugadoresConMax->first();
+                    $eliminado = Jugador::find($idEliminado)->nickname;
+                    $resultado = "eliminado";
+
+                    $idPersonaje = DB::table('jugador_partida_personajes')
+                        ->where('id_partida', $idPartida)
+                        ->where('id_jugador', $idEliminado)
+                        ->value('id_personaje');
+
+                    $partida->jugadoresLobby()->updateExistingPivot($idEliminado, ['eliminado' => true]);
+                } else {
+                    $eliminado = null;
+                    $resultado = "empate";
+                    $idPersonaje = null;
+                }
+
+                broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
+            }
+        }
+        if ($votosRonda->count() >= $jugadoresVivos && $fase) {
             $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
                 ->map(fn($votos) => count($votos));
 
@@ -243,15 +274,19 @@ class VotoController extends Controller
     }
 
 
-       public function calcularVotoLobo($idPartida, $idBot, $ronda)
+    public function calcularVotoLobo($idPartida, $idBot, $ronda)
     {
         $bot = Jugador::findOrFail($idBot);
 
         $idVotado = $bot->calcularVotoNoche($idPartida, $bot);
         $jugadorVotado = Jugador::findOrFail($idVotado);
 
-        return response()->json(['voto_bot' => $idVotado, 'nickname_votado'=>$jugadorVotado->nickname,
-        'id_bot'=> $bot->id, 'nickname_bot'=>$bot->nickname]);
+        return response()->json([
+            'voto_bot' => $idVotado,
+            'nickname_votado' => $jugadorVotado->nickname,
+            'id_bot' => $bot->id,
+            'nickname_bot' => $bot->nickname
+        ]);
     }
 
 
@@ -271,17 +306,17 @@ class VotoController extends Controller
 
         $jugadorVotado = Jugador::find($idVotado);
         $bot = Jugador::find($idBot);
-        if($ronda%2==0){
-        event(new Votar(
-            $idPartida,
-            $bot->nickname,
-            $jugadorVotado->nickname
-        ));
-        }else{
+        if ($ronda % 2 == 0) {
+            event(new Votar(
+                $idPartida,
+                $bot->nickname,
+                $jugadorVotado->nickname
+            ));
+        } else {
             event(new VotoLobo(
-            $idPartida,
-            $bot->nickname,
-            $jugadorVotado->nickname
+                $idPartida,
+                $bot->nickname,
+                $jugadorVotado->nickname
             ));
         }
 

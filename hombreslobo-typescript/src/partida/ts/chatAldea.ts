@@ -18,7 +18,7 @@ import { chatLobos } from "./chatLobos";
 import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
 import { votar } from "../../providers/votos/enviarDatosVoto";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
-import { cerrarVotacion, mostrarVotacion, voto } from "./votacion";
+import { cerrarVotacion, mostrarVotacion } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
 import { votarYHablarBot } from "../../providers/votos/obtenerVotoBot";
 import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
@@ -59,9 +59,16 @@ let muerto = false;
 let ronda = 0;
 let rondaFinalizada = false;
 let votos = 0;
-let votosLobos = 0;
+//let votosLobos = 0;
 let lobo = false;
 let participantes: Jugador[] = [];
+
+let vivos = jugadores.filter((j) => !j.eliminado);
+console.log(vivos);
+let lobosVivos = participantes.length;
+console.log(lobosVivos);
+let aldeanosVivos = vivos.length - lobosVivos;
+console.log(aldeanosVivos);
 
 const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
 const listaJugadores = datosJugadoresPartida.listaJugadores;
@@ -69,7 +76,7 @@ const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
 const miNickname = getJugador();
 const jugadorActual = await obtenerJugadorActual();
 const idJugador = jugadorActual.datos?.id;
-const numeroDeLobos = Math.floor(numeroJugadoresPartida / 3) || 1; // filtrar según roles lobo que haya
+//const numeroDeLobos = Math.floor(numeroJugadoresPartida / 3) || 1; // filtrar según roles lobo que haya
 let bots: Jugador[] = [];
 let botsLobo = await obtenerJugadoresLobos();
 
@@ -119,6 +126,7 @@ const repartirCartasJugadores = async (
         id_jugador_votado: idVotado,
         ronda,
         fase: dia,
+        numeroLobos: lobosVivos,
       };
 
       const resultado = await votar(partida_id, payload);
@@ -137,6 +145,12 @@ const repartirCartasJugadores = async (
   host = await verificarHost(partida_id);
   if (host) {
     btnIniciar.classList.remove("oculto");
+    vivos = jugadores.filter((j) => !j.eliminado);
+    console.log(vivos);
+    lobosVivos = participantes.length;
+    console.log(lobosVivos);
+    aldeanosVivos = vivos.length - lobosVivos;
+    console.log(aldeanosVivos);
   }
 })();
 
@@ -182,6 +196,12 @@ canal.bind("nuevo-mensaje", (data: any) => {
 });
 
 canal.bind("cambio-fase", async (data: any) => {
+  vivos = jugadores.filter((j) => !j.eliminado);
+  console.log(vivos);
+  lobosVivos = participantes.length;
+  console.log(lobosVivos);
+  aldeanosVivos = vivos.length - lobosVivos;
+  console.log(aldeanosVivos);
   if (data.fase === "dia") {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
@@ -199,22 +219,23 @@ canal.bind("cambio-fase", async (data: any) => {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
     if (host) {
-      const lobos = (await obtenerIdJugadoresLobos()).filter(l => l.id !== idJugador);
+      const lobos = (await obtenerIdJugadoresLobos()).filter(
+        (l) => l.id !== idJugador
+      );
 
+      const botsLobo = jugadores.filter(
+        (j) => j.bot && j.rolId === 2 && j.id !== idJugador
+      );
 
-      const botsLobo = jugadores.filter(j => j.bot && j.rolId === 2 && j.id !== idJugador);
-
-    
       participantes = [...lobos, ...botsLobo];
 
       console.log("Participantes (bots lobo):", participantes);
-          for (const p of participantes) {
-            setTimeout(() => {
-              votarYHablarBotLobo(partida_id, p.id, ronda);
-            }, Math.random() * 3000 + 1000);
-          }
-        }
-
+      for (const p of participantes) {
+        setTimeout(() => {
+          votarYHablarBotLobo(partida_id, p.id, ronda);
+        }, Math.random() * 3000 + 1000);
+      }
+    }
   }
 
   // PRUEBAS
@@ -244,13 +265,17 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-    actualizarEstadoJugador(partida_id, data.idJugadorEliminado)
+    actualizarEstadoJugador(partida_id, data.idJugadorEliminado);
 
-    const jugadorEliminado = jugadores.find(j => j.nickname === data.eliminado);
+    const jugadorEliminado = jugadores.find(
+      (j) => j.nickname === data.eliminado
+    );
     if (jugadorEliminado) jugadorEliminado.eliminado = true;
 
     if (participantes) {
-      participantes = participantes.filter(p => p.nickname !== data.eliminado);
+      participantes = participantes.filter(
+        (p) => p.nickname !== data.eliminado
+      );
     }
 
     if (data.eliminado === miNickname) {
@@ -272,9 +297,7 @@ canal.bind("votacion-terminada", async (data: any) => {
       await cambiarFasePartida(partida_id, !dia);
     }
   }, 3000);
-
 });
-
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {
   if (temporizador) {
@@ -405,16 +428,16 @@ function pintarMensajeSistema(texto: string) {
 }
 
 async function comprobarVictoria() {
-  const vivos = jugadores.filter(j => !j.eliminado); 
-  console.log(vivos)
+  const vivos = jugadores.filter((j) => !j.eliminado);
+  console.log(vivos);
   const lobosVivos = participantes.length;
-  console.log(lobosVivos)
+  console.log(lobosVivos);
   const aldeanosVivos = vivos.length - lobosVivos;
-  console.log(aldeanosVivos)
+  console.log(aldeanosVivos);
 
   if (lobosVivos >= aldeanosVivos) {
     mostrarFinPartida("GANAN LOS LOBOS");
-      setTimeout(() => {
+    setTimeout(() => {
       window.location.href = "/";
     }, 2000);
     return true;
@@ -422,10 +445,10 @@ async function comprobarVictoria() {
 
   if (lobosVivos === 0) {
     mostrarFinPartida("GANAN LOS ALDEANOS");
-      setTimeout(() => {
+    setTimeout(() => {
       window.location.href = "/";
     }, 2000);
-   return true;
+    return true;
   }
 
   return false;
@@ -445,7 +468,6 @@ function mostrarFinPartida(texto: string) {
   document.body.appendChild(overlay);
 
   document.getElementById("btn-volver")!.addEventListener("click", () => {
-    window.location.href = "/"; 
+    window.location.href = "/";
   });
 }
-
