@@ -159,7 +159,9 @@ export const initLobby = () => {
     if (resultado.ok) {
       jugadoresActuales = resultado.jugadoresActuales;
       jugadoresMaximos = resultado.jugadoresMaximos;
-      jugadoresArray = (resultado.listaJugadores || []).map(j => j.nickname);
+      jugadoresArray = (resultado.listaJugadores || []).map(
+        (j: any) => j.nickname
+      );
       actualizarContador();
       actualizarListaJugadores();
     }

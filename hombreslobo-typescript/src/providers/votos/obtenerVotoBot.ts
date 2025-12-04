@@ -1,9 +1,9 @@
 import { getJSONHeaders } from "../../autenticacion/ts/header";
 import { construirApi } from "../../autenticacion/ts/apiFetch";
-import { enviarMensajeBot } from "../enviarMensaje"; 
-import { pintarMensaje } from "../../Partida/ts/chatAldea"; 
+import { enviarMensajeBot } from "../enviarMensaje";
+import { pintarMensaje } from "../../Partida/ts/chatAldea";
 
-const esperar = (ms: number) => new Promise(res => setTimeout(res, ms));
+const esperar = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export const votarYHablarBot = async (
   idPartida: number | string,
@@ -25,14 +25,13 @@ export const votarYHablarBot = async (
 
     await esperar(3500);
 
-
     const cantidadMensajes = Math.floor(Math.random() * 3);
     const mensajesBot = [
       "Creo que ya sé quién es...",
       "Tengo mis sospechas de",
       "No me fío nada de",
       "Creo que estamos en peligro por",
-      "No sé, pero alguien no me cuadra:"
+      "No sé, pero alguien no me cuadra:",
     ];
 
     for (let i = 0; i < cantidadMensajes; i++) {
@@ -41,8 +40,7 @@ export const votarYHablarBot = async (
 
       const mensajeFinal = `${mensajeRandom} ${nicknameObjetivo}`;
 
-      await esperar(Math.random() * 6000 + 1000); 
-      pintarMensaje(nicknameBot, mensajeFinal);
+      await esperar(Math.random() * 6000 + 1000);
 
       await enviarMensajeBot({
         message: mensajeFinal,
@@ -51,23 +49,20 @@ export const votarYHablarBot = async (
       });
     }
 
-    
-  await fetch(
-      construirApi(`/partida/${idPartida}/votar/${ronda}`),
-      {
-        method: "POST",
-        headers: getJSONHeaders(),
-        body: JSON.stringify({
-          voto_bot: objetivo,
-          id_bot: idBot,
-          ronda: ronda
-        })
-      }
-    );
+    await fetch(construirApi(`/partida/${idPartida}/votar/${ronda}`), {
+      method: "POST",
+      headers: getJSONHeaders(),
+      body: JSON.stringify({
+        voto_bot: objetivo,
+        id_bot: idBot,
+        ronda: ronda,
+      }),
+    });
 
-    console.log(`Bot ${nicknameBot} ha votado correctamente a ${nicknameObjetivo}`);
+    console.log(
+      `Bot ${nicknameBot} ha votado correctamente a ${nicknameObjetivo}`
+    );
   } catch (error) {
     console.error("Error en votarYHablarBot:", error);
   }
-
 };

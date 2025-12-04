@@ -142,7 +142,7 @@ const repartirCartasJugadores = async (
 
     if (esMiUsuario) {
       slotDiv.classList.add("mi-jugador");
-      if (miRolId === 2) {
+      if (miRolId == 2) {
         lobo = true;
         await renderizarCartaLobo(slotDiv, nombreJugador);
         await chatLobos();
@@ -237,7 +237,24 @@ canal.bind("cambio-fase", async (data: any) => {
   } else {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
+  //   if (host) {
+  //     const lobos = (await obtenerIdJugadoresLobos()).filter(
+  //       (l) => l.id !== idJugador
+  //     );
 
+  //     const botsLobo = (await obtenerIdJugadoresLobos()).filter(
+  //       (j) => j.bot && j.id !== idJugador
+  //     );
+
+  //     participantes = [...botsLobo];
+
+  //     console.log("Participantes (bots lobo):", participantes);
+  //     for (const p of participantes) {
+  //       setTimeout(() => {
+  //         votarYHablarBotLobo(partida_id, p.id, ronda);
+  //       }, Math.random() * 3000 + 1000);
+  //     }
+  //   }
   }
 
   const cartaYaRepartida = contenedorCarta.querySelector(".carta-rol");
