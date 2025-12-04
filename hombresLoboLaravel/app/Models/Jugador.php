@@ -24,7 +24,7 @@ class Jugador extends Model
 
     public function partidas(): BelongsToMany
     {
-        return $this->belongsToMany(Partida::class, 'historial_partidas_personajes', 'id_jugador', 'id_partida')
+        return $this->belongsToMany(Partida::class, 'historial_partidas_jugadores', 'id_jugador', 'id_partida')
             ->withPivot('ganadas', 'perdidas')
             ->withTimestamps();
     }
@@ -122,11 +122,13 @@ class Jugador extends Model
 
         $jugadoresVivos = Jugador::whereHas('partidasActivas', function ($q) use ($idPartida) {
             $q->where('id_partida', $idPartida)
-            ->where('estado', 0);
+            ->where('jugador_partida_personajes.estado', 1)
+            ->where('jugador_partida_personajes.id_personaje', '!=', 2);
         })->get();
 
+
         $victimasPotenciales = $jugadoresVivos
-            ->where('rol', '!=', 2)
+            ->where('jugador_partida_personajes.id_personaje', '!=', 2)
             ->where('id', '!=', $bot->id);
 
         if ($votos->count() === 0) {

@@ -44,7 +44,7 @@ class ChatController extends Controller
     public function sendMensajeBotLobo(Request $request, $bot)
     {
         $msg = $request->input('message');
-        $idPartida = $request->input('partida_id');
+        $idPartida = $request->input('id_partida');
 
         $jugador = Jugador::find($bot);
 

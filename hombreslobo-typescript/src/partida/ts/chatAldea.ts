@@ -62,10 +62,12 @@ let muertos: Jugador[] = [];
 let bots: Jugador[] = [];
 let humanos: Jugador[] = [];
 let botsLobo: Jugador[] = [];
+let aliados: Jugador[] = [];
 
-function actualizarListas() {
-  vivos = jugadores.filter((j) => !j.eliminado);
-  muertos = jugadores.filter((j) => j.eliminado);
+async function actualizarListas() {
+  jugadores = await obtenerDatosJugadoresPartida(id_partida);
+  vivos = jugadores.filter((j) => j.estado !== 0);
+  muertos = jugadores.filter((j) => j.estado === 0);
 
   lobos = vivos.filter((j) => j.id_personaje === 2);
   aldeanos = vivos.filter((j) => j.id_personaje === 1);
@@ -74,6 +76,9 @@ function actualizarListas() {
   humanos = vivos.filter((j) => !j.bot);
 
   botsLobo = bots.filter((j) => j.id_personaje === 2);
+
+  aliados = vivos.filter((j) => j.id_personaje !==2);
+  console.log('vivos',vivos, 'muertos,',muertos, 'lobos',lobos, 'aldeanos',aldeanos, 'bots', bots, 'humanos', humanos, 'botsLobo', botsLobo, 'aliados', aliados)
 }
 
 const datosJugadoresPartida = await obtenerJugadoresPartida(id_partida);
@@ -101,42 +106,18 @@ if (host) {
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
 ): Promise<void> => {
-  // Si no hay jugadores, intenta recargar una vez
-  if (!jugadores || jugadores.length === 0) {
-    console.warn("repartirCartas: jugadores vacío, reintentando carga...");
-    const resp = await obtenerDatosJugadoresPartida(id_partida);
-    if (Array.isArray(resp) && resp.length > 0) {
-      jugadores = resp as Jugador[];
-      console.log("repartirCartas: recarga OK, jugadores:", JSON.stringify(jugadores));
-      actualizarListas();
-    } else {
-      console.warn("repartirCartas: no hay jugadores tras reintento, abortando.");
-      return;
-    }
-  }
-
   const miRolId = await obtenerRolPersonajeJugador();
-
-  const yaHaySlots = contenedorCarta.querySelectorAll(".jugador").length > 0;
-  if (yaHaySlots) return;
-
+  actualizarListas()
   for (let i = 0; i < jugadores.length; i++) {
     const jugador = jugadores[i];
-    console.log(`jugador ${jugador}`)
-
     const nombreJugador = String(jugador.nickname).trim();
     const numSlot = i + 1;
     const idJugadorCarta = jugador.id_jugador;
 
-    if (typeof idJugadorCarta === "undefined" || idJugadorCarta === null) {
-      console.warn("Jugador sin id_jugador, se omite slot:", jugador);
-      continue;
-    }
-
     const slotDiv = document.createElement("div");
     slotDiv.className = `jugador slot-${numSlot}`;
     slotDiv.dataset.jugador = nombreJugador;
-    slotDiv.dataset.id = String(idJugadorCarta);
+    slotDiv.dataset.id = idJugadorCarta.toString();
 
     const esMiUsuario = nombreJugador === miNickname;
 
@@ -144,10 +125,10 @@ const repartirCartasJugadores = async (
       slotDiv.classList.add("mi-jugador");
       if (miRolId == 2) {
         lobo = true;
-        await renderizarCartaLobo(slotDiv, nombreJugador);
+        await renderizarCartaLobo(slotDiv, miNickname);
         await chatLobos();
       } else if (miRolId === 1) {
-        await renderizarCartaAldeano(slotDiv, nombreJugador);
+        await renderizarCartaAldeano(slotDiv, miNickname);
       } else {
         renderizarReverso(slotDiv, nombreJugador);
       }
@@ -157,17 +138,17 @@ const repartirCartasJugadores = async (
 
     slotDiv.addEventListener("click", async () => {
       if (esMiUsuario) return;
+      // Votar si es de día, o si es de noche y soy lobo
       if (!dia && !lobo) return;
+
       if (yaHasVotado) return;
       if (muerto) return;
-
       const idVotado = parseInt(slotDiv.dataset.id!);
       const payload = {
         id_jugador: idJugador,
         id_jugador_votado: idVotado,
         ronda,
         fase: dia,
-        numeroLobos: lobos.length,
       };
 
       const resultado = await votar(id_partida, payload);
@@ -230,31 +211,20 @@ canal.bind("cambio-fase", async (data: any) => {
     if (host) {
       for (const bot of bots) {
         setTimeout(() => {
-          votarYHablarBot(id_partida, bot.id_jugador, ronda);
+          votarYHablarBot(id_partida, bot.id_jugador, ronda, dia);
         }, Math.random() * 3000 + 1000);
       }
     }
   } else {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
-  //   if (host) {
-  //     const lobos = (await obtenerIdJugadoresLobos()).filter(
-  //       (l) => l.id !== idJugador
-  //     );
-
-  //     const botsLobo = (await obtenerIdJugadoresLobos()).filter(
-  //       (j) => j.bot && j.id !== idJugador
-  //     );
-
-  //     participantes = [...botsLobo];
-
-  //     console.log("Participantes (bots lobo):", participantes);
-  //     for (const p of participantes) {
-  //       setTimeout(() => {
-  //         votarYHablarBotLobo(partida_id, p.id, ronda);
-  //       }, Math.random() * 3000 + 1000);
-  //     }
-  //   }
+    if (host) {
+      for (const bot of botsLobo) {
+        setTimeout(() => {
+          votarYHablarBotLobo(id_partida, bot.id_jugador, ronda, dia);
+        }, Math.random() * 3000 + 1000);
+      }
+    }
   }
 
   const cartaYaRepartida = contenedorCarta.querySelector(".carta-rol");
@@ -280,14 +250,14 @@ canal.bind("votacion-terminada", async (data: any) => {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
 
 
-    const jugadorEliminado = jugadores.find(
-      (j) => j.nickname === data.eliminado
-    );
-    if (jugadorEliminado) jugadorEliminado.eliminado = true;
+    // const jugadorEliminado = jugadores.find(
+    //   (j) => j.nickname === data.eliminado
+    // );
+    // if (jugadorEliminado) jugadorEliminado.eliminado = true;
 
-    if (data.eliminado === miNickname) {
-      muerto = true;
-    }
+    // if (data.eliminado === miNickname) {
+    //   muerto = true;
+    // }
 
     actualizarListas();
 
@@ -428,13 +398,14 @@ function pintarMensajeSistema(texto: string) {
 
 async function comprobarVictoria() {
   actualizarListas();
-  if (lobos.length >= aldeanos.length) {
+  if (lobos.length >= aliados.length) {
     mostrarFinPartida("GANAN LOS LOBOS");
-    return true;
+    setTimeout(window.location.href="/", 5000)
+    
   }
   if (lobos.length === 0) {
     mostrarFinPartida("GANAN LOS ALDEANOS");
-    return true;
+    setTimeout(window.location.href="/", 5000)
   }
   return false;
 }

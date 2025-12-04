@@ -8,7 +8,8 @@ const esperar = (ms: number) => new Promise((res) => setTimeout(res, ms));
 export const votarYHablarBotLobo = async (
   idPartida: number | string,
   idBot: number,
-  ronda: number
+  ronda: number,
+  dia: boolean
 ) => {
   try {
     const resVoto = await fetch(
@@ -41,7 +42,7 @@ export const votarYHablarBotLobo = async (
 
       const mensajeFinal = `${mensajeRandom} ${nicknameObjetivo}`;
 
-      await esperar(Math.random() * 6000 + 1000);
+      await esperar(Math.random() * 7000 + 1000);
 
       await enviarMensajeBotLobo({
         message: mensajeFinal,
@@ -57,6 +58,7 @@ export const votarYHablarBotLobo = async (
         voto_bot: objetivo,
         id_bot: idBot,
         ronda: ronda,
+        dia: dia
       }),
     });
 

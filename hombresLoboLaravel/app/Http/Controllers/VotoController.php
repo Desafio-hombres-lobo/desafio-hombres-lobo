@@ -15,7 +15,7 @@ class VotoController extends Controller
 {
     public function votar(Request $request, $idPartida)
     {
-        $fase = $request->fase;
+        $dia = $request->dia;
         $validated = $request->validate([
             'id_jugador' => 'required|exists:jugadores,id',
             'id_jugador_votado' => 'required|exists:jugadores,id',
@@ -46,14 +46,49 @@ class VotoController extends Controller
             ->value('id_personaje');
 
         // Si es lobo, emite por el canal privado
-        if ($idPersonaje == 2 && !$fase) {
+        if ($idPersonaje == 2 && !$dia) {
             broadcast(new VotoLobo(
                 $idPartida,
                 $jugador->nickname,
                 $jugadorVotado->nickname
             ));
+
+        $partida = Partida::find($idPartida);
+        $jugadoresVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 1)->wherePivot('id_personaje', 2)->count();
+        $votosRonda = Voto::where('id_partida', $idPartida)
+            ->where('ronda', $validated['ronda'])
+            ->get();
+
+        if ($votosRonda->count() >= $jugadoresVivos) {
+            $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
+                ->map(fn($votos) => count($votos));
+
+            $maxVotos = $conteoVotos->max();
+
+            $jugadoresConMax = $conteoVotos->filter(fn($v) => $v === $maxVotos)->keys();
+
+            if ($jugadoresConMax->count() === 1) {
+                $idEliminado = $jugadoresConMax->first();
+                $eliminado = Jugador::find($idEliminado)->nickname;
+                $resultado = "eliminado";
+
+                $idPersonaje = DB::table('jugador_partida_personajes')
+                    ->where('id_partida', $idPartida)
+                    ->where('id_jugador', $idEliminado)
+                    ->value('id_personaje');
+
+                $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
+            } else {
+                $eliminado = null;
+                $resultado = "empate";
+                $idPersonaje = null;
+                $idEliminado = null;
+            }
+
+            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
         }
 
+        }else{
         $partida = Partida::find($idPartida);
         $jugadoresVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 1)->count();
         $votosRonda = Voto::where('id_partida', $idPartida)
@@ -87,6 +122,7 @@ class VotoController extends Controller
             }
 
             broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
+        }
         }
 
         return response()->json([
@@ -128,7 +164,7 @@ class VotoController extends Controller
                 $eliminado = Jugador::find($idEliminado)->nickname;
                 $resultado = "eliminado";
 
-                $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 1]);
+                $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
             } else {
                 $resultado = "empate";
                 $eliminado = null;
@@ -265,6 +301,7 @@ class VotoController extends Controller
     {
         $idVotado = $request->voto_bot;
         $idBot = $request->id_bot;
+        $dia = $request->dia;//boolean para saber si es de día o de noche
         if ($idVotado) {
             Voto::create([
                 'id_partida' => $idPartida,
@@ -276,7 +313,7 @@ class VotoController extends Controller
 
         $jugadorVotado = Jugador::find($idVotado);
         $bot = Jugador::find($idBot);
-        if ($ronda % 2 == 0) {
+        if ($dia) {
             event(new Votar(
                 $idPartida,
                 $bot->nickname,
@@ -292,7 +329,7 @@ class VotoController extends Controller
         }
 
 
-        if ($ronda % 2 != 0) {
+        if (!$dia) {
             $partida = Partida::find($idPartida);
             $votosLobo = DB::table('jugador_partida_personajes')
                 ->where('id_partida', $idPartida)

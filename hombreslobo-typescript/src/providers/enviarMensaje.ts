@@ -57,7 +57,7 @@ export const enviarMensajeBot = async (payload: { message: string; id_partida: s
 
 export const enviarMensajeBotLobo = async (payload: {
   message: string;
-  partida_id: number | string;
+  id_partida: number | string;
   bot: number;
 }) => {
   const token = getToken();

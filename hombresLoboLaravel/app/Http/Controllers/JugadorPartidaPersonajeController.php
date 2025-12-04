@@ -39,7 +39,6 @@ class JugadorPartidaPersonajeController extends Controller
     {
         $jugadores = JugadorPartidaPersonaje::with('jugador')
             ->where('id_partida', $idPartida)
-            ->where('jugador_partida_personajes.estado', 1)
             ->get();
         ;
 
