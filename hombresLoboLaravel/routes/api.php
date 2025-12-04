@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/accionPersonaje', [PersonajeController::class, 'accionesDelPersonaje']);
         Route::post('/datosJugadorPartida', [JugadorPartidaPersonajeController::class, 'obtenerDatosJugadorPartida']);
         Route::post('/asignarJugadorAPartida', [JugadorPartidaPersonajeController::class, 'asignarJugadorPartida']);
-        Route::post('/cambiarEstadoDePersonaje', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);
+        Route::put('/cambiarEstadoDePersonaje', [JugadorPartidaPersonajeController::class, 'cambiarEstadoPersonaje']);
         Route::post('/resolverVotos', [JugadorPartidaPersonajeController::class, 'resolverVotos']);
         Route::post('/chat/aldea', [ChatPartidaController::class, 'enviar']);
         Route::post('/chat/lobos', [ChatPartidaController::class, 'enviarLobos']);
@@ -75,6 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/chat/send', [ChatController::class, 'send']);
         Route::post('/chat/send/{bot}', [ChatController::class, 'sendMensajeBot']);
+        Route::post('/chat/send/{bot}/lobo', [ChatController::class, 'sendMensajeBotLobo']);
 
         Route::post('/{id}/llena', [PartidaController::class, 'llenar']);
 
@@ -102,6 +103,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/partida/{idPartida}/calcularVotoNoche/{idBot}/{ronda}', [VotoController::class, 'calcularVotoLobo']);
 
         Route::post('/partida/{idBot}/votar/{ronda}', [VotoController::class, 'votarBot']);
+        Route::put('/partida/{idPartida}/eliminar-jugador/{idJugador}', [PartidaController::class, 'eliminarJugador']);
+
+        Route::get('/datosJugadoresPartida/{idPartida}', [JugadorPartidaPersonajeController::class, 'obtenerJugadoresPartida']);
 
     });
 });

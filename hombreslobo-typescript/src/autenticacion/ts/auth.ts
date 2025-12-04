@@ -3,7 +3,7 @@ const ROL_USUARIO = "auth_rol";
 const CLAVE_USUARIO = "auth_usuario";
 const CLAVE_JUGADOR = "auth_jugador";
 const LOCALSTORAGE = "credenciales";
-const PARTIDA = "partida_id";
+const PARTIDA = "id_partida";
 
 export const getToken = () => {
   return sessionStorage.getItem(getTokenPath());

@@ -12,7 +12,7 @@ class ChatPartidaController extends Controller
     {
         $msg = $request->input('mensaje');
         $usuario = $request->user();
-        $partidaId = $request->input('partida_id');
+        $partidaId = $request->input('id_partida');
         event(new MensajeEnviado($msg, $usuario, $partidaId));
         return response()->json(['status' => 'ok']);
     }
@@ -21,7 +21,7 @@ class ChatPartidaController extends Controller
     {
         $msg = $request->input('mensaje');
         $usuario = $request->user();
-        $partidaId = $request->input('partida_id');
+        $partidaId = $request->input('id_partida');
         event(new MensajeEnviadoLobos($msg, $usuario, $partidaId));
         return response()->json(['status' => 'ok']);
     }

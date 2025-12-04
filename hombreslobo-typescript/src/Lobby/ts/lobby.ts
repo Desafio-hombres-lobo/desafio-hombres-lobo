@@ -171,9 +171,9 @@ export const initLobby = () => {
     const resultado = await salirPartida(partidaId);
     if (resultado.ok) {
       pusher.unsubscribe("game." + partidaId);
-      localStorage.removeItem("partida_id");
+      localStorage.removeItem("id_partida");
       window.location.href = "/";
-      sessionStorage.removeItem("partida_id");
+      sessionStorage.removeItem("id_partida");
     } else {
       console.error("Error abandonando partida:", resultado.error);
     }

@@ -24,13 +24,17 @@ class Partida extends Model
             ->withTimestamps();
     }
 
-    // Jugadores de la partida con su personaje y estado
-    public function jugadoresPartidaEstado(): BelongsToMany
+
+    public function jugadoresPartidaEstado()
     {
-        return $this->belongsToMany(Jugador::class, 'jugador_partida_personajes')
-            ->withPivot('id_personaje', 'estado')
-            ->withTimestamps();
+        return $this->belongsToMany(
+            Jugador::class,
+            'jugador_partida_personajes',
+            'id_partida',
+            'id_jugador'
+        )->withPivot('id_personaje', 'estado', 'votos');
     }
+
 
     // Personajes de la partida con jugador y estado
     public function personajes(): BelongsToMany
@@ -44,8 +48,8 @@ class Partida extends Model
         return $this->belongsToMany(
             Jugador::class,
             'jugador_partida',
-            'partida_id',
-            'jugador_id'
+            'id_partida',
+            'id_jugador'
         )->withTimestamps();
     }
 }

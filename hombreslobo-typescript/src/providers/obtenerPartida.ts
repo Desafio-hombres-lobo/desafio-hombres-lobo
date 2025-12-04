@@ -4,12 +4,7 @@ import { getJSONHeaders } from "../autenticacion/ts/header";
 export let partidaActual: any = null;
 
 export const obtenerPartida = async (partidaId: string) => {
-  const token = sessionStorage.getItem("auth_token");
 
-  if (!token) {
-    console.error("No hay token de autenticación");
-    return null;
-  }
 
   try {
     const header = getJSONHeaders();

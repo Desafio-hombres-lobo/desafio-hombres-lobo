@@ -35,6 +35,38 @@ class JugadorPartidaPersonajeController extends Controller
             'data' => $datos
         ], 200);
     }
+    public function obtenerJugadoresPartida($idPartida)
+    {
+        $jugadores = JugadorPartidaPersonaje::with('jugador')
+            ->where('id_partida', $idPartida)
+            ->get();
+        ;
+
+        if ($jugadores->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No hay registros para esta partida.'
+            ], 404);
+        }
+
+        $resultado = $jugadores->map(function($j) {
+            return [
+                'id_jugador' => $j->id_jugador,
+                'id_partida' => $j->id_partida,
+                'id_personaje' => $j->id_personaje,
+                'estado' => $j->estado,
+                'nickname' => $j->jugador->nickname,
+                'bot' => $j->jugador->bot,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $resultado
+        ], 200);
+    }
+
+
 
     public function asignarJugadorPartida(Request $request){
         $request->validate([
@@ -144,7 +176,7 @@ class JugadorPartidaPersonajeController extends Controller
         ->get()
         ->map(function($jpp) {
             return [
-                'id' => $jpp->jugador->id,      
+                'id' => $jpp->jugador->id,
                 'nickname' => $jpp->jugador->nickname ?? 'desconocido',
                 'bot' => $jpp->jugador->bot ?? false,
             ];

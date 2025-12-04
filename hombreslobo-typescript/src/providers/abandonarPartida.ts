@@ -19,7 +19,7 @@ export const salirPartida = async (partidaId: string) => {
       method: "POST",
       headers,
       body: JSON.stringify({
-        partida_id: partidaId
+        id_partida: partidaId
       }),
     });
 

@@ -12,22 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('jugador_partida', function (Blueprint $table) {
-        $table->id();
+            $table->unsignedBigInteger('id_jugador');
+            $table->unsignedBigInteger('id_partida');
 
-        $table->unsignedBigInteger('jugador_id');
-        $table->foreign('jugador_id')->references('id')->on('jugadores')->onDelete('cascade');
+            $table->boolean('eliminado')->default(false);
 
-        $table->unsignedBigInteger('partida_id');
-        $table->foreign('partida_id')->references('id')->on('partidas')->onDelete('cascade');
-        $table->boolean('eliminado')->default(false);
+            $table->timestamps();
 
+            // Foreign keys
+            $table->foreign('id_jugador')->references('id')->on('jugadores')->onDelete('cascade');
+            $table->foreign('id_partida')->references('id')->on('partidas')->onDelete('cascade');
 
-        $table->timestamps();
-
-
-        $table->unique(['jugador_id', 'partida_id']);
-
+            // Clave única para evitar duplicados
+            $table->unique(['id_partida', 'id_jugador']);
         });
+
     }
 
     /**

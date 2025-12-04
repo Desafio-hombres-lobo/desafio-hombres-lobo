@@ -124,7 +124,7 @@ export const initModalCrearPartida = (): void => {
       mensajeExito.textContent = resultado.mensaje;
 
       if (resultado.partida?.id != null) {
-        sessionStorage.setItem("partida_id", resultado.partida.id.toString());
+        sessionStorage.setItem("id_partida", resultado.partida.id.toString());
       }
 
       window.location.href = "src/Lobby/html/lobby.html";

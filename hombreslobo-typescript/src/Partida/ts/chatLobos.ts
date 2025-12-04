@@ -5,7 +5,7 @@ import { voltearCartasLobo } from "../../Personajes/ts/voltearCartaPersonaje";
 import { obtenerJugadoresLobos } from "../../providers/obtenerJugadoresLobo";
 import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
 
-const partida_id = getPartidaId()!;
+const id_partida = getPartidaId()!;
 
 export const chatLobos = async () => {
   const canal = conectarLobos();
@@ -17,7 +17,7 @@ export const chatLobos = async () => {
 };
 
 const conectarLobos = () => {
-  return pusher.subscribe("lobos" + partida_id);
+  return pusher.subscribe("lobos" + id_partida);
 };
 
 const configurarBind = (canal: any) => {
@@ -30,11 +30,12 @@ const configurarVotos = (canal: any) => {
   canal.bind("votos-lobos", (data: any) => {
     // console.log("Jugadores lobo: ", jugadoresLobo);
     pintarVotoLobo(data.idVotante, data.idVotado);
+    
   });
 };
 
 const jugadoresLoboFaseNoche = async (jugadoresLobo: any[]) => {
-  const respuestaPartida = await obtenerJugadoresPartida(partida_id);
+  const respuestaPartida = await obtenerJugadoresPartida(id_partida);
   const listaDeJugadores = (respuestaPartida as any).listaJugadores || [];
 
   setTimeout(() => {

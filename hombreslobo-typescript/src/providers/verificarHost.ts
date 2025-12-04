@@ -1,14 +1,14 @@
 import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
-export const verificarHost = async (partida_id: any) => {
+export const verificarHost = async (id_partida: any) => {
   try {
     const endpoint = "/partida/host";
     const response = await fetch(construirApi(endpoint), {
       method: "POST",
       headers: getJSONHeaders(),
       body: JSON.stringify({
-        partida_id: partida_id,
+        id_partida: id_partida,
       }),
     });
     if (!response.ok) return false;

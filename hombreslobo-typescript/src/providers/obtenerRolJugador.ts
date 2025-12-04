@@ -5,7 +5,7 @@ import { getPartidaId } from "../autenticacion/ts/auth";
 
 export const obtenerRolPersonajeJugador = async () => {
   const token = getToken();
-  const partida_id = getPartidaId();
+  const id_partida = getPartidaId();
 
   if (!token) {
     alert("Error: No estás autenticado. Por favor, inicia sesión.");
@@ -18,7 +18,7 @@ export const obtenerRolPersonajeJugador = async () => {
     const response = await fetch(construirApi(`/partida/miRol`), {
       method: "POST",
       headers: headers,
-      body: JSON.stringify({ partida_id: partida_id }),
+      body: JSON.stringify({ id_partida: id_partida }),
     });
 
     if (response.ok) {

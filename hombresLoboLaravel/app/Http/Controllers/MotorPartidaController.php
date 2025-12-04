@@ -12,14 +12,14 @@ class MotorPartidaController extends Controller
 {
     public function cambioFase(Request $request)
     {
-        $partida_id = $request->input('partida_id');
+        $id_partida = $request->input('id_partida');
         $fase = $request->input('fase');
 
         $duracionTurno = 1; //Duracion en minutos del turno
 
         $final = Carbon::now()->addMinutes($duracionTurno);
         event(new CambiarFase(
-            $partida_id,
+            $id_partida,
             $fase,
             $final->toIso8601String()
         ));
@@ -33,9 +33,9 @@ class MotorPartidaController extends Controller
     public function esHost(Request $request)
     {
 
-        $request->validate(['partida_id' => 'required|integer']);
+        $request->validate(['id_partida' => 'required|integer']);
 
-        $partidaId = $request->input('partida_id');
+        $partidaId = $request->input('id_partida');
         $partida = Partida::findOrFail($partidaId);
 
         $user = $request->user();
