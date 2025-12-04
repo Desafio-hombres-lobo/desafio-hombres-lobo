@@ -2,14 +2,17 @@
   position: relative;
   text-align: center;
   padding: 6rem 2rem;
+  background: url("../imagenes/fondos/bosque-fondo.jpg") center/cover no-repeat;
 }
 
 .contenedor-principal::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(28, 15, 27, 0.93); 
+  z-index: 0;
 }
+
 
 .descripcion {
   position: relative;
