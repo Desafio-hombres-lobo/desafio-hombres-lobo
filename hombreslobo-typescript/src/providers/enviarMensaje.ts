@@ -1,7 +1,7 @@
 import { getToken } from "../autenticacion/ts/auth";
 import { construirApi } from "../autenticacion/ts/apiFetch";
 
-export const enviarMensaje = async (payload: { message: string; partida_id: string }) => {
+export const enviarMensaje = async (payload: { message: string; id_partida: string }) => {
   const token = getToken();
   const apiUrl = construirApi("/chat/send");
 
@@ -28,7 +28,7 @@ export const enviarMensaje = async (payload: { message: string; partida_id: stri
   }
 };
 
-export const enviarMensajeBot = async (payload: { message: string; partida_id: string, bot:number }) => {
+export const enviarMensajeBot = async (payload: { message: string; id_partida: string, bot:number }) => {
   const token = getToken();
   const apiUrl = construirApi(`/chat/send/${payload.bot}`);
 

@@ -46,7 +46,7 @@ export const votarYHablarBot = async (
 
       await enviarMensajeBot({
         message: mensajeFinal,
-        partida_id: idPartida.toString(),
+        id_partida: idPartida.toString(),
         bot: idBot
       });
     }

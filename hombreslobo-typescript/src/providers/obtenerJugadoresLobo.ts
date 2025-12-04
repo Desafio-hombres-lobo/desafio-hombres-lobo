@@ -5,7 +5,7 @@ import { getPartidaId } from "../autenticacion/ts/auth";
 
 export const obtenerJugadoresLobos = async (): Promise<any[]> => {
   const token = getToken();
-  const partida_id = getPartidaId();
+  const id_partida = getPartidaId();
 
   if (!token) {
     alert("Error: No estás autenticado. Por favor, inicia sesión.");
@@ -17,7 +17,7 @@ export const obtenerJugadoresLobos = async (): Promise<any[]> => {
   try {
     const headers = getJSONHeaders();
     const response = await fetch(
-      construirApi(`/partidas/${partida_id}/lobos`),
+      construirApi(`/partidas/${id_partida}/lobos`),
       {
         method: "GET",
         headers: headers,

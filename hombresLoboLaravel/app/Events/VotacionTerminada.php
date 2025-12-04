@@ -18,13 +18,15 @@ class VotacionTerminada implements ShouldBroadcast
     public $eliminado;
     public $idPartida;
     public $idPersonaje;
+    public $idEliminado;
 
-    public function __construct($idPartida, $resultado, $eliminado, $idPersonaje)
+    public function __construct($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado)
     {
         $this->idPartida = $idPartida;
         $this->resultado = $resultado;
         $this->eliminado = $eliminado;
         $this->idPersonaje = $idPersonaje;
+        $this->idEliminado = $idEliminado;
     }
 
     public function broadcastOn()

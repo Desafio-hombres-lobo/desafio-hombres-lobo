@@ -30,7 +30,7 @@ export const obtenerJugadoresPartida = async (partidaId: string) => {
       ok: true,
       jugadoresActuales: datos.jugadores_actuales,
       jugadoresMaximos: datos.jugadores_maximos,
-      partidaId: datos.partida_id,
+      partidaId: datos.id_partida,
       listaJugadores: datos.lista_jugadores || [],
     };
   } catch (error) {

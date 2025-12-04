@@ -18,13 +18,13 @@ import { chatLobos } from "./chatLobos";
 import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
 import { votar } from "../../providers/votos/enviarDatosVoto";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
-import { cerrarVotacion, mostrarVotacion, voto } from "./votacion";
+import { cerrarVotacion, mostrarVotacion } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
 import { votarYHablarBot } from "../../providers/votos/obtenerVotoBot";
 import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
-import { obtenerJugadoresLobos } from "../../providers/obtenerJugadoresLobo";
 import { votarYHablarBotLobo } from "../../providers/votos/obtenerVotoBotsLobo";
-import { obtenerIdJugadoresLobos } from "../../providers/obtenerIdJugadoresLobo";
+import { obtenerDatosJugadoresPartida } from "../../providers/obtenerDatosJugadores";
+import type { Jugador } from "./Jugador";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -37,56 +37,106 @@ const spanFase = document.getElementById("fase-partida")!;
 const headerChat = document.getElementById("h3-chat")!;
 const reloj = document.getElementById("reloj-partida")!;
 const btnIniciar = document.getElementById("btn-iniciar")! as HTMLButtonElement;
-const partida_id = getPartidaId()!;
+const id_partida = getPartidaId()!;
 const textoEspera = document.getElementById("texto-espera")!;
 const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
-type Jugador = {
-  id: number;
-  nickname: string;
-  bot: boolean;
-  [key: string]: any; // si tiene más campos
-};
+
+
 
 let jugadores: Jugador[] = [];
-
 let yaHasVotado = false;
 let muerto = false;
 let ronda = 0;
 let rondaFinalizada = false;
 let votos = 0;
-let votosLobos = 0;
 let lobo = false;
-let participantes: Jugador[] = [];
 
-const datosJugadoresPartida = await obtenerJugadoresPartida(partida_id);
-const listaJugadores = datosJugadoresPartida.listaJugadores;
+let lobos: Jugador[] = [];
+let aldeanos: Jugador[] = [];
+let vivos: Jugador[] = [];
+let muertos: Jugador[] = [];
+let bots: Jugador[] = [];
+let humanos: Jugador[] = [];
+let botsLobo: Jugador[] = [];
+
+function actualizarListas() {
+  vivos = jugadores.filter((j) => !j.eliminado);
+  muertos = jugadores.filter((j) => j.eliminado);
+
+  lobos = vivos.filter((j) => j.id_personaje === 2);
+  aldeanos = vivos.filter((j) => j.id_personaje === 1);
+
+  bots = vivos.filter((j) => j.bot);
+  humanos = vivos.filter((j) => !j.bot);
+
+  botsLobo = bots.filter((j) => j.id_personaje === 2);
+}
+
+const datosJugadoresPartida = await obtenerJugadoresPartida(id_partida);
 const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
+if (Array.isArray(datosJugadoresPartida)) {
+  jugadores = datosJugadoresPartida as Jugador[];
+  console.log("Lista de jugadores cargada (snapshot):", JSON.stringify(jugadores));
+} else {
+  console.warn("No se pudieron obtener jugadores: respuesta vacía o inválida");
+  jugadores = [];
+}
+
+
 const miNickname = getJugador();
 const jugadorActual = await obtenerJugadorActual();
 const idJugador = jugadorActual.datos?.id;
-const numeroDeLobos = Math.floor(numeroJugadoresPartida / 3) || 1; // filtrar según roles lobo que haya
-let bots: Jugador[] = [];
-let botsLobo = await obtenerJugadoresLobos();
+
+actualizarListas();
+
+host = await verificarHost(id_partida);
+if (host) {
+  btnIniciar.classList.remove("oculto");
+}
 
 const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
 ): Promise<void> => {
+  // Si no hay jugadores, intenta recargar una vez
+  if (!jugadores || jugadores.length === 0) {
+    console.warn("repartirCartas: jugadores vacío, reintentando carga...");
+    const resp = await obtenerDatosJugadoresPartida(id_partida);
+    if (Array.isArray(resp) && resp.length > 0) {
+      jugadores = resp as Jugador[];
+      console.log("repartirCartas: recarga OK, jugadores:", JSON.stringify(jugadores));
+      actualizarListas();
+    } else {
+      console.warn("repartirCartas: no hay jugadores tras reintento, abortando.");
+      return;
+    }
+  }
+
   const miRolId = await obtenerRolPersonajeJugador();
 
-  for (let i = 0; i < listaJugadores.length; i++) {
-    const jugador = listaJugadores[i];
+  const yaHaySlots = contenedorCarta.querySelectorAll(".jugador").length > 0;
+  if (yaHaySlots) return;
+
+  for (let i = 0; i < jugadores.length; i++) {
+    const jugador = jugadores[i];
+    console.log(`jugador ${jugador}`)
+
     const nombreJugador = String(jugador.nickname).trim();
     const numSlot = i + 1;
-    const idJugadorCarta = jugador.id;
+    const idJugadorCarta = jugador.id_jugador;
+
+    if (typeof idJugadorCarta === "undefined" || idJugadorCarta === null) {
+      console.warn("Jugador sin id_jugador, se omite slot:", jugador);
+      continue;
+    }
 
     const slotDiv = document.createElement("div");
     slotDiv.className = `jugador slot-${numSlot}`;
     slotDiv.dataset.jugador = nombreJugador;
-    slotDiv.dataset.id = idJugadorCarta.toString();
+    slotDiv.dataset.id = String(idJugadorCarta);
 
     const esMiUsuario = nombreJugador === miNickname;
 
@@ -94,10 +144,10 @@ const repartirCartasJugadores = async (
       slotDiv.classList.add("mi-jugador");
       if (miRolId === 2) {
         lobo = true;
-        await renderizarCartaLobo(slotDiv, miNickname);
+        await renderizarCartaLobo(slotDiv, nombreJugador);
         await chatLobos();
       } else if (miRolId === 1) {
-        await renderizarCartaAldeano(slotDiv, miNickname);
+        await renderizarCartaAldeano(slotDiv, nombreJugador);
       } else {
         renderizarReverso(slotDiv, nombreJugador);
       }
@@ -107,20 +157,20 @@ const repartirCartasJugadores = async (
 
     slotDiv.addEventListener("click", async () => {
       if (esMiUsuario) return;
-      // Votar si es de día, o si es de noche y soy lobo
       if (!dia && !lobo) return;
-
       if (yaHasVotado) return;
       if (muerto) return;
+
       const idVotado = parseInt(slotDiv.dataset.id!);
       const payload = {
         id_jugador: idJugador,
         id_jugador_votado: idVotado,
         ronda,
         fase: dia,
+        numeroLobos: lobos.length,
       };
 
-      const resultado = await votar(partida_id, payload);
+      const resultado = await votar(id_partida, payload);
       yaHasVotado = true;
       if (!resultado.ok) {
         alert(`Error al votar: ${resultado.error}`);
@@ -130,19 +180,6 @@ const repartirCartasJugadores = async (
     contenedorCarta.appendChild(slotDiv);
   }
 };
-
-//Se ejecuta nada más cargar el script, del que te cuento
-(async () => {
-  host = await verificarHost(partida_id);
-  if (host) {
-    btnIniciar.classList.remove("oculto");
-  }
-})();
-
-(async () => {
-  const lista = await obtenerJugadoresPartida(partida_id);
-  jugadores = lista.listaJugadores;
-})();
 
 function actualizarFaseVisual() {
   if (muerto) {
@@ -157,6 +194,7 @@ function actualizarFaseVisual() {
     listaMensajes.classList.remove("chat-noche");
     if (!muerto) {
       inputMensaje.disabled = false;
+      inputMensaje.placeholder = "Escribe en la aldea...";
     }
   } else {
     spanFase.innerHTML = "FASE: NOCHE";
@@ -166,65 +204,44 @@ function actualizarFaseVisual() {
     if (!lobo) {
       listaMensajes.classList.add("chat-noche");
       inputMensaje.disabled = true;
+      inputMensaje.placeholder = "Solo los lobos pueden hablar de noche.";
+    } else if (!muerto) {
+      inputMensaje.disabled = false;
+      inputMensaje.placeholder = "Habla con los lobos...";
     }
   }
   yaHasVotado = false;
-
-  ronda++;
   rondaFinalizada = false;
+  ronda++;
 }
 
-const canal = pusher.subscribe("aldea" + partida_id);
+const canal = pusher.subscribe("aldea" + id_partida);
 
 canal.bind("nuevo-mensaje", (data: any) => {
   pintarMensaje(data.usuario, data.mensaje);
 });
 
 canal.bind("cambio-fase", async (data: any) => {
+  actualizarListas();
+
   if (data.fase === "dia") {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
     if (host) {
-      bots = jugadores.filter((j) => j.bot);
-      console.log(bots.length);
-
       for (const bot of bots) {
         setTimeout(() => {
-          votarYHablarBot(partida_id, bot.id, ronda);
+          votarYHablarBot(id_partida, bot.id_jugador, ronda);
         }, Math.random() * 3000 + 1000);
       }
     }
   } else {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
-    if (host) {
-      const lobos = (await obtenerIdJugadoresLobos()).filter(
-        (l) => l.id !== idJugador
-      );
-
-      const botsLobo = jugadores.filter(
-        (j) => j.bot && j.rolId === 2 && j.id !== idJugador
-      );
-
-      participantes = [...lobos, ...botsLobo];
-
-      console.log("Participantes (bots lobo):", participantes);
-      for (const p of participantes) {
-        setTimeout(() => {
-          votarYHablarBotLobo(partida_id, p.id, ronda);
-        }, Math.random() * 3000 + 1000);
-      }
-    }
 
   }
 
-  // PRUEBAS
   const cartaYaRepartida = contenedorCarta.querySelector(".carta-rol");
-
   if (!cartaYaRepartida) {
-    console.log(
-      "Inicio de partida detectado desde el servidor. Repartiendo carta..."
-    );
     await repartirCartasJugadores(numeroJugadoresPartida);
   }
 
@@ -237,7 +254,6 @@ canal.bind("cambio-fase", async (data: any) => {
 
 canal.bind("voto", (data: any) => {
   if (!dia) return;
-
   pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
   votos++;
 });
@@ -245,29 +261,34 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-    const index = jugadores.findIndex((j) => j.nickname === data.eliminado);
-      if (participantes) {
-      participantes = participantes.filter(p => p.nickname !== data.eliminado);
-      console.log("Participantes después de eliminar:", participantes);
-    }
-    if (index !== -1) jugadores.splice(index, 1);
+
+
+    const jugadorEliminado = jugadores.find(
+      (j) => j.nickname === data.eliminado
+    );
+    if (jugadorEliminado) jugadorEliminado.eliminado = true;
 
     if (data.eliminado === miNickname) {
       muerto = true;
     }
+
+    actualizarListas();
+
     if (data.idPersonaje) {
       await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
     }
   } else {
     mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
   }
+
+  await comprobarVictoria();
+
   setTimeout(async () => {
     cerrarVotacion();
     if (host) {
-      await cambiarFasePartida(partida_id, !dia);
+      await cambiarFasePartida(id_partida, !dia);
     }
   }, 3000);
-  votos = 0;
 });
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {
@@ -282,15 +303,12 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
     if (distancia < 0) {
       if (temporizador) {
         window.clearInterval(temporizador);
-        temporizador = null; // Importante limpiar la variable
+        temporizador = null;
         reloj.innerHTML = '<i class="fas fa-clock"></i> 00:00';
         rondaFinalizada = true;
-
         if (host) {
-          console.log("Tiempo agotado. Como host, cambio la fase.");
           try {
-            await finalizarVotacion(partida_id, ronda);
-            //await cambiarFasePartida(partida_id, !dia);
+            await finalizarVotacion(id_partida, ronda);
           } catch (error) {
             console.error("Error al cambiar fase por tiempo:", error);
           }
@@ -300,7 +318,6 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
     }
     const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
     const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
-
     const minStr = minutos < 10 ? "0" + minutos : minutos;
     const segStr = segundos < 10 ? "0" + segundos : segundos;
     reloj.innerHTML = `<i class="fas fa-clock"></i> ${minStr}:${segStr}`;
@@ -309,29 +326,27 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
 
 formChat.addEventListener("submit", async (e) => {
   e.preventDefault();
-
   const mensaje = inputMensaje.value.trim();
   if (!mensaje) return;
-
   inputMensaje.value = "";
 
   if (mensaje === "/cambiar") {
     if (host) {
       try {
-        await finalizarVotacion(partida_id, ronda);
-        await cambiarFasePartida(partida_id, !dia);
+        await finalizarVotacion(id_partida, ronda);
+        await cambiarFasePartida(id_partida, !dia);
         ronda++;
         return;
-      } catch {
-        console.error;
+      } catch (e) {
+        console.error("Error al cambiar fase manual:", e);
       }
     }
   }
   try {
     if (!dia && lobo && !muerto) {
-      await enviarMensajeLobos(mensaje, partida_id);
+      await enviarMensajeLobos(mensaje, id_partida);
     } else {
-      if (!muerto) await enviarMensaje(mensaje, partida_id);
+      if (!muerto) await enviarMensaje(mensaje, id_partida);
     }
   } catch {
     alert("Error");
@@ -342,20 +357,24 @@ if (btnIniciar) {
   btnIniciar.addEventListener("click", async () => {
     btnIniciar.disabled = true;
     btnIniciar.innerText = "Iniciando...";
-
     try {
       const headers = getJSONHeaders();
-      const response = await fetch(construirApi(`/${partida_id}/iniciar`), {
+      const response = await fetch(construirApi(`/${id_partida}/iniciar`), {
         method: "POST",
         headers: headers,
       });
-
       if (!response.ok) throw new Error("Error al iniciar en servidor");
 
-      // El host se reparte la carta a sí mismo inmediatamente
       await repartirCartasJugadores(numeroJugadoresPartida);
-
-      await cambiarFasePartida(partida_id, !dia);
+      await cambiarFasePartida(id_partida, !dia);
+      const jugadoresResp = await obtenerDatosJugadoresPartida(id_partida);
+if (Array.isArray(jugadoresResp)) {
+  jugadores = jugadoresResp as Jugador[];
+  console.log("Lista de jugadores cargada (snapshot):", JSON.stringify(jugadores));
+} else {
+  console.warn("No se pudieron obtener jugadores: respuesta vacía o inválida");
+  jugadores = [];
+}
       btnIniciar.classList.add("oculto");
     } catch (error) {
       console.error("Error al iniciar partida:", error);
@@ -367,12 +386,10 @@ if (btnIniciar) {
 
 export function pintarMensaje(usuario: string, texto: string) {
   const div = document.createElement("div");
-
   const miUsuario = getJugador();
   const yo = usuario === miUsuario;
 
   div.classList.add("msg");
-
   if (yo) {
     div.classList.add("propio");
     div.innerHTML = `<strong>Tú:</strong> ${texto}`;
@@ -381,19 +398,41 @@ export function pintarMensaje(usuario: string, texto: string) {
   }
 
   listaMensajes.appendChild(div);
-  //Autoscroll
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 }
 
 function pintarMensajeSistema(texto: string) {
   const div = document.createElement("div");
-
   div.classList.add("msg", "sistema");
-
   div.innerHTML = `${texto}`;
-
   listaMensajes.appendChild(div);
-
-  // Autoscroll
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
+}
+
+async function comprobarVictoria() {
+  actualizarListas();
+  if (lobos.length >= aldeanos.length) {
+    mostrarFinPartida("GANAN LOS LOBOS");
+    return true;
+  }
+  if (lobos.length === 0) {
+    mostrarFinPartida("GANAN LOS ALDEANOS");
+    return true;
+  }
+  return false;
+}
+
+function mostrarFinPartida(texto: string) {
+  const overlay = document.createElement("div");
+  overlay.classList.add("fin-overlay");
+  overlay.innerHTML = `
+    <div class="fin-contenedor">
+      <h1>${texto}</h1>
+      <button id="btn-volver">Volver al inicio</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  document.getElementById("btn-volver")!.addEventListener("click", () => {
+    window.location.href = "/";
+  });
 }

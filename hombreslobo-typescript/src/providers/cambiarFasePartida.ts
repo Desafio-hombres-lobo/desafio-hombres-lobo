@@ -1,7 +1,7 @@
 import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
-export const cambiarFasePartida = async (partida_id: any, fase: boolean) => {
+export const cambiarFasePartida = async (id_partida: any, fase: boolean) => {
   try {
     const endpoint = "/partida/cambiarFase";
     let faseRespuesta;
@@ -14,7 +14,7 @@ export const cambiarFasePartida = async (partida_id: any, fase: boolean) => {
       method: "POST",
       headers: getJSONHeaders(),
       body: JSON.stringify({
-        partida_id,
+        id_partida,
         fase: faseRespuesta,
       }),
     });

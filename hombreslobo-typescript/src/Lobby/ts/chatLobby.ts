@@ -45,7 +45,7 @@ btnEnviar.addEventListener("click", async () => {
   const mensaje = txtMensaje.value.trim();
   if (!mensaje) return;
 
-  const resp = await enviarMensaje({ message: mensaje, partida_id: partidaId });
+  const resp = await enviarMensaje({ message: mensaje, id_partida: partidaId });
 
   if (resp.ok) {
     console.log("Confirmación del servidor:", resp.data);
@@ -61,7 +61,7 @@ txtMensaje.addEventListener("keydown", async (event) => {
     const mensaje = txtMensaje.value.trim();
     if (!mensaje) return;
 
-    const resp = await enviarMensaje({ message: mensaje, partida_id: partidaId });
+    const resp = await enviarMensaje({ message: mensaje, id_partida: partidaId });
 
     if (resp.ok) {
       console.log("Confirmación del servidor:", resp.data);

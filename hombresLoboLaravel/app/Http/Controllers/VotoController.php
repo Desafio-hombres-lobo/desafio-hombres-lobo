@@ -42,6 +42,7 @@ class VotoController extends Controller
         $idPersonaje = DB::table('jugador_partida_personajes')
             ->where('id_partida', $idPartida)
             ->where('id_jugador', $validated['id_jugador'])
+            ->where('estado', 1)
             ->value('id_personaje');
 
         // Si es lobo, emite por el canal privado
@@ -54,7 +55,7 @@ class VotoController extends Controller
         }
 
         $partida = Partida::find($idPartida);
-        $jugadoresVivos = $partida->jugadoresLobby()->wherePivot('eliminado', false)->count();
+        $jugadoresVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 1)->count();
         $votosRonda = Voto::where('id_partida', $idPartida)
             ->where('ronda', $validated['ronda'])
             ->get();
@@ -77,14 +78,15 @@ class VotoController extends Controller
                     ->where('id_jugador', $idEliminado)
                     ->value('id_personaje');
 
-                $partida->jugadoresLobby()->updateExistingPivot($idEliminado, ['eliminado' => true]);
+                $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
             } else {
                 $eliminado = null;
                 $resultado = "empate";
                 $idPersonaje = null;
+                $idEliminado = null;
             }
 
-            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje));
+            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
         }
 
         return response()->json([
@@ -104,12 +106,13 @@ class VotoController extends Controller
             ->where('ronda', $ronda)
             ->get();
 
-        $jugadoresVivos = $partida->jugadoresLobby()->wherePivot('eliminado', false)->get();
+        $jugadoresVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 0)->get();
 
         if ($votosRonda->isEmpty()) {
             $resultado = "empate";
             $eliminado = null;
             $idPersonaje = null;
+            $idEliminado = null;
         } else {
             $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
                 ->map(fn($v) => count($v));
@@ -125,15 +128,16 @@ class VotoController extends Controller
                 $eliminado = Jugador::find($idEliminado)->nickname;
                 $resultado = "eliminado";
 
-                $partida->jugadoresLobby()->updateExistingPivot($idEliminado, ['eliminado' => true]);
+                $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 1]);
             } else {
                 $resultado = "empate";
                 $eliminado = null;
                 $idPersonaje = null;
+                $idEliminado = null;
             }
         }
 
-        broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje));
+        broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
 
         return response()->json([
             'ok' => true,
@@ -163,6 +167,7 @@ class VotoController extends Controller
                 $idPartida,
                 'empate',
                 null,
+                null,
                 null
             ));
             return response()->json([
@@ -184,6 +189,7 @@ class VotoController extends Controller
             event(new VotacionTerminada(
                 $idPartida,
                 'empate',
+                null,
                 null,
                 null
             ));
@@ -211,7 +217,8 @@ class VotoController extends Controller
             $idPartida,
             'eliminado',
             $jugadorEliminado->nickname,
-            $idPersonaje
+            $idPersonaje,
+            $idJugadorEliminado
         ));
 
 
@@ -286,8 +293,8 @@ class VotoController extends Controller
             $partida = Partida::find($idPartida);
         $votosLobo = DB::table('jugador_partida_personajes')
                 ->where('id_partida', $idPartida)
-                ->where('id_personaje', 2) // Asumimos que 2 es el ID de Lobo
-                ->where('estado', 1)       // 1 significa 'vivo' según tu migración
+                ->where('id_personaje', 2)
+                ->where('estado', 1)
                 ->count();
         $votosRonda = Voto::where('id_partida', $idPartida)
             ->where('ronda', $ronda)
@@ -311,18 +318,19 @@ class VotoController extends Controller
                     ->where('id_jugador', $idEliminado)
                     ->value('id_personaje');
 
-                $partida->jugadoresLobby()->updateExistingPivot($idEliminado, ['eliminado' => true]);
+                $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
             } else {
                 $eliminado = null;
                 $resultado = "empate";
                 $idPersonaje = null;
+                $idEliminado=null;
             }
 
-            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje));
+            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
         }
         }else{
             $partida = Partida::find($idPartida);
-        $jugadoresVivos = $partida->jugadoresLobby()->wherePivot('eliminado', false)->count();
+        $jugadoresVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 1)->count();
         $votosRonda = Voto::where('id_partida', $idPartida)
             ->where('ronda', $ronda)
             ->get();
@@ -345,14 +353,15 @@ class VotoController extends Controller
                     ->where('id_jugador', $idEliminado)
                     ->value('id_personaje');
 
-                $partida->jugadoresLobby()->updateExistingPivot($idEliminado, ['eliminado' => true]);
+                $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
             } else {
                 $eliminado = null;
                 $resultado = "empate";
                 $idPersonaje = null;
+                $idEliminado = null;
             }
 
-            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje));
+            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
         }
         }
 

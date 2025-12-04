@@ -81,7 +81,7 @@ class PartidaController extends Controller
 
         $Uniendo = false;
 
-        if (!$partida->jugadoresLobby()->where('jugador_id', $jugador->id)->exists()) {
+        if (!$partida->jugadoresLobby()->where('id_jugador', $jugador->id)->exists()) {
             $partida->jugadoresLobby()->attach($jugador->id);
             $Uniendo = true;
         }
@@ -107,7 +107,7 @@ class PartidaController extends Controller
         ->get();
 
         return response()->json([
-            'partida_id' => $id,
+            'id_partida' => $id,
             'jugadores_actuales' => $jugadores->count(),
             'jugadores_maximos' => $partida->num_jugadores,
             'lista_jugadores' => $jugadores
@@ -127,10 +127,10 @@ class PartidaController extends Controller
     public function abandonarPartida(Request $request)
     {
         $validated = $request->validate([
-            'partida_id' => 'required|exists:partidas,id',
+            'id_partida' => 'required|exists:partidas,id',
         ]);
 
-        $partidaId = $validated['partida_id'];
+        $partidaId = $validated['id_partida'];
 
 
         $usuarioId = $request->user()->id;
@@ -147,7 +147,7 @@ class PartidaController extends Controller
             return response()->json(['error' => 'Partida no encontrada'], 404);
         }
 
-        if ($partida->jugadoresLobby()->where('jugador_id', $jugador->id)->exists()) {
+        if ($partida->jugadoresLobby()->where('id_jugador', $jugador->id)->exists()) {
 
             $partida->jugadoresLobby()->detach($jugador->id);
 
@@ -259,10 +259,10 @@ class PartidaController extends Controller
         $jugador = $user->jugador;
 
         $request->validate([
-            'partida_id' => 'required|exists:partidas,id'
+            'id_partida' => 'required|exists:partidas,id'
         ]);
 
-        $asignacion = JugadorPartidaPersonaje::where('id_partida', $request->partida_id)
+        $asignacion = JugadorPartidaPersonaje::where('id_partida', $request->id_partida)
                         ->where('id_jugador', $jugador->id)
                         ->first();
 
@@ -303,6 +303,18 @@ class PartidaController extends Controller
                 'updated_at' => now(),
             ]);
         }
+
+                JugadorPartidaPersonaje::updateOrCreate(
+            [
+                'id_jugador' => $bot->id,
+                'id_partida' => $partida->id
+            ],
+            [
+                'id_personaje' => null, // Se asignará al iniciar partida
+                'estado' => 1,
+                'votos' => 0
+            ]
+        );
 
         return response()->json([
             'ok' => true,

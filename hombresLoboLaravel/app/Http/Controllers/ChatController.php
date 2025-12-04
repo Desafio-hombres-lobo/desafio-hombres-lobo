@@ -11,7 +11,7 @@ class ChatController extends Controller
     public function send(Request $request)
     {
         $msg = $request->input('message');
-        $idPartida = $request->input('partida_id');
+        $idPartida = $request->input('id_partida');
 
         $user = $request->user()->jugador;
 
@@ -27,7 +27,7 @@ class ChatController extends Controller
         public function sendMensajeBot(Request $request, $bot)
     {
         $msg = $request->input('message');
-        $idPartida = $request->input('partida_id');
+        $idPartida = $request->input('id_partida');
 
         $jugador=Jugador::find($bot);
 

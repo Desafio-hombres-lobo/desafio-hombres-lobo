@@ -27,4 +27,9 @@ class JugadorPartidaPersonaje extends Model
     public function jugador() {
     return $this->belongsTo(Jugador::class, 'id_jugador');
     }
+
+    public function personaje() {
+    return $this->belongsTo(Personaje::class, 'id_personaje');
+    }
+
 }
