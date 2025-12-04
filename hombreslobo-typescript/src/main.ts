@@ -11,6 +11,13 @@ import { validarLogin } from "./autenticacion/ts/validarLogin";
 import { actualizarHeader } from "./autenticacion/ts/actualizarHeader";
 import { initLobby } from "./Lobby/ts/lobby";
 
+  const hamburger = document.getElementById('hamburger');
+  const menu = document.getElementById('menu');
+
+  hamburger.addEventListener('click', () => {
+  menu.classList.toggle('activo');
+  });
+
 document.addEventListener("DOMContentLoaded", () => {
   initModal();
 
