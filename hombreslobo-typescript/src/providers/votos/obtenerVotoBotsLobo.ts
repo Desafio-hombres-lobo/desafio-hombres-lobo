@@ -1,9 +1,9 @@
 import { getJSONHeaders } from "../../autenticacion/ts/header";
 import { construirApi } from "../../autenticacion/ts/apiFetch";
-import { enviarMensajeBot } from "../enviarMensaje"; 
-import { pintarMensaje } from "../../Partida/ts/chatAldea"; 
+import { enviarMensajeBotLobo } from "../enviarMensaje";
+import { pintarMensaje } from "../../Partida/ts/chatAldea";
 
-const esperar = (ms: number) => new Promise(res => setTimeout(res, ms));
+const esperar = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export const votarYHablarBotLobo = async (
   idPartida: number | string,
@@ -25,7 +25,6 @@ export const votarYHablarBotLobo = async (
 
     await esperar(3500);
 
-
     const cantidadMensajes = Math.floor(Math.random() * 3);
     const mensajesBot = [
       "Creo que sospecha",
@@ -33,7 +32,7 @@ export const votarYHablarBotLobo = async (
       "A ver, por descarte para que no sospechen, yo digo que matemos a",
       "No sé, por decir a alguien digo",
       "Yo creo que la niña es",
-      "Iba a por mí"
+      "Iba a por mí",
     ];
 
     for (let i = 0; i < cantidadMensajes; i++) {
@@ -42,33 +41,29 @@ export const votarYHablarBotLobo = async (
 
       const mensajeFinal = `${mensajeRandom} ${nicknameObjetivo}`;
 
-      await esperar(Math.random() * 6000 + 1000); 
-      pintarMensaje(nicknameBot, mensajeFinal);
+      await esperar(Math.random() * 6000 + 1000);
 
-      await enviarMensajeBot({
+      await enviarMensajeBotLobo({
         message: mensajeFinal,
         partida_id: idPartida.toString(),
-        bot: idBot
+        bot: idBot,
       });
     }
 
-    
-  await fetch(
-      construirApi(`/partida/${idPartida}/votar/${ronda}`),
-      {
-        method: "POST",
-        headers: getJSONHeaders(),
-        body: JSON.stringify({
-          voto_bot: objetivo,
-          id_bot: idBot,
-          ronda: ronda
-        })
-      }
-    );
+    await fetch(construirApi(`/partida/${idPartida}/votar/${ronda}`), {
+      method: "POST",
+      headers: getJSONHeaders(),
+      body: JSON.stringify({
+        voto_bot: objetivo,
+        id_bot: idBot,
+        ronda: ronda,
+      }),
+    });
 
-    console.log(`Bot ${nicknameBot} ha votado correctamente a ${nicknameObjetivo}`);
+    console.log(
+      `Bot ${nicknameBot} ha votado correctamente a ${nicknameObjetivo}`
+    );
   } catch (error) {
     console.error("Error en votarYHablarBot:", error);
   }
-
 };

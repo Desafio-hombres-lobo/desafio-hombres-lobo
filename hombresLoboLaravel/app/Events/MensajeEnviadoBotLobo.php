@@ -9,40 +9,44 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Jugador;
 
-class MessageSent implements ShouldBroadcast
+class MensajeEnviadoBotLobo implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $message;
+    /**
+     * Create a new event instance.
+     */
+    public $usuario;
+    public $mensaje;
     public $idPartida;
-    public $nickname;
 
-    public function __construct($message, $idPartida, $nickname)
+    public function __construct($mensaje, $nickname, $idPartida)
     {
-        $this->message = $message;
+        $this->usuario = $nickname;
+        $this->mensaje = $mensaje;
         $this->idPartida = $idPartida;
-        $this->nickname = $nickname;
     }
 
-
+    // Canal público "chat"
     public function broadcastOn(): Channel
     {
-        return new Channel('lobby' . $this->idPartida);
+        return new Channel('lobos' . $this->idPartida);
     }
 
     // Nombre del evento en el cliente
     public function broadcastAs(): string
     {
-        return 'message.sent';
+        return 'nuevo-mensaje-lobos';
     }
 
     // Datos que se envían al cliente
     public function broadcastWith(): array
     {
         return [
-            'message' => $this->message,
-            'username' => $this->nickname
+            'usuario' => $this->usuario,
+            'mensaje' => $this->mensaje,
         ];
     }
 }

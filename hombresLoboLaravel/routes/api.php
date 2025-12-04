@@ -75,6 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/chat/send', [ChatController::class, 'send']);
         Route::post('/chat/send/{bot}', [ChatController::class, 'sendMensajeBot']);
+        Route::post('/chat/send/{bot}/lobo', [ChatController::class, 'sendMensajeBotLobo']);
 
         Route::post('/{id}/llena', [PartidaController::class, 'llenar']);
 
