@@ -1,4 +1,10 @@
 import {
+  ROL_ALDEANO,
+  ROL_LOBO,
+  ROL_NINIA,
+  ROL_VIDENTE,
+} from "./constantes_roles";
+import {
   renderizarCartaAldeano,
   renderizarCartaLobo,
   renderizarCartaNiña,
@@ -14,11 +20,11 @@ export const voltearCartaPersonaje = async (
   slotDiv.innerHTML = "";
   const id = Number(idPersonaje);
 
-  if (id === 1) {
+  if (id === ROL_ALDEANO) {
     await renderizarCartaAldeano(slotDiv, nickname);
-  } else if (id === 2) {
+  } else if (id === ROL_LOBO) {
     await renderizarCartaLobo(slotDiv, nickname);
-  } else if (id === 3) {
+  } else if (id === ROL_NINIA) {
     await renderizarCartaNiña(slotDiv, nickname);
   }
 
@@ -40,7 +46,7 @@ export const voltearCartasLobo = async (
   }
   slotDiv.innerHTML = "";
 
-  if (idPersonaje === 2) {
+  if (idPersonaje === ROL_LOBO) {
     await renderizarCartaLobo(slotDiv, nickname);
     console.log(`Carta de lobo volteada para ${nickname}`);
   }

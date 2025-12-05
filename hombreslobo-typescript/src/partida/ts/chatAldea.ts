@@ -28,6 +28,11 @@ import { ganarPartida } from "../../providers/finalPartida/enviarDatosFinalParti
 import { perderPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
 import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPartidaFinalizada";
 import { verChatLobos } from "./funcionNinia";
+import {
+  ROL_ALDEANO,
+  ROL_LOBO,
+  ROL_NINIA,
+} from "../../Personajes/ts/constantes_roles";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -72,15 +77,15 @@ async function actualizarListas() {
   vivos = jugadores.filter((j) => j.estado !== 0);
   muertos = jugadores.filter((j) => j.estado === 0);
 
-  lobos = vivos.filter((j) => j.id_personaje === 2);
-  aldeanos = vivos.filter((j) => j.id_personaje === 1);
+  lobos = vivos.filter((j) => j.id_personaje === ROL_LOBO);
+  aldeanos = vivos.filter((j) => j.id_personaje === ROL_ALDEANO);
 
   bots = vivos.filter((j) => j.bot);
   humanos = vivos.filter((j) => !j.bot);
 
-  botsLobo = bots.filter((j) => j.id_personaje === 2);
+  botsLobo = bots.filter((j) => j.id_personaje === ROL_LOBO);
 
-  aliados = vivos.filter((j) => j.id_personaje !== 2);
+  aliados = vivos.filter((j) => j.id_personaje !== ROL_LOBO);
   if (muertos.some((j) => j.nickname === miNickname)) {
     muerto = true;
     if (!chatLobosInicializado) {
@@ -89,8 +94,8 @@ async function actualizarListas() {
     }
   }
 
-  aliadosTotales = jugadores.filter((j) => j.id_personaje !== 2);
-  lobosTotales = jugadores.filter((j) => j.id_personaje == 2);
+  aliadosTotales = jugadores.filter((j) => j.id_personaje !== ROL_LOBO);
+  lobosTotales = jugadores.filter((j) => j.id_personaje == ROL_LOBO);
   console.log(
     "vivos",
     vivos,
@@ -139,13 +144,13 @@ const repartirCartasJugadores = async (): Promise<void> => {
 
     if (esMiUsuario) {
       slotDiv.classList.add("mi-jugador");
-      if (miRolId == 2) {
+      if (miRolId == ROL_LOBO) {
         lobo = true;
         await renderizarCartaLobo(slotDiv, miNickname);
         await chatLobos(lobos);
-      } else if (miRolId === 1) {
+      } else if (miRolId === ROL_ALDEANO) {
         await renderizarCartaAldeano(slotDiv, miNickname);
-      } else if (miRolId === 3) {
+      } else if (miRolId === ROL_NINIA) {
         await renderizarCartaNiña(slotDiv, miNickname);
       }
     } else {
@@ -195,7 +200,7 @@ function actualizarFaseVisual() {
       inputMensaje.placeholder = "Escribe en la aldea...";
     }
   } else {
-    if (miRolId === 3 && !muerto) {
+    if (miRolId === ROL_NINIA && !muerto) {
       btnNiña.classList.remove("oculto");
       verChatLobos(btnNiña, listaMensajes);
     }

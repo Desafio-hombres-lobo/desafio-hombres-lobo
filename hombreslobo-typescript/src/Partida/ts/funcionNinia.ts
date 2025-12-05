@@ -8,6 +8,7 @@ import { getPartidaId } from "../../autenticacion/ts/auth";
 export const verChatLobos = (btn: HTMLInputElement, chat: HTMLElement) => {
   const partida = getPartidaId()!;
   btn.addEventListener("click", function () {
+    btn.classList.add("oculto");
     const canal = conectarLobos();
     configurarBind(canal);
     chat.classList.remove("chat-noche");
