@@ -12,6 +12,7 @@ import {
   renderizarCartaLobo,
   renderizarCartaAldeano,
   renderizarReverso,
+  renderizarCartaVidente,
 } from "../../Personajes/ts/crearCartaPersonaje";
 import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
 import { chatLobos } from "./chatLobos";
@@ -66,6 +67,7 @@ let botsLobo: Jugador[] = [];
 let aliados: Jugador[] = [];
 let aliadosTotales: Jugador[] = [];
 let lobosTotales: Jugador[] = [];
+let vidente: Jugador[] = [];
 
 async function actualizarListas() {
   jugadores = await obtenerDatosJugadoresPartida(id_partida);
@@ -74,6 +76,7 @@ async function actualizarListas() {
 
   lobos = vivos.filter((j) => j.id_personaje === 2);
   aldeanos = vivos.filter((j) => j.id_personaje === 1);
+  vidente = vivos.filter((j) => j.id_personaje === 3);
 
   bots = vivos.filter((j) => j.bot);
   humanos = vivos.filter((j) => !j.bot);
@@ -96,6 +99,8 @@ async function actualizarListas() {
     lobos,
     "aldeanos",
     aldeanos,
+    "vidente",
+    vidente,
     "bots",
     bots,
     "humanos",
@@ -157,6 +162,8 @@ const repartirCartasJugadores = async (
         await chatLobos(jugadores, lobos);
       } else if (miRolId === 1) {
         await renderizarCartaAldeano(slotDiv, miNickname);
+      } else if (miRolId === 3) {
+        await renderizarCartaVidente(slotDiv, miNickname);
       } else {
         renderizarReverso(slotDiv, nombreJugador);
       }

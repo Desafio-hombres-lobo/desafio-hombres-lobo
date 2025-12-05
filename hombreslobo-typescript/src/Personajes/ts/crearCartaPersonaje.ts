@@ -3,11 +3,14 @@ import "../css/styles.css";
 import loboImg from "../../imagenes/cartas/lobo.png";
 import aldeanoImg from "../../imagenes/cartas/aldeano.png";
 import reversoCarta from "../../imagenes/cartas/reverso-carta.jpeg";
+import videnteImg from "../../imagenes/cartas/vidente.png";
 
 let ID_ALDEANO = 1;
 let ID_LOBO = 2;
+let ID_VIDENTE = 3;
 const IMG_HOMBRE_LOBO = loboImg;
 const IMG_ALDEANO = aldeanoImg;
+const IMG_VIDENTE = videnteImg;
 
 export const renderizarCartaLobo = async (
   contenedor: HTMLElement,
@@ -22,9 +25,6 @@ export const renderizarCartaLobo = async (
 
   const listaAcciones = datosAccionesPersonaje.acciones;
   const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Lobo";
-  // const idAccion = listaAcciones[0]?.id_accion;
-  // const idJugador = listaAcciones[0]?.id_jugador;
-  // const idPersonaje = listaAcciones[0]?.id_personaje;
 
   const carta = document.createElement("div");
   carta.classList.add("carta-rol", "carta-lobo");
@@ -53,9 +53,6 @@ export const renderizarCartaAldeano = async (
 
   const listaAcciones = datosAccionesPersonaje.acciones;
   const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Aldeano";
-  // const idAccion = listaAcciones[0]?.id_accion;
-  // const idJugador = listaAcciones[0]?.id_jugador;
-  // const idPersonaje = listaAcciones[0]?.id_personaje;
 
   const carta = document.createElement("div");
   carta.classList.add("carta-rol", "carta-aldeano");
@@ -66,6 +63,35 @@ export const renderizarCartaAldeano = async (
       <p class="carta-titulo">${nickname}</p>
   `;
 
+  contenedor.appendChild(carta);
+};
+
+export const renderizarCartaVidente = async (
+  contenedor: HTMLElement,
+  nickname: string
+): Promise<void> => {
+  const datosAccionesPersonaje: any = await obtenerAccionesPersonaje(
+    ID_VIDENTE
+  );
+
+  if (!datosAccionesPersonaje) {
+    contenedor.innerHTML = "<p>Error al cargar Lobo</p>";
+    return;
+  }
+
+  const listaAcciones = datosAccionesPersonaje.acciones;
+  const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Vidente";
+
+  const carta = document.createElement("div");
+  carta.classList.add("carta-rol", "carta-vidente");
+  carta.innerHTML = `
+      <div class="carta-img-container">
+          <img src="${IMG_VIDENTE}" alt="${nombrePersonaje}">
+      </div>
+      <p class="carta-titulo">${nickname}</p>
+  `;
+
+  console.log("Renderizando carta Vidente...");
   contenedor.appendChild(carta);
 };
 

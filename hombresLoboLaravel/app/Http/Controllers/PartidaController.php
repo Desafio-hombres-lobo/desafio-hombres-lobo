@@ -199,13 +199,15 @@ class PartidaController extends Controller
         $totalJugadores = $jugadores->count();
 
         $numLobos = floor($totalJugadores * 0.3);
+        $vidente = 1;
+        $numAldeanos = $totalJugadores - $numLobos - $vidente;
+
 
         // Mínimo un lobo siempre
         if($numLobos < 1){
             $numLobos = 1;
         }
 
-        $numAldeanos = $totalJugadores - $numLobos;
 
         // Crear mazo con ID´s
         $mazo = [];
@@ -215,6 +217,10 @@ class PartidaController extends Controller
 
         for($i = 0; $i < $numAldeanos; $i++){
             $mazo[] = 1;
+        }
+
+        for($i = 0; $i < $vidente; $i++){
+            $mazo[] = 3;
         }
 
         shuffle($mazo);

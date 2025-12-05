@@ -1,6 +1,7 @@
 import {
   renderizarCartaAldeano,
   renderizarCartaLobo,
+  renderizarCartaVidente
 } from "./crearCartaPersonaje";
 
 export const voltearCartaPersonaje = async (
@@ -17,6 +18,8 @@ export const voltearCartaPersonaje = async (
     await renderizarCartaAldeano(slotDiv, nickname);
   } else if (id === 2) {
     await renderizarCartaLobo(slotDiv, nickname);
+  } else if (id === 3) {
+    await renderizarCartaVidente(slotDiv, nickname);
   }
 
   slotDiv.classList.add("jugador-eliminado");
