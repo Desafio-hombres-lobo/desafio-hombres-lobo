@@ -108,20 +108,6 @@ async function actualizarListas() {
     aliados
   );
 }
-
-const datosJugadoresPartida = await obtenerJugadoresPartida(id_partida);
-const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
-if (Array.isArray(datosJugadoresPartida)) {
-  jugadores = datosJugadoresPartida as Jugador[];
-  console.log(
-    "Lista de jugadores cargada (snapshot):",
-    JSON.stringify(jugadores)
-  );
-} else {
-  console.warn("No se pudieron obtener jugadores: respuesta vacía o inválida");
-  jugadores = [];
-}
-
 const miNickname = getJugador()!;
 const jugadorActual = await obtenerJugadorActual();
 const idJugador = jugadorActual.datos?.id;
@@ -135,7 +121,7 @@ if (host) {
 
 const repartirCartasJugadores = async (): Promise<void> => {
   const miRolId = await obtenerRolPersonajeJugador();
-  actualizarListas();
+  await actualizarListas();
   for (let i = 0; i < jugadores.length; i++) {
     const jugador = jugadores[i];
     const nombreJugador = String(jugador.nickname).trim();
@@ -157,8 +143,6 @@ const repartirCartasJugadores = async (): Promise<void> => {
         await chatLobos(lobos);
       } else if (miRolId === 1) {
         await renderizarCartaAldeano(slotDiv, miNickname);
-      } else {
-        renderizarReverso(slotDiv, nombreJugador);
       }
     } else {
       renderizarReverso(slotDiv, nombreJugador);
@@ -168,7 +152,6 @@ const repartirCartasJugadores = async (): Promise<void> => {
       if (esMiUsuario) return;
       // Votar si es de día, o si es de noche y soy lobo
       if (!dia && !lobo) return;
-
       if (yaHasVotado) return;
       if (muerto) return;
       const idVotado = parseInt(slotDiv.dataset.id!);
@@ -186,7 +169,6 @@ const repartirCartasJugadores = async (): Promise<void> => {
         alert(`Error al votar: ${resultado.error}`);
       }
     });
-
     contenedorCarta.appendChild(slotDiv);
   }
 };
