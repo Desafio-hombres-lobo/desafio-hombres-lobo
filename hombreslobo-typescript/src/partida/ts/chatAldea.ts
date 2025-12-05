@@ -26,6 +26,7 @@ import type { Jugador } from "./Jugador";
 import { ganarPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
 import { perderPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
 import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPartidaFinalizada";
+import { verChatLobos } from "./funcionNinia";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -174,7 +175,7 @@ const repartirCartasJugadores = async (): Promise<void> => {
 };
 
 function actualizarFaseVisual() {
-  const btnNiña = document.getElementById("btn-niña")!;
+  const btnNiña = document.getElementById("btn-niña")! as HTMLInputElement;
   if (muerto) {
     inputMensaje.disabled = true;
     inputMensaje.placeholder = "No puedes hablar, estás muerto.";
@@ -193,6 +194,7 @@ function actualizarFaseVisual() {
   } else {
     if (miRolId === 3 && !muerto) {
       btnNiña.classList.remove("oculto");
+      verChatLobos(btnNiña);
     }
     spanFase.innerHTML = "FASE: NOCHE";
     headerChat.innerHTML = "CHAT DE LOS LOBOS";

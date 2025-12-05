@@ -60,6 +60,6 @@ const pintarVotoLobo = (votante: string, votado: string) => {
   }
 };
 
-export const desconectarChat = () => {
+export const desconectarChatLobos = () => {
   pusher.unsubscribe("lobos" + id_partida);
 };
