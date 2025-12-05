@@ -82,6 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/rellenar/partida/{idPartida}', [PartidaController::class, 'rellenarBots']);
 
         Route::post('/{partidaId}/iniciar', [PartidaController::class, 'iniciarPartida']);
+        Route::post('/{partidaId}/empezar', [PartidaController::class, 'empezarPartida']);
         Route::post('/partida/miRol', [PartidaController::class, 'obtenerMiRol']);
 
         //Registrar voto de un usuario

@@ -30,7 +30,6 @@ const configurarVotos = (canal: any) => {
   canal.bind("votos-lobos", (data: any) => {
     // console.log("Jugadores lobo: ", jugadoresLobo);
     pintarVotoLobo(data.idVotante, data.idVotado);
-    
   });
 };
 

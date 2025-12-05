@@ -28,6 +28,7 @@ import type { Jugador } from "./Jugador";
 import { ganarPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
 import { perderPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
 import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPartidaFinalizada";
+import { iniciarPartida } from "../../providers/iniciarPartida";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -48,8 +49,6 @@ let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
 
-
-
 let jugadores: Jugador[] = [];
 let yaHasVotado = false;
 let muerto = false;
@@ -66,8 +65,8 @@ let bots: Jugador[] = [];
 let humanos: Jugador[] = [];
 let botsLobo: Jugador[] = [];
 let aliados: Jugador[] = [];
-let aliadosTotales : Jugador[] = [];
-let lobosTotales : Jugador[] =[];
+let aliadosTotales: Jugador[] = [];
+let lobosTotales: Jugador[] = [];
 
 async function actualizarListas() {
   jugadores = await obtenerDatosJugadoresPartida(id_partida);
@@ -82,26 +81,45 @@ async function actualizarListas() {
 
   botsLobo = bots.filter((j) => j.id_personaje === 2);
 
-  aliados = vivos.filter((j) => j.id_personaje !==2);
-  if(miNickname in muertos){
+  aliados = vivos.filter((j) => j.id_personaje !== 2);
+  if (miNickname in muertos) {
     muerto = true;
   }
 
-  aliadosTotales = jugadores.filter((j) => j.id_personaje !==2);
-  lobosTotales = jugadores.filter((j) => j.id_personaje ==2);
-  console.log('vivos',vivos, 'muertos,',muertos, 'lobos',lobos, 'aldeanos',aldeanos, 'bots', bots, 'humanos', humanos, 'botsLobo', botsLobo, 'aliados', aliados)
+  aliadosTotales = jugadores.filter((j) => j.id_personaje !== 2);
+  lobosTotales = jugadores.filter((j) => j.id_personaje == 2);
+  console.log(
+    "vivos",
+    vivos,
+    "muertos,",
+    muertos,
+    "lobos",
+    lobos,
+    "aldeanos",
+    aldeanos,
+    "bots",
+    bots,
+    "humanos",
+    humanos,
+    "botsLobo",
+    botsLobo,
+    "aliados",
+    aliados
+  );
 }
 
 const datosJugadoresPartida = await obtenerJugadoresPartida(id_partida);
 const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
 if (Array.isArray(datosJugadoresPartida)) {
   jugadores = datosJugadoresPartida as Jugador[];
-  console.log("Lista de jugadores cargada (snapshot):", JSON.stringify(jugadores));
+  console.log(
+    "Lista de jugadores cargada (snapshot):",
+    JSON.stringify(jugadores)
+  );
 } else {
   console.warn("No se pudieron obtener jugadores: respuesta vacía o inválida");
   jugadores = [];
 }
-
 
 const miNickname = getJugador()!;
 const jugadorActual = await obtenerJugadorActual();
@@ -114,11 +132,9 @@ if (host) {
   btnIniciar.classList.remove("oculto");
 }
 
-const repartirCartasJugadores = async (
-  numeroJugadoresPartida: number
-): Promise<void> => {
+const repartirCartasJugadores = async (): Promise<void> => {
   const miRolId = await obtenerRolPersonajeJugador();
-  actualizarListas()
+  actualizarListas();
   for (let i = 0; i < jugadores.length; i++) {
     const jugador = jugadores[i];
     const nombreJugador = String(jugador.nickname).trim();
@@ -238,18 +254,12 @@ canal.bind("cambio-fase", async (data: any) => {
     }
   }
 
-  const cartaYaRepartida = contenedorCarta.querySelector(".carta-rol");
-  if (!cartaYaRepartida) {
-    await repartirCartasJugadores(numeroJugadoresPartida);
-  }
-
   if (textoEspera) {
     textoEspera.classList.add("oculto");
   }
   actualizarFaseVisual();
   iniciarCuentaAtras(data.tiempoFin);
 });
-
 canal.bind("voto", (data: any) => {
   if (!dia) return;
   pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
@@ -278,29 +288,29 @@ canal.bind("votacion-terminada", async (data: any) => {
   }, 3000);
 });
 
-canal.bind("fin-partida", async (data:any)=>{  
+canal.bind("fin-partida", async (data: any) => {
   const miRol = await obtenerRolPersonajeJugador();
-  mostrarFinPartida(data.equipo)
-  let divFinal = document.getElementById('contenedor-final')
-  let h2 = document.createElement('h2');
-  if(miRol === 2 ){
-    if(data.equipo == 'lobos'){
-      h2.textContent= '¡Has ganado!'
-    }else{
-      h2.textContent = '¡Oh no! Perdiste'
+  mostrarFinPartida(data.equipo);
+  let divFinal = document.getElementById("contenedor-final");
+  let h2 = document.createElement("h2");
+  if (miRol === 2) {
+    if (data.equipo == "lobos") {
+      h2.textContent = "¡Has ganado!";
+    } else {
+      h2.textContent = "¡Oh no! Perdiste";
     }
-  }else{
-        if(data.equipo == 'aldeanos'){
-      h2.textContent= '¡Has ganado!'
-    }else{
-      h2.textContent = '¡Oh no! Perdiste'
+  } else {
+    if (data.equipo == "aldeanos") {
+      h2.textContent = "¡Has ganado!";
+    } else {
+      h2.textContent = "¡Oh no! Perdiste";
     }
   }
 
-  divFinal?.appendChild(h2)
+  divFinal?.appendChild(h2);
 
-  setTimeout(window.location.href='/', 3500)
-})
+  setTimeout((window.location.href = "/"), 3500);
+});
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {
   if (temporizador) {
@@ -368,30 +378,10 @@ if (btnIniciar) {
   btnIniciar.addEventListener("click", async () => {
     btnIniciar.disabled = true;
     btnIniciar.innerText = "Iniciando...";
-    try {
-      const headers = getJSONHeaders();
-      const response = await fetch(construirApi(`/${id_partida}/iniciar`), {
-        method: "POST",
-        headers: headers,
-      });
-      if (!response.ok) throw new Error("Error al iniciar en servidor");
-
-      await repartirCartasJugadores(numeroJugadoresPartida);
-      await cambiarFasePartida(id_partida, !dia);
-      const jugadoresResp = await obtenerDatosJugadoresPartida(id_partida);
-if (Array.isArray(jugadoresResp)) {
-  jugadores = jugadoresResp as Jugador[];
-  console.log("Lista de jugadores cargada (snapshot):", JSON.stringify(jugadores));
-} else {
-  console.warn("No se pudieron obtener jugadores: respuesta vacía o inválida");
-  jugadores = [];
-}
-      btnIniciar.classList.add("oculto");
-    } catch (error) {
-      console.error("Error al iniciar partida:", error);
-      btnIniciar.disabled = false;
-      btnIniciar.innerText = "EMPEZAR PARTIDA";
-    }
+    await iniciarPartida(id_partida);
+    //await repartirCartasJugadores();
+    //await cambiarFasePartida(id_partida, !dia);
+    btnIniciar.classList.add("oculto");
   });
 }
 
@@ -421,31 +411,30 @@ function pintarMensajeSistema(texto: string) {
 }
 
 async function comprobarVictoria() {
-  if(host){
+  if (host) {
     if (lobos.length >= aliados.length) {
-          lobosTotales.forEach(lobo => {
-            ganarPartida(id_partida, lobo.id_jugador)
-          });
-          aliadosTotales.forEach(aliado => {
-            perderPartida(id_partida, aliado.id_jugador)
-          });
-          finalizarPartida(id_partida, 'lobos' )
-          console.log("Han ganado los lobos")
-        }
-    if (lobos.length === 0) {
-          lobosTotales.forEach(lobo => {
-            perderPartida(id_partida, lobo.id_jugador)
-          });
-          aliadosTotales.forEach(aliado => {
-            ganarPartida(id_partida, aliado.id_jugador)
-          });
-          console.log("Han ganado los aldeanos")
-          finalizarPartida(id_partida, 'aldeanos' )
-      }
-
+      lobosTotales.forEach((lobo) => {
+        ganarPartida(id_partida, lobo.id_jugador);
+      });
+      aliadosTotales.forEach((aliado) => {
+        perderPartida(id_partida, aliado.id_jugador);
+      });
+      finalizarPartida(id_partida, "lobos");
+      console.log("Han ganado los lobos");
     }
-    console.log("Se ha comprobado la victoria?")
-  
+    if (lobos.length === 0) {
+      lobosTotales.forEach((lobo) => {
+        perderPartida(id_partida, lobo.id_jugador);
+      });
+      aliadosTotales.forEach((aliado) => {
+        ganarPartida(id_partida, aliado.id_jugador);
+      });
+      console.log("Han ganado los aldeanos");
+      finalizarPartida(id_partida, "aldeanos");
+    }
+  }
+  console.log("Se ha comprobado la victoria?");
+
   return false;
 }
 
@@ -458,5 +447,4 @@ function mostrarFinPartida(texto: string) {
     </div>
   `;
   document.body.appendChild(overlay);
-  
 }
