@@ -8,7 +8,8 @@ export const votar = async (
     id_jugador: number;
     id_jugador_votado: number;
     ronda: number;
-    fase: boolean;
+    dia: boolean;
+    idPersonaje: number;
   }
 ) => {
   const token = getToken();

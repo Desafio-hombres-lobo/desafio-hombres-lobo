@@ -2,16 +2,14 @@ import { getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
 import { pintarMensaje } from "./chatAldea";
 import { voltearCartasLobo } from "../../Personajes/ts/voltearCartaPersonaje";
-import { obtenerJugadoresLobos } from "../../providers/obtenerJugadoresLobo";
-import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
+import type { Jugador } from "./Jugador";
 
 const id_partida = getPartidaId()!;
 
-export const chatLobos = async () => {
+export const chatLobos = async (lobos: Jugador[]) => {
   const canal = conectarLobos();
-  const jugadoresLobo = await obtenerJugadoresLobos();
 
-  jugadoresLoboFaseNoche(jugadoresLobo);
+  jugadoresLoboFaseNoche(lobos);
   configurarBind(canal);
   configurarVotos(canal);
 };
@@ -28,29 +26,15 @@ const configurarBind = (canal: any) => {
 
 const configurarVotos = (canal: any) => {
   canal.bind("votos-lobos", (data: any) => {
-    // console.log("Jugadores lobo: ", jugadoresLobo);
     pintarVotoLobo(data.idVotante, data.idVotado);
   });
 };
 
-const jugadoresLoboFaseNoche = async (jugadoresLobo: any[]) => {
-  const respuestaPartida = await obtenerJugadoresPartida(id_partida);
-  const listaDeJugadores = (respuestaPartida as any).listaJugadores || [];
-
+export const jugadoresLoboFaseNoche = async (lobos: Jugador[]) => {
   setTimeout(() => {
-    jugadoresLobo.forEach((datosLobo: any) => {
-      if (datosLobo && datosLobo.id_personaje === 2) {
-        const jugadorEncontrado = listaDeJugadores.find(
-          (j: any) => j.id === datosLobo.id_jugador
-        );
-
-        if (jugadorEncontrado) {
-          voltearCartasLobo(jugadorEncontrado.nickname, 2);
-        } else {
-          console.warn(
-            `No encontré el nombre para el ID ${datosLobo.id_jugador}`
-          );
-        }
+    lobos.forEach((lobo: Jugador) => {
+      if (lobo.id_personaje) {
+        voltearCartasLobo(lobo.nickname, lobo.id_personaje);
       }
     });
   }, 1000);

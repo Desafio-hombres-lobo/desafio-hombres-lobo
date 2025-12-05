@@ -154,7 +154,7 @@ const repartirCartasJugadores = async (): Promise<void> => {
       if (miRolId == 2) {
         lobo = true;
         await renderizarCartaLobo(slotDiv, miNickname);
-        await chatLobos();
+        await chatLobos(lobos);
       } else if (miRolId === 1) {
         await renderizarCartaAldeano(slotDiv, miNickname);
       } else {
@@ -176,7 +176,8 @@ const repartirCartasJugadores = async (): Promise<void> => {
         id_jugador: idJugador,
         id_jugador_votado: idVotado,
         ronda,
-        fase: dia,
+        dia: dia,
+        idPersonaje: miRolId,
       };
 
       const resultado = await votar(id_partida, payload);
