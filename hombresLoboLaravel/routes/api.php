@@ -82,6 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/rellenar/partida/{idPartida}', [PartidaController::class, 'rellenarBots']);
 
         Route::post('/{partidaId}/iniciar', [PartidaController::class, 'iniciarPartida']);
+        Route::post('/{partidaId}/empezar', [PartidaController::class, 'empezarPartida']);
         Route::post('/partida/miRol', [PartidaController::class, 'obtenerMiRol']);
 
         //Registrar voto de un usuario
@@ -106,6 +107,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/partida/{idPartida}/eliminar-jugador/{idJugador}', [PartidaController::class, 'eliminarJugador']);
 
         Route::get('/datosJugadoresPartida/{idPartida}', [JugadorPartidaPersonajeController::class, 'obtenerJugadoresPartida']);
+
+        //Ganar o perder partida
+        Route::post('/partida/{idPartida}/ganar', [PartidaController::class, 'ganarPartida']);
+        Route::post('/partida/{idPartida}/perder', [PartidaController::class, 'perderPartida']);
+
+        Route::post('/partida/{idPartida}/finalizar-partida', [PartidaController::class, 'finalizarPartida']);
 
     });
 });

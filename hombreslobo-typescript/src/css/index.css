@@ -2,14 +2,17 @@
   position: relative;
   text-align: center;
   padding: 6rem 2rem;
+  background: url("../imagenes/fondos/bosque-fondo.jpg") center/cover no-repeat;
 }
 
 .contenedor-principal::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(28, 15, 27, 0.93); 
+  z-index: 0;
 }
+
 
 .descripcion {
   position: relative;
@@ -145,3 +148,63 @@
 #boton-crear-cuenta {
   text-decoration: none;
 }
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.profile-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  z-index: 999;
+}
+
+.menu {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+
+  .hamburger {
+    display: block;
+  }
+
+  .menu {
+    display: none;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.9);
+    position: absolute;
+    top: 70px;
+    right: 0;
+    width: 100%;
+    padding: 1.5rem 0;
+    text-align: center;
+  }
+
+  .menu.activo {
+    display: flex;
+  }
+}
+

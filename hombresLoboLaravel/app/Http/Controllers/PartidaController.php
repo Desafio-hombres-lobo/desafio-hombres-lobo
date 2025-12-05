@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\EmpezarPartida;
 use App\Events\JugadorAbandono;
 use App\Events\PlayerJoined;
 use App\Events\IniciarPartida;
+use App\Events\FinalizarPartida;
 use App\Models\Jugador;
 use App\Models\Partida;
 use App\Models\JugadorPartidaPersonaje;
@@ -14,16 +16,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PartidaController extends Controller
-
 {
     public function index()
     {
-    $partidas = Partida::all();
-    return response()->json($partidas);
+        $partidas = Partida::all();
+        return response()->json($partidas);
     }
 
 
-    public function partidasIniciando(){
+    public function partidasIniciando()
+    {
         $partidas = Partida::where('estado', 0)->get();
         return $partidas;
     }
@@ -37,7 +39,7 @@ class PartidaController extends Controller
         ]);
 
         $jugador = $request->user()->jugador;
-        $partida=Partida::create([
+        $partida = Partida::create([
             'creador_id' => $jugador->id,
             'nombre' => $request->nombre,
             'num_jugadores' => $request->num_jugadores,
@@ -94,7 +96,8 @@ class PartidaController extends Controller
     }
 
 
-    public function jugadores($id){
+    public function jugadores($id)
+    {
         $partida = Partida::find($id);
 
         if (!$partida) {
@@ -102,9 +105,9 @@ class PartidaController extends Controller
         }
 
         $jugadores = $partida->jugadoresLobby()
-        ->select('jugadores.id', 'jugadores.nickname', 'jugadores.bot')
-        ->where('eliminado', false)
-        ->get();
+            ->select('jugadores.id', 'jugadores.nickname', 'jugadores.bot')
+            ->where('eliminado', false)
+            ->get();
 
         return response()->json([
             'id_partida' => $id,
@@ -114,10 +117,11 @@ class PartidaController extends Controller
         ]);
     }
 
-    public function creadorPartida($idPartida){
+    public function creadorPartida($idPartida)
+    {
         $partida = Partida::find($idPartida);
 
-        if(!$partida){
+        if (!$partida) {
             return response()->json(['error' => 'Partida no encontrada']);
         }
 
@@ -163,33 +167,34 @@ class PartidaController extends Controller
     }
 
     public function llenar(Request $request, $id)
-{
-    $partida = Partida::find($id);
+    {
+        $partida = Partida::find($id);
 
-    if (!$partida) {
-        return response()->json(['error' => 'Partida no encontrada'], 404);
+        if (!$partida) {
+            return response()->json(['error' => 'Partida no encontrada'], 404);
+        }
+
+        $request->validate([
+            'estado' => 'required|integer|in:0,1,2,3', // 0=iniciando, 1=jugando, 2=llena, 3=finalizada
+        ]);
+
+
+        $partida->estado = $request->estado;
+        $partida->save();
+
+        return response()->json([
+            'ok' => true,
+            'mensaje' => "Estado actualizado a {$partida->estado}"
+        ]);
     }
 
-    $request->validate([
-        'estado' => 'required|integer|in:0,1,2,3', // 0=iniciando, 1=jugando, 2=llena, 3=finalizada
-    ]);
-
-
-    $partida->estado = $request->estado;
-    $partida->save();
-
-    return response()->json([
-        'ok' => true,
-        'mensaje' => "Estado actualizado a {$partida->estado}"
-    ]);
-}
-
-    public function iniciarPartida($idPartida){
+    public function iniciarPartida($idPartida)
+    {
         // broadcast(new IniciarPartida($idPartida));
         // return response()->json(['ok' => true]);
         $partida = Partida::find($idPartida);
 
-        if(!$partida){
+        if (!$partida) {
             return response()->json(['error' => 'Partida no encontrada', 400]);
         }
 
@@ -200,7 +205,7 @@ class PartidaController extends Controller
         $numLobos = floor($totalJugadores * 0.3);
 
         // Mínimo un lobo siempre
-        if($numLobos < 1){
+        if ($numLobos < 1) {
             $numLobos = 1;
         }
 
@@ -208,11 +213,11 @@ class PartidaController extends Controller
 
         // Crear mazo con ID´s
         $mazo = [];
-        for($i = 0; $i < $numLobos; $i++){
+        for ($i = 0; $i < $numLobos; $i++) {
             $mazo[] = 2;
         }
 
-        for($i = 0; $i < $numAldeanos; $i++){
+        for ($i = 0; $i < $numAldeanos; $i++) {
             $mazo[] = 1;
         }
 
@@ -251,6 +256,16 @@ class PartidaController extends Controller
             DB::rollBack();
             return response()->json(['error' => 'Error repartiendo roles: ' . $e->getMessage()], 500);
         }
+
+    }
+
+    public function empezarPartida($idPartida)
+    {
+        event(new EmpezarPartida($idPartida));
+        return response()->json([
+            'message' => 'Partida iniciada correctamente',
+            'id' => $idPartida
+        ]);
     }
 
     public function obtenerMiRol(Request $request)
@@ -263,8 +278,8 @@ class PartidaController extends Controller
         ]);
 
         $asignacion = JugadorPartidaPersonaje::where('id_partida', $request->id_partida)
-                        ->where('id_jugador', $jugador->id)
-                        ->first();
+            ->where('id_jugador', $jugador->id)
+            ->first();
 
         if (!$asignacion) {
             // Si la partida no ha empezado, no tiene rol aún
@@ -302,25 +317,107 @@ class PartidaController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+            JugadorPartidaPersonaje::updateOrCreate(
+                [
+                    'id_jugador' => $bot->id,
+                    'id_partida' => $partida->id
+                ],
+                [
+                    'id_personaje' => null, // Se asignará al iniciar partida
+                    'estado' => 1,
+                    'votos' => 0
+                ]
+            );
         }
-
-                JugadorPartidaPersonaje::updateOrCreate(
-            [
-                'id_jugador' => $bot->id,
-                'id_partida' => $partida->id
-            ],
-            [
-                'id_personaje' => null, // Se asignará al iniciar partida
-                'estado' => 1,
-                'votos' => 0
-            ]
-        );
-
         return response()->json([
             'ok' => true,
         ]);
     }
 
+    public function ganarPartida(Request $request, $idPartida)
+    {
+        $idJugador = $request->idJugador;
+
+        $jugador = Jugador::findOrFail($idJugador);
+
+        $jugador->partidas()->updateExistingPivot($idPartida, [
+            'ganadas' => 1,
+            'perdidas' => 0,
+        ]);
+
+        return response()->json([
+            'message' => 'Partida registrada como ganada y finalizada.'
+        ]);
+    }
+
+    public function perderPartida(Request $request, $idPartida)
+    {
+        $idJugador = $request->idJugador;
+
+        $jugador = Jugador::findOrFail($idJugador);
+
+        $jugador->partidas()->updateExistingPivot($idPartida, [
+            'ganadas' => 0,
+            'perdidas' => 1,
+        ]);
+
+        return response()->json([
+            'message' => 'Partida registrada como ganada y finalizada.'
+        ]);
+    }
+
+    public function finalizarPartida(Request $request, $idPartida)
+    {
+
+        $partida = Partida::find($idPartida);
+        $equipoGanador = $request->equipo;
+        if (!$partida) {
+            return response()->json(['error' => 'Partida no encontrada'], 404);
+        }
+
+
+        $jugadores = $partida->jugadoresPartidaEstado()->get();
+
+        foreach ($jugadores as $jugador) {
+            $idPersonaje = $jugador->pivot->id_personaje;
+            $esLobo = ($idPersonaje == 2);
+            $haGanado = false;
+
+            if ($equipoGanador === 'lobos') {
+                if ($esLobo)
+                    $haGanado = true;
+            } else {
+                if (!$esLobo)
+                    $haGanado = true;
+            }
+
+
+            DB::table('historial_partidas_jugadores')->updateOrInsert(
+                [
+                    'id_partida' => $idPartida,
+                    'id_jugador' => $jugador->id,
+
+                ],
+                [
+                    'id_personaje' => $idPersonaje,
+                    'ganadas' => $haGanado ? 1 : 0,
+                    'perdidas' => $haGanado ? 0 : 1,
+                    'estado' => 0, // Terminada
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]
+            );
+        }
+        $partida->estado = 3;
+        $partida->save();
+
+        broadcast(new FinalizarPartida($idPartida, $equipoGanador));
+
+        return response()->json([
+            'ok' => true,
+            'mensaje' => "Estado actualizado a {$partida->estado}"
+        ]);
+    }
 
 }
 

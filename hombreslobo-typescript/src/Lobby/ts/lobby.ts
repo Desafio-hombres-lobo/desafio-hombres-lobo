@@ -104,7 +104,6 @@ export const initLobby = () => {
 
   channel.bind("iniciar.juego", (data: any) => {
     console.log("Evento recibido, iniciando partida...", data);
-    rellenarBotsPartida(partidaId, jugadoresActuales);
     setTimeout(
       () => (window.location.href = "/src/Partida/htmls/partida.html"),
       4000
@@ -191,6 +190,7 @@ export const initLobby = () => {
   botonIniciar.addEventListener("click", async () => {
     const host = await verificarHost(partidaId);
     if (host) {
+      await rellenarBotsPartida(partidaId, jugadoresActuales);
       await iniciarPartida(partidaId);
     }
   });

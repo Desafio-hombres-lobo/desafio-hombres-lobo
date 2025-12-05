@@ -16,6 +16,7 @@ class VotoController extends Controller
     public function votar(Request $request, $idPartida)
     {
         $dia = $request->dia;
+        $idPersonaje = $request->idPersonaje;
         $validated = $request->validate([
             'id_jugador' => 'required|exists:jugadores,id',
             'id_jugador_votado' => 'required|exists:jugadores,id',
@@ -31,100 +32,86 @@ class VotoController extends Controller
 
         $jugador = Jugador::find($validated['id_jugador']);
         $jugadorVotado = Jugador::find($validated['id_jugador_votado']);
+        $partida = Partida::find($idPartida);
+        if ($dia) {
+            event(new Votar(
+                $idPartida,
+                $jugador->nickname,
+                $jugadorVotado->nickname
+            ));
+            $jugadoresVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 1)->count();
+            $votosRonda = Voto::where('id_partida', $idPartida)
+                ->where('ronda', $validated['ronda'])
+                ->get();
 
-        event(new Votar(
-            $idPartida,
-            $jugador->nickname,
-            $jugadorVotado->nickname
-        ));
+            if ($votosRonda->count() >= $jugadoresVivos) {
+                $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
+                    ->map(fn($votos) => count($votos));
 
-        // Comprobamos si el jugador que vota es un lobo
-        $idPersonaje = DB::table('jugador_partida_personajes')
-            ->where('id_partida', $idPartida)
-            ->where('id_jugador', $validated['id_jugador'])
-            ->where('estado', 1)
-            ->value('id_personaje');
+                $maxVotos = $conteoVotos->max();
 
-        // Si es lobo, emite por el canal privado
-        if ($idPersonaje == 2 && !$dia) {
+                $jugadoresConMax = $conteoVotos->filter(fn($v) => $v === $maxVotos)->keys();
+
+                if ($jugadoresConMax->count() === 1) {
+                    $idEliminado = $jugadoresConMax->first();
+                    $eliminado = Jugador::find($idEliminado)->nickname;
+                    $resultado = "eliminado";
+
+                    $idPersonaje = DB::table('jugador_partida_personajes')
+                        ->where('id_partida', $idPartida)
+                        ->where('id_jugador', $idEliminado)
+                        ->value('id_personaje');
+
+                    $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
+                } else {
+                    $eliminado = null;
+                    $resultado = "empate";
+                    $idPersonaje = null;
+                    $idEliminado = null;
+                }
+
+                broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
+            }
+        } else if (!$dia && $idPersonaje == 2) {
             broadcast(new VotoLobo(
                 $idPartida,
                 $jugador->nickname,
                 $jugadorVotado->nickname
             ));
 
-        $partida = Partida::find($idPartida);
-        $jugadoresVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 1)->wherePivot('id_personaje', 2)->count();
-        $votosRonda = Voto::where('id_partida', $idPartida)
-            ->where('ronda', $validated['ronda'])
-            ->get();
+            $lobosVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 1)->wherePivot('id_personaje', 2)->count();
+            $votosRonda = Voto::where('id_partida', $idPartida)
+                ->where('ronda', $validated['ronda'])
+                ->get();
+            if ($votosRonda->count() >= $lobosVivos) {
+                $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
+                    ->map(fn($votos) => count($votos));
 
-        if ($votosRonda->count() >= $jugadoresVivos) {
-            $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
-                ->map(fn($votos) => count($votos));
+                $maxVotos = $conteoVotos->max();
 
-            $maxVotos = $conteoVotos->max();
+                $jugadoresConMax = $conteoVotos->filter(fn($v) => $v === $maxVotos)->keys();
 
-            $jugadoresConMax = $conteoVotos->filter(fn($v) => $v === $maxVotos)->keys();
+                if ($jugadoresConMax->count() === 1) {
+                    $idEliminado = $jugadoresConMax->first();
+                    $eliminado = Jugador::find($idEliminado)->nickname;
+                    $resultado = "eliminado";
 
-            if ($jugadoresConMax->count() === 1) {
-                $idEliminado = $jugadoresConMax->first();
-                $eliminado = Jugador::find($idEliminado)->nickname;
-                $resultado = "eliminado";
+                    $idPersonaje = DB::table('jugador_partida_personajes')
+                        ->where('id_partida', $idPartida)
+                        ->where('id_jugador', $idEliminado)
+                        ->value('id_personaje');
 
-                $idPersonaje = DB::table('jugador_partida_personajes')
-                    ->where('id_partida', $idPartida)
-                    ->where('id_jugador', $idEliminado)
-                    ->value('id_personaje');
+                    $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
+                } else {
+                    $eliminado = null;
+                    $resultado = "empate";
+                    $idPersonaje = null;
+                    $idEliminado = null;
+                }
 
-                $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
-            } else {
-                $eliminado = null;
-                $resultado = "empate";
-                $idPersonaje = null;
-                $idEliminado = null;
+                broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
             }
-
-            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
         }
-
-        }else{
-        $partida = Partida::find($idPartida);
-        $jugadoresVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 1)->count();
-        $votosRonda = Voto::where('id_partida', $idPartida)
-            ->where('ronda', $validated['ronda'])
-            ->get();
-
-        if ($votosRonda->count() >= $jugadoresVivos) {
-            $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
-                ->map(fn($votos) => count($votos));
-
-            $maxVotos = $conteoVotos->max();
-
-            $jugadoresConMax = $conteoVotos->filter(fn($v) => $v === $maxVotos)->keys();
-
-            if ($jugadoresConMax->count() === 1) {
-                $idEliminado = $jugadoresConMax->first();
-                $eliminado = Jugador::find($idEliminado)->nickname;
-                $resultado = "eliminado";
-
-                $idPersonaje = DB::table('jugador_partida_personajes')
-                    ->where('id_partida', $idPartida)
-                    ->where('id_jugador', $idEliminado)
-                    ->value('id_personaje');
-
-                $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
-            } else {
-                $eliminado = null;
-                $resultado = "empate";
-                $idPersonaje = null;
-                $idEliminado = null;
-            }
-
-            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
-        }
-        }
-
         return response()->json([
             'ok' => true,
             'voto' => $voto,
@@ -358,22 +345,22 @@ class VotoController extends Controller
                         ->where('id_jugador', $idEliminado)
                         ->value('id_personaje');
 
-                $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
-            } else {
-                $eliminado = null;
-                $resultado = "empate";
-                $idPersonaje = null;
-                $idEliminado=null;
-            }
+                    $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
+                } else {
+                    $eliminado = null;
+                    $resultado = "empate";
+                    $idPersonaje = null;
+                    $idEliminado = null;
+                }
 
-            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
-        }
-        }else{
+                broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
+            }
+        } else {
             $partida = Partida::find($idPartida);
-        $jugadoresVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 1)->count();
-        $votosRonda = Voto::where('id_partida', $idPartida)
-            ->where('ronda', $ronda)
-            ->get();
+            $jugadoresVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 1)->count();
+            $votosRonda = Voto::where('id_partida', $idPartida)
+                ->where('ronda', $ronda)
+                ->get();
 
             if ($votosRonda->count() >= $jugadoresVivos) {
                 $conteoVotos = $votosRonda->groupBy('id_jugador_votado')
@@ -393,16 +380,16 @@ class VotoController extends Controller
                         ->where('id_jugador', $idEliminado)
                         ->value('id_personaje');
 
-                $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
-            } else {
-                $eliminado = null;
-                $resultado = "empate";
-                $idPersonaje = null;
-                $idEliminado = null;
-            }
+                    $partida->jugadoresPartidaEstado()->updateExistingPivot($idEliminado, ['estado' => 0]);
+                } else {
+                    $eliminado = null;
+                    $resultado = "empate";
+                    $idPersonaje = null;
+                    $idEliminado = null;
+                }
 
-            broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
-        }
+                broadcast(new VotacionTerminada($idPartida, $resultado, $eliminado, $idPersonaje, $idEliminado));
+            }
         }
 
 

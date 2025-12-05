@@ -1,6 +1,7 @@
 import { cerrarSesion } from "./cerrarSesion";
 import { abrirModalJugar } from "../../Partida/ts/mostrarModal";
 import { getToken, getRol, getJugador } from "./auth";
+import { cargarFoto } from "../../perfil/ts/cargarFotoPerfil";
 export const actualizarHeader = () => {
   const menu = document.querySelector(".menu");
   const token = getToken();
@@ -50,17 +51,14 @@ export const actualizarHeader = () => {
       const divSesion = document.createElement("div");
       divSesion.className = "div-sesion-iniciada";
 
-      const nombreUsuarioLink = document.createElement("a");
-      nombreUsuarioLink.className = "nombre-usuario";
-      nombreUsuarioLink.innerHTML = `${nombreJugador}`;
+      const fotoLink = document.createElement("a");
+      fotoLink.href = "/src/perfil/html/perfil.html";
+      fotoLink.className = "profile-pic";
 
-      const verPerfil = document.createElement("a");
-      verPerfil.className = "ver-perfil";
-      verPerfil.href = "/src/perfil/html/perfil.html";
-      verPerfil.textContent = "Ver perfil";
-      divSesion.appendChild(nombreUsuarioLink);
-      divSesion.appendChild(verPerfil);
-
+      const fotoImg = document.createElement("img");
+      fotoImg.alt = "Foto perfil";
+      fotoLink.appendChild(fotoImg);
+      cargarFoto()
       const cerrarSesionBoton = document.createElement("a");
       cerrarSesionBoton.href = "#";
       cerrarSesionBoton.id = "logout-button";
@@ -72,6 +70,7 @@ export const actualizarHeader = () => {
         e.preventDefault();
         cerrarSesion();
       });
+      divSesion.appendChild(fotoLink);
       divSesion.appendChild(cerrarSesionBoton);
       menu.appendChild(divSesion);
     }

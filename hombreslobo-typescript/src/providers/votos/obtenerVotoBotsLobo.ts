@@ -42,7 +42,7 @@ export const votarYHablarBotLobo = async (
 
       const mensajeFinal = `${mensajeRandom} ${nicknameObjetivo}`;
 
-      await esperar(Math.random() * 7000 + 1000);
+      await esperar(Math.random() * 4000 + 1000);
 
       await enviarMensajeBotLobo({
         message: mensajeFinal,
