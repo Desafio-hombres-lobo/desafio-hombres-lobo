@@ -9,6 +9,7 @@ import {
   renderizarCartaLobo,
   renderizarCartaAldeano,
   renderizarReverso,
+  renderizarCartaNiña,
 } from "../../Personajes/ts/crearCartaPersonaje";
 import { empezarPartida } from "../../providers/empezarPartida";
 import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
@@ -144,6 +145,8 @@ const repartirCartasJugadores = async (): Promise<void> => {
         await chatLobos(lobos);
       } else if (miRolId === 1) {
         await renderizarCartaAldeano(slotDiv, miNickname);
+      } else if (miRolId === 3) {
+        await renderizarCartaNiña(slotDiv, miNickname);
       }
     } else {
       renderizarReverso(slotDiv, nombreJugador);
@@ -194,7 +197,7 @@ function actualizarFaseVisual() {
   } else {
     if (miRolId === 3 && !muerto) {
       btnNiña.classList.remove("oculto");
-      verChatLobos(btnNiña);
+      verChatLobos(btnNiña, listaMensajes);
     }
     spanFase.innerHTML = "FASE: NOCHE";
     headerChat.innerHTML = "CHAT DE LOS LOBOS";
@@ -407,13 +410,13 @@ export function pintarMensaje(usuario: string, texto: string) {
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 }
 
-function pintarMensajeSistema(texto: string) {
+export const pintarMensajeSistema = (texto: string) => {
   const div = document.createElement("div");
   div.classList.add("msg", "sistema");
   div.innerHTML = `${texto}`;
   listaMensajes.appendChild(div);
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
-}
+};
 
 async function comprobarVictoria() {
   if (host) {
