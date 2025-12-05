@@ -53,7 +53,7 @@ let ronda = 0;
 let rondaFinalizada = false;
 let votos = 0;
 let lobo = false;
-
+let miRolId: any = null;
 let lobos: Jugador[] = [];
 let aldeanos: Jugador[] = [];
 let vivos: Jugador[] = [];
@@ -120,7 +120,7 @@ if (host) {
 }
 
 const repartirCartasJugadores = async (): Promise<void> => {
-  const miRolId = await obtenerRolPersonajeJugador();
+  miRolId = await obtenerRolPersonajeJugador();
   await actualizarListas();
   for (let i = 0; i < jugadores.length; i++) {
     const jugador = jugadores[i];
@@ -174,6 +174,7 @@ const repartirCartasJugadores = async (): Promise<void> => {
 };
 
 function actualizarFaseVisual() {
+  const btnNiña = document.getElementById("btn-niña")!;
   if (muerto) {
     inputMensaje.disabled = true;
     inputMensaje.placeholder = "No puedes hablar, estás muerto.";
@@ -184,11 +185,15 @@ function actualizarFaseVisual() {
     centroInfo.classList.remove("fase-noche");
     centroInfo.classList.add("fase-dia");
     listaMensajes.classList.remove("chat-noche");
+    btnNiña.classList.add("oculto");
     if (!muerto) {
       inputMensaje.disabled = false;
       inputMensaje.placeholder = "Escribe en la aldea...";
     }
   } else {
+    if (miRolId === 3 && !muerto) {
+      btnNiña.classList.remove("oculto");
+    }
     spanFase.innerHTML = "FASE: NOCHE";
     headerChat.innerHTML = "CHAT DE LOS LOBOS";
     centroInfo.classList.remove("fase-dia");
