@@ -256,7 +256,7 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-    actualizarListas();
+    await actualizarListas();
 
     if (data.idPersonaje) {
       await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
@@ -277,9 +277,11 @@ canal.bind("votacion-terminada", async (data: any) => {
 
 canal.bind("fin-partida", async (data: any) => {
   const miRol = await obtenerRolPersonajeJugador();
-  mostrarFinPartida(data.equipo);
+  const textoTitulo = `¡HAN GANADO LOS ${data.equipo.toUpperCase()}!`;
+  mostrarFinPartida(textoTitulo);
   let divFinal = document.getElementById("contenedor-final");
   let h2 = document.createElement("h2");
+
   if (miRol === 2) {
     if (data.equipo == "lobos") {
       h2.textContent = "¡Has ganado!";
