@@ -298,6 +298,8 @@ canal.bind("fin-partida", async (data:any)=>{
   }
 
   divFinal?.appendChild(h2)
+
+  setTimeout(window.location.href='/', 3500)
 })
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {
