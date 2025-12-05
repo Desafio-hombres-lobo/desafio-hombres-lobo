@@ -208,8 +208,12 @@ class PartidaController extends Controller
         if ($numLobos < 1) {
             $numLobos = 1;
         }
+        $rolesEspeciales = [];
 
-        $numAldeanos = $totalJugadores - $numLobos;
+
+        $rolesEspeciales[] = 3; //aqui agregamos los que queramos, por ejemplo el 3 es la niña asique agregamos un 3
+        //$rolesEspeciales[] = 4; vidente...
+        //$rolesEspeciales[] = 5; cazador... etc
 
         // Crear mazo con ID´s
         $mazo = [];
@@ -217,7 +221,12 @@ class PartidaController extends Controller
             $mazo[] = 2;
         }
 
-        for ($i = 0; $i < $numAldeanos; $i++) {
+        foreach ($rolesEspeciales as $rolId) {
+            if (count($mazo) < $totalJugadores) {
+                $mazo[] = $rolId;
+            }
+        }
+        while (count($mazo) < $totalJugadores) {
             $mazo[] = 1;
         }
 
