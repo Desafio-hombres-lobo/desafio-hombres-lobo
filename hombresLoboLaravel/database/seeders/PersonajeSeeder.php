@@ -42,6 +42,12 @@ class PersonajeSeeder extends Seeder
             'descripcion' => 'Cada noche devora a un aldeano. De día se hace pasar por uno de ellos.'
         ]);
 
+        // VIDENTE
+        $lobo = Personaje::create([
+            'nombre' => 'Vidente',
+            'descripcion' => 'El ojo que todo lo ve.'
+        ]);
+
         // El lobo puede votar de día y Mmatar de noche
         $idsLobo = array_filter([$accionVotar?->id, $accionMatar?->id]);
         $lobo->acciones()->attach($idsLobo);
