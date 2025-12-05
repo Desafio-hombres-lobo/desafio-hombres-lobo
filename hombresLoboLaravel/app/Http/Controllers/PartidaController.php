@@ -262,6 +262,10 @@ class PartidaController extends Controller
     public function empezarPartida($idPartida)
     {
         event(new EmpezarPartida($idPartida));
+        return response()->json([
+            'message' => 'Partida iniciada correctamente',
+            'id' => $idPartida
+        ]);
     }
 
     public function obtenerMiRol(Request $request)
@@ -313,20 +317,18 @@ class PartidaController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+            JugadorPartidaPersonaje::updateOrCreate(
+                [
+                    'id_jugador' => $bot->id,
+                    'id_partida' => $partida->id
+                ],
+                [
+                    'id_personaje' => null, // Se asignará al iniciar partida
+                    'estado' => 1,
+                    'votos' => 0
+                ]
+            );
         }
-
-        JugadorPartidaPersonaje::updateOrCreate(
-            [
-                'id_jugador' => $bot->id,
-                'id_partida' => $partida->id
-            ],
-            [
-                'id_personaje' => null, // Se asignará al iniciar partida
-                'estado' => 1,
-                'votos' => 0
-            ]
-        );
-
         return response()->json([
             'ok' => true,
         ]);

@@ -13,6 +13,7 @@ import {
   renderizarCartaAldeano,
   renderizarReverso,
 } from "../../Personajes/ts/crearCartaPersonaje";
+import { empezarPartida } from "../../providers/empezarPartida";
 import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
 import { chatLobos } from "./chatLobos";
 import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
@@ -373,12 +374,19 @@ formChat.addEventListener("submit", async (e) => {
     alert("Error");
   }
 });
+canal.bind("iniciar-partida", async () => {
+  await actualizarListas();
+  await repartirCartasJugadores();
+  if (host) {
+    await cambiarFasePartida(id_partida, !dia);
+  }
+});
 
 if (btnIniciar) {
   btnIniciar.addEventListener("click", async () => {
     btnIniciar.disabled = true;
     btnIniciar.innerText = "Iniciando...";
-    await iniciarPartida(id_partida);
+    await empezarPartida(id_partida);
     //await repartirCartasJugadores();
     //await cambiarFasePartida(id_partida, !dia);
     btnIniciar.classList.add("oculto");

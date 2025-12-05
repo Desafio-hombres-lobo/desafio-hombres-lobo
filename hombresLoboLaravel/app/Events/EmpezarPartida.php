@@ -23,7 +23,7 @@ class EmpezarPartida implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new Channel('aldea.' . $this->partida);
+        return new Channel('aldea' . $this->partida);
     }
 
     public function broadcastAs()
