@@ -14,7 +14,7 @@ export const chatLobos = async (lobos: Jugador[]) => {
   configurarVotos(canal);
 };
 
-const conectarLobos = () => {
+export const conectarLobos = () => {
   return pusher.subscribe("lobos" + id_partida);
 };
 
@@ -58,4 +58,8 @@ const pintarVotoLobo = (votante: string, votado: string) => {
     listaMensajes.appendChild(div);
     listaMensajes.scrollTop = listaMensajes.scrollHeight;
   }
+};
+
+export const desconectarChat = () => {
+  pusher.unsubscribe("lobos" + id_partida);
 };
