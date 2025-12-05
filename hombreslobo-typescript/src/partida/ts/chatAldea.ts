@@ -25,6 +25,9 @@ import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje
 import { votarYHablarBotLobo } from "../../providers/votos/obtenerVotoBotsLobo";
 import { obtenerDatosJugadoresPartida } from "../../providers/obtenerDatosJugadores";
 import type { Jugador } from "./Jugador";
+import { ganarPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
+import { perderPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
+import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPartidaFinalizada";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -63,6 +66,8 @@ let bots: Jugador[] = [];
 let humanos: Jugador[] = [];
 let botsLobo: Jugador[] = [];
 let aliados: Jugador[] = [];
+let aliadosTotales : Jugador[] = [];
+let lobosTotales : Jugador[] =[];
 
 async function actualizarListas() {
   jugadores = await obtenerDatosJugadoresPartida(id_partida);
@@ -78,6 +83,12 @@ async function actualizarListas() {
   botsLobo = bots.filter((j) => j.id_personaje === 2);
 
   aliados = vivos.filter((j) => j.id_personaje !==2);
+  if(miNickname in muertos){
+    muerto = true;
+  }
+
+  aliadosTotales = jugadores.filter((j) => j.id_personaje !==2);
+  lobosTotales = jugadores.filter((j) => j.id_personaje ==2);
   console.log('vivos',vivos, 'muertos,',muertos, 'lobos',lobos, 'aldeanos',aldeanos, 'bots', bots, 'humanos', humanos, 'botsLobo', botsLobo, 'aliados', aliados)
 }
 
@@ -92,7 +103,7 @@ if (Array.isArray(datosJugadoresPartida)) {
 }
 
 
-const miNickname = getJugador();
+const miNickname = getJugador()!;
 const jugadorActual = await obtenerJugadorActual();
 const idJugador = jugadorActual.datos?.id;
 
@@ -248,17 +259,6 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-
-
-    // const jugadorEliminado = jugadores.find(
-    //   (j) => j.nickname === data.eliminado
-    // );
-    // if (jugadorEliminado) jugadorEliminado.eliminado = true;
-
-    // if (data.eliminado === miNickname) {
-    //   muerto = true;
-    // }
-
     actualizarListas();
 
     if (data.idPersonaje) {
@@ -277,6 +277,28 @@ canal.bind("votacion-terminada", async (data: any) => {
     }
   }, 3000);
 });
+
+canal.bind("fin-partida", async (data:any)=>{  
+  const miRol = await obtenerRolPersonajeJugador();
+  mostrarFinPartida(data.equipo)
+  let divFinal = document.getElementById('contenedor-final')
+  let h2 = document.createElement('h2');
+  if(miRol === 2 ){
+    if(data.equipo == 'lobos'){
+      h2.textContent= '¡Has ganado!'
+    }else{
+      h2.textContent = '¡Oh no! Perdiste'
+    }
+  }else{
+        if(data.equipo == 'aldeanos'){
+      h2.textContent= '¡Has ganado!'
+    }else{
+      h2.textContent = '¡Oh no! Perdiste'
+    }
+  }
+
+  divFinal?.appendChild(h2)
+})
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {
   if (temporizador) {
@@ -397,16 +419,31 @@ function pintarMensajeSistema(texto: string) {
 }
 
 async function comprobarVictoria() {
-  actualizarListas();
-  if (lobos.length >= aliados.length) {
-    mostrarFinPartida("GANAN LOS LOBOS");
-    setTimeout(window.location.href="/", 5000)
-    
-  }
-  if (lobos.length === 0) {
-    mostrarFinPartida("GANAN LOS ALDEANOS");
-    setTimeout(window.location.href="/", 5000)
-  }
+  if(host){
+    if (lobos.length >= aliados.length) {
+          lobosTotales.forEach(lobo => {
+            ganarPartida(id_partida, lobo.id_jugador)
+          });
+          aliadosTotales.forEach(aliado => {
+            perderPartida(id_partida, aliado.id_jugador)
+          });
+          finalizarPartida(id_partida, 'lobos' )
+          console.log("Han ganado los lobos")
+        }
+    if (lobos.length === 0) {
+          lobosTotales.forEach(lobo => {
+            perderPartida(id_partida, lobo.id_jugador)
+          });
+          aliadosTotales.forEach(aliado => {
+            ganarPartida(id_partida, aliado.id_jugador)
+          });
+          console.log("Han ganado los aldeanos")
+          finalizarPartida(id_partida, 'aldeanos' )
+      }
+
+    }
+    console.log("Se ha comprobado la victoria?")
+  
   return false;
 }
 
@@ -414,13 +451,10 @@ function mostrarFinPartida(texto: string) {
   const overlay = document.createElement("div");
   overlay.classList.add("fin-overlay");
   overlay.innerHTML = `
-    <div class="fin-contenedor">
+    <div class="fin-contenedor" id="contenedor-final">
       <h1>${texto}</h1>
-      <button id="btn-volver">Volver al inicio</button>
     </div>
   `;
   document.body.appendChild(overlay);
-  document.getElementById("btn-volver")!.addEventListener("click", () => {
-    window.location.href = "/";
-  });
+  
 }

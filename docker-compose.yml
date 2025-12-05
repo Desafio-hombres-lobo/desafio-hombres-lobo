@@ -80,5 +80,17 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: mysql
 
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_proxy
+    restart: unless-stopped
+    depends_on:
+      - laravel
+      - frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
 volumes:
   db_data:

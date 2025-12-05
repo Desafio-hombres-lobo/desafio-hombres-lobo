@@ -107,6 +107,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/datosJugadoresPartida/{idPartida}', [JugadorPartidaPersonajeController::class, 'obtenerJugadoresPartida']);
 
+        //Ganar o perder partida
+        Route::post('/partida/{idPartida}/ganar', [PartidaController::class, 'ganarPartida']);
+        Route::post('/partida/{idPartida}/perder', [PartidaController::class, 'perderPartida']);
+
+        Route::post('/partida/{idPartida}/finalizar-partida', [PartidaController::class, 'finalizarPartida']);
+
     });
 });
 

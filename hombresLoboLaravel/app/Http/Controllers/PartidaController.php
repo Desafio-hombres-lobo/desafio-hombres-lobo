@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\JugadorAbandono;
 use App\Events\PlayerJoined;
 use App\Events\IniciarPartida;
+use App\Events\FinalizarPartida;
 use App\Models\Jugador;
 use App\Models\Partida;
 use App\Models\JugadorPartidaPersonaje;
@@ -321,6 +322,56 @@ class PartidaController extends Controller
         ]);
     }
 
+        public function ganarPartida(Request $request, $idPartida)
+        {
+            $idJugador = $request->idJugador;
+
+            $jugador = Jugador::findOrFail($idJugador);
+
+            $jugador->partidas()->updateExistingPivot($idPartida, [
+                'ganadas' => 1,
+                'perdidas' => 0,
+            ]);
+
+            return response()->json([
+                'message' => 'Partida registrada como ganada y finalizada.'
+            ]);
+        }
+
+        public function perderPartida(Request $request, $idPartida)
+        {
+            $idJugador = $request->idJugador;
+
+            $jugador = Jugador::findOrFail($idJugador);
+
+            $jugador->partidas()->updateExistingPivot($idPartida, [
+                'ganadas' => 0,
+                'perdidas' => 1,
+            ]);
+
+            return response()->json([
+                'message' => 'Partida registrada como ganada y finalizada.'
+            ]);
+        }
+
+        public function finalizarPartida(Request $request, $idPartida){
+
+            $partida = Partida::find($idPartida);
+            $equipo = $request->equipo;
+            if (!$partida) {
+                return response()->json(['error' => 'Partida no encontrada'], 404);
+            }
+
+            $partida->estado = 3;
+            $partida->save();
+
+            broadcast(new FinalizarPartida($idPartida, $equipo));
+
+            return response()->json([
+                'ok' => true,
+                'mensaje' => "Estado actualizado a {$partida->estado}"
+            ]);
+                }
 
 }
 
