@@ -370,15 +370,48 @@ class PartidaController extends Controller
     {
 
         $partida = Partida::find($idPartida);
-        $equipo = $request->equipo;
+        $equipoGanador = $request->equipo;
         if (!$partida) {
             return response()->json(['error' => 'Partida no encontrada'], 404);
         }
 
+
+        $jugadores = $partida->jugadoresPartidaEstado()->get();
+
+        foreach ($jugadores as $jugador) {
+            $idPersonaje = $jugador->pivot->id_personaje;
+            $esLobo = ($idPersonaje == 2);
+            $haGanado = false;
+
+            if ($equipoGanador === 'lobos') {
+                if ($esLobo)
+                    $haGanado = true;
+            } else {
+                if (!$esLobo)
+                    $haGanado = true;
+            }
+
+
+            DB::table('historial_partidas_jugadores')->updateOrInsert(
+                [
+                    'id_partida' => $idPartida,
+                    'id_jugador' => $jugador->id,
+
+                ],
+                [
+                    'id_personaje' => $idPersonaje,
+                    'ganadas' => $haGanado ? 1 : 0,
+                    'perdidas' => $haGanado ? 0 : 1,
+                    'estado' => 0, // Terminada
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]
+            );
+        }
         $partida->estado = 3;
         $partida->save();
 
-        broadcast(new FinalizarPartida($idPartida, $equipo));
+        broadcast(new FinalizarPartida($idPartida, $equipoGanador));
 
         return response()->json([
             'ok' => true,

@@ -407,23 +407,10 @@ function pintarMensajeSistema(texto: string) {
 async function comprobarVictoria() {
   if (host) {
     if (lobos.length >= aliados.length) {
-      lobosTotales.forEach((lobo) => {
-        ganarPartida(id_partida, lobo.id_jugador);
-      });
-      aliadosTotales.forEach((aliado) => {
-        perderPartida(id_partida, aliado.id_jugador);
-      });
       finalizarPartida(id_partida, "lobos");
       console.log("Han ganado los lobos");
     }
     if (lobos.length === 0) {
-      lobosTotales.forEach((lobo) => {
-        perderPartida(id_partida, lobo.id_jugador);
-      });
-      aliadosTotales.forEach((aliado) => {
-        ganarPartida(id_partida, aliado.id_jugador);
-      });
-      console.log("Han ganado los aldeanos");
       finalizarPartida(id_partida, "aldeanos");
     }
     console.log("Se ha comprobado la victoria?");
