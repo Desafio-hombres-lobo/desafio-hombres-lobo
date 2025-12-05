@@ -83,7 +83,7 @@ async function actualizarListas() {
   botsLobo = bots.filter((j) => j.id_personaje === 2);
 
   aliados = vivos.filter((j) => j.id_personaje !== 2);
-  if (miNickname in muertos) {
+  if (muertos.some((j) => j.nickname === miNickname)) {
     muerto = true;
   }
 
@@ -441,10 +441,8 @@ async function comprobarVictoria() {
       console.log("Han ganado los aldeanos");
       finalizarPartida(id_partida, "aldeanos");
     }
+    console.log("Se ha comprobado la victoria?");
   }
-  console.log("Se ha comprobado la victoria?");
-
-  return false;
 }
 
 function mostrarFinPartida(texto: string) {
