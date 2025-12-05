@@ -42,15 +42,19 @@ class PersonajeSeeder extends Seeder
             'descripcion' => 'Cada noche devora a un aldeano. De día se hace pasar por uno de ellos.'
         ]);
 
+        // El lobo puede votar de día y Mmatar de noche
+        $idsLobo = array_filter([$accionVotar?->id, $accionMatar?->id]);
+        $lobo->acciones()->attach($idsLobo);
+
         // VIDENTE
-        $lobo = Personaje::create([
+        $vidente = Personaje::create([
             'nombre' => 'Vidente',
             'descripcion' => 'El ojo que todo lo ve.'
         ]);
 
-        // El lobo puede votar de día y Mmatar de noche
-        $idsLobo = array_filter([$accionVotar?->id, $accionMatar?->id]);
-        $lobo->acciones()->attach($idsLobo);
+        // Vidente puede ver rol de otro jugador y votar
+        $idsVidente = array_filter([$accionVer?->id, $accionVotar?->id]);
+        $vidente->acciones()->attach($idsVidente);
 
     }
 }
