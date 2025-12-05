@@ -88,3 +88,13 @@
 .txt-aldeano:hover {
   background-color: #ffcf8f;
 }
+/* ESTILOS CARTA NIÑA */
+.carta-niña {
+  background-color: #ff85a2;
+
+  background: linear-gradient(135deg, #ff9eb5 0%, #ff7a9b 100%);
+
+  border-color: #3d0f1a;
+
+  transition: all 0.3s ease;
+}
