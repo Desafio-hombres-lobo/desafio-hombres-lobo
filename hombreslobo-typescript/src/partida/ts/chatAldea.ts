@@ -1,13 +1,10 @@
 import { getJugador, getPartidaId } from "../../autenticacion/ts/auth";
-import { getJSONHeaders } from "../../autenticacion/ts/header";
-import { construirApi } from "../../autenticacion/ts/apiFetch";
 import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
 import "../css/partida.css";
 import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
 import { verificarHost } from "../../providers/verificarHost";
-import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
 import {
   renderizarCartaLobo,
   renderizarCartaAldeano,
@@ -29,7 +26,6 @@ import type { Jugador } from "./Jugador";
 import { ganarPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
 import { perderPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
 import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPartidaFinalizada";
-import { iniciarPartida } from "../../providers/iniciarPartida";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -49,7 +45,7 @@ const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
-
+let chatLobosInicializado = false;
 let jugadores: Jugador[] = [];
 let yaHasVotado = false;
 let muerto = false;
@@ -85,6 +81,10 @@ async function actualizarListas() {
   aliados = vivos.filter((j) => j.id_personaje !== 2);
   if (muertos.some((j) => j.nickname === miNickname)) {
     muerto = true;
+    if (!chatLobosInicializado) {
+      chatLobos(lobos);
+      chatLobosInicializado = true;
+    }
   }
 
   aliadosTotales = jugadores.filter((j) => j.id_personaje !== 2);
@@ -193,11 +193,14 @@ function actualizarFaseVisual() {
     headerChat.innerHTML = "CHAT DE LOS LOBOS";
     centroInfo.classList.remove("fase-dia");
     centroInfo.classList.add("fase-noche");
-    if (!lobo) {
+    if (!lobo && !muerto) {
       listaMensajes.classList.add("chat-noche");
       inputMensaje.disabled = true;
       inputMensaje.placeholder = "Solo los lobos pueden hablar de noche.";
-    } else if (!muerto) {
+    } else {
+      listaMensajes.classList.remove("chat-noche");
+    }
+    if (lobo && !muerto) {
       inputMensaje.disabled = false;
       inputMensaje.placeholder = "Habla con los lobos...";
     }
