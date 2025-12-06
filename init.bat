@@ -7,7 +7,8 @@ set TARGET_CONTAINER=laravel_app
 set EXEC_COMMAND=php artisan reverb:start
 
 echo Iniciando docker compose...
-docker compose up -d
+docker compose down
+docker compose up -d --build
 
 echo.
 echo ============================

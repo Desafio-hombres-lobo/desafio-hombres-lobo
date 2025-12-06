@@ -1,18 +1,17 @@
 import { getJugador, getPartidaId } from "../../autenticacion/ts/auth";
-import { getJSONHeaders } from "../../autenticacion/ts/header";
-import { construirApi } from "../../autenticacion/ts/apiFetch";
 import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
 import "../css/partida.css";
 import "../../css/base.css";
 import { cambiarFasePartida } from "../../providers/cambiarFasePartida";
 import { verificarHost } from "../../providers/verificarHost";
-import { obtenerJugadoresPartida } from "../../providers/obtenerJugadoresPartida";
 import {
   renderizarCartaLobo,
   renderizarCartaAldeano,
   renderizarReverso,
+  renderizarCartaNiña,
 } from "../../Personajes/ts/crearCartaPersonaje";
+import { empezarPartida } from "../../providers/empezarPartida";
 import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
 import { chatLobos } from "./chatLobos";
 import { enviarMensajeLobos } from "../../providers/envioDatosChatLobos";
@@ -28,6 +27,12 @@ import type { Jugador } from "./Jugador";
 import { ganarPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
 import { perderPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
 import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPartidaFinalizada";
+import { verChatLobos } from "./funcionNinia";
+import {
+  ROL_ALDEANO,
+  ROL_LOBO,
+  ROL_NINIA,
+} from "../../Personajes/ts/constantes_roles";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -44,19 +49,20 @@ const id_partida = getPartidaId()!;
 const textoEspera = document.getElementById("texto-espera")!;
 const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 
+let niñaEscuchando = false;
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
-
-export let jugadores: Jugador[] = [];
+let chatLobosInicializado = false;
+let jugadores: Jugador[] = [];
 let yaHasVotado = false;
 let muerto = false;
 let ronda = 0;
 let rondaFinalizada = false;
 let votos = 0;
 let lobo = false;
-
-export let lobos: Jugador[] = [];
+let miRolId: any = null;
+let lobos: Jugador[] = [];
 let aldeanos: Jugador[] = [];
 let vivos: Jugador[] = [];
 let muertos: Jugador[] = [];
@@ -72,21 +78,25 @@ async function actualizarListas() {
   vivos = jugadores.filter((j) => j.estado !== 0);
   muertos = jugadores.filter((j) => j.estado === 0);
 
-  lobos = vivos.filter((j) => j.id_personaje === 2);
-  aldeanos = vivos.filter((j) => j.id_personaje === 1);
+  lobos = vivos.filter((j) => j.id_personaje === ROL_LOBO);
+  aldeanos = vivos.filter((j) => j.id_personaje === ROL_ALDEANO);
 
   bots = vivos.filter((j) => j.bot);
   humanos = vivos.filter((j) => !j.bot);
 
-  botsLobo = bots.filter((j) => j.id_personaje === 2);
+  botsLobo = bots.filter((j) => j.id_personaje === ROL_LOBO);
 
-  aliados = vivos.filter((j) => j.id_personaje !== 2);
-  if (miNickname in muertos) {
+  aliados = vivos.filter((j) => j.id_personaje !== ROL_LOBO);
+  if (muertos.some((j) => j.nickname === miNickname)) {
     muerto = true;
+    if (!chatLobosInicializado) {
+      chatLobos(lobos);
+      chatLobosInicializado = true;
+    }
   }
 
-  aliadosTotales = jugadores.filter((j) => j.id_personaje !== 2);
-  lobosTotales = jugadores.filter((j) => j.id_personaje == 2);
+  aliadosTotales = jugadores.filter((j) => j.id_personaje !== ROL_LOBO);
+  lobosTotales = jugadores.filter((j) => j.id_personaje == ROL_LOBO);
   console.log(
     "vivos",
     vivos,
@@ -106,20 +116,6 @@ async function actualizarListas() {
     aliados
   );
 }
-
-const datosJugadoresPartida = await obtenerJugadoresPartida(id_partida);
-const numeroJugadoresPartida = datosJugadoresPartida.jugadoresActuales;
-if (Array.isArray(datosJugadoresPartida)) {
-  jugadores = datosJugadoresPartida as Jugador[];
-  console.log(
-    "Lista de jugadores cargada (snapshot):",
-    JSON.stringify(jugadores)
-  );
-} else {
-  console.warn("No se pudieron obtener jugadores: respuesta vacía o inválida");
-  jugadores = [];
-}
-
 const miNickname = getJugador()!;
 const jugadorActual = await obtenerJugadorActual();
 const idJugador = jugadorActual.datos?.id;
@@ -131,11 +127,9 @@ if (host) {
   btnIniciar.classList.remove("oculto");
 }
 
-const repartirCartasJugadores = async (
-  numeroJugadoresPartida: number
-): Promise<void> => {
-  const miRolId = await obtenerRolPersonajeJugador();
-  actualizarListas();
+const repartirCartasJugadores = async (): Promise<void> => {
+  miRolId = await obtenerRolPersonajeJugador();
+  await actualizarListas();
   for (let i = 0; i < jugadores.length; i++) {
     const jugador = jugadores[i];
     const nombreJugador = String(jugador.nickname).trim();
@@ -151,14 +145,14 @@ const repartirCartasJugadores = async (
 
     if (esMiUsuario) {
       slotDiv.classList.add("mi-jugador");
-      if (miRolId == 2) {
+      if (miRolId == ROL_LOBO) {
         lobo = true;
         await renderizarCartaLobo(slotDiv, miNickname);
-        await chatLobos(jugadores, lobos);
-      } else if (miRolId === 1) {
+        await chatLobos(lobos);
+      } else if (miRolId === ROL_ALDEANO) {
         await renderizarCartaAldeano(slotDiv, miNickname);
-      } else {
-        renderizarReverso(slotDiv, nombreJugador);
+      } else if (miRolId === ROL_NINIA) {
+        await renderizarCartaNiña(slotDiv, miNickname);
       }
     } else {
       renderizarReverso(slotDiv, nombreJugador);
@@ -168,7 +162,6 @@ const repartirCartasJugadores = async (
       if (esMiUsuario) return;
       // Votar si es de día, o si es de noche y soy lobo
       if (!dia && !lobo) return;
-
       if (yaHasVotado) return;
       if (muerto) return;
       const idVotado = parseInt(slotDiv.dataset.id!);
@@ -176,7 +169,8 @@ const repartirCartasJugadores = async (
         id_jugador: idJugador,
         id_jugador_votado: idVotado,
         ronda,
-        fase: dia,
+        dia: dia,
+        idPersonaje: miRolId,
       };
 
       const resultado = await votar(id_partida, payload);
@@ -185,12 +179,12 @@ const repartirCartasJugadores = async (
         alert(`Error al votar: ${resultado.error}`);
       }
     });
-
     contenedorCarta.appendChild(slotDiv);
   }
 };
 
 function actualizarFaseVisual() {
+  const btnNiña = document.getElementById("btn-niña")! as HTMLInputElement;
   if (muerto) {
     inputMensaje.disabled = true;
     inputMensaje.placeholder = "No puedes hablar, estás muerto.";
@@ -201,20 +195,32 @@ function actualizarFaseVisual() {
     centroInfo.classList.remove("fase-noche");
     centroInfo.classList.add("fase-dia");
     listaMensajes.classList.remove("chat-noche");
+    btnNiña.classList.add("oculto");
     if (!muerto) {
       inputMensaje.disabled = false;
       inputMensaje.placeholder = "Escribe en la aldea...";
     }
   } else {
+    if (miRolId === ROL_NINIA && !muerto) {
+      btnNiña.classList.remove("oculto");
+
+      if (!niñaEscuchando) {
+        verChatLobos(btnNiña, listaMensajes); // se puede agregar al boton un .onclick que sobreescribe lo anterior, por si acaso voy con lo que sabemos hacer// btnNiña.onclick = function()
+        niñaEscuchando = true;
+      }
+    }
     spanFase.innerHTML = "FASE: NOCHE";
     headerChat.innerHTML = "CHAT DE LOS LOBOS";
     centroInfo.classList.remove("fase-dia");
     centroInfo.classList.add("fase-noche");
-    if (!lobo) {
+    if (!lobo && !muerto) {
       listaMensajes.classList.add("chat-noche");
       inputMensaje.disabled = true;
       inputMensaje.placeholder = "Solo los lobos pueden hablar de noche.";
-    } else if (!muerto) {
+    } else {
+      listaMensajes.classList.remove("chat-noche");
+    }
+    if (lobo && !muerto) {
       inputMensaje.disabled = false;
       inputMensaje.placeholder = "Habla con los lobos...";
     }
@@ -255,18 +261,12 @@ canal.bind("cambio-fase", async (data: any) => {
     }
   }
 
-  const cartaYaRepartida = contenedorCarta.querySelector(".carta-rol");
-  if (!cartaYaRepartida) {
-    await repartirCartasJugadores(numeroJugadoresPartida);
-  }
-
   if (textoEspera) {
     textoEspera.classList.add("oculto");
   }
   actualizarFaseVisual();
   iniciarCuentaAtras(data.tiempoFin);
 });
-
 canal.bind("voto", (data: any) => {
   if (!dia) return;
   pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
@@ -276,7 +276,7 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-    actualizarListas();
+    await actualizarListas();
 
     if (data.idPersonaje) {
       await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
@@ -297,9 +297,11 @@ canal.bind("votacion-terminada", async (data: any) => {
 
 canal.bind("fin-partida", async (data: any) => {
   const miRol = await obtenerRolPersonajeJugador();
-  mostrarFinPartida(data.equipo);
+  const textoTitulo = `¡HAN GANADO LOS ${data.equipo.toUpperCase()}!`;
+  mostrarFinPartida(textoTitulo);
   let divFinal = document.getElementById("contenedor-final");
   let h2 = document.createElement("h2");
+
   if (miRol === 2) {
     if (data.equipo == "lobos") {
       h2.textContent = "¡Has ganado!";
@@ -316,7 +318,9 @@ canal.bind("fin-partida", async (data: any) => {
 
   divFinal?.appendChild(h2);
 
-  setTimeout((window.location.href = "/"), 3500);
+  setTimeout(() => {
+    window.location.href = "/";
+  }, 5000);
 });
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {
@@ -380,40 +384,22 @@ formChat.addEventListener("submit", async (e) => {
     alert("Error");
   }
 });
+canal.bind("iniciar-partida", async () => {
+  await actualizarListas();
+  await repartirCartasJugadores();
+  if (host) {
+    await cambiarFasePartida(id_partida, !dia);
+  }
+});
 
 if (btnIniciar) {
   btnIniciar.addEventListener("click", async () => {
     btnIniciar.disabled = true;
     btnIniciar.innerText = "Iniciando...";
-    try {
-      const headers = getJSONHeaders();
-      const response = await fetch(construirApi(`/${id_partida}/iniciar`), {
-        method: "POST",
-        headers: headers,
-      });
-      if (!response.ok) throw new Error("Error al iniciar en servidor");
-
-      await repartirCartasJugadores(numeroJugadoresPartida);
-      await cambiarFasePartida(id_partida, !dia);
-      const jugadoresResp = await obtenerDatosJugadoresPartida(id_partida);
-      if (Array.isArray(jugadoresResp)) {
-        jugadores = jugadoresResp as Jugador[];
-        console.log(
-          "Lista de jugadores cargada (snapshot):",
-          JSON.stringify(jugadores)
-        );
-      } else {
-        console.warn(
-          "No se pudieron obtener jugadores: respuesta vacía o inválida"
-        );
-        jugadores = [];
-      }
-      btnIniciar.classList.add("oculto");
-    } catch (error) {
-      console.error("Error al iniciar partida:", error);
-      btnIniciar.disabled = false;
-      btnIniciar.innerText = "EMPEZAR PARTIDA";
-    }
+    await empezarPartida(id_partida);
+    //await repartirCartasJugadores();
+    //await cambiarFasePartida(id_partida, !dia);
+    btnIniciar.classList.add("oculto");
   });
 }
 
@@ -434,40 +420,25 @@ export function pintarMensaje(usuario: string, texto: string) {
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 }
 
-function pintarMensajeSistema(texto: string) {
+export const pintarMensajeSistema = (texto: string) => {
   const div = document.createElement("div");
   div.classList.add("msg", "sistema");
   div.innerHTML = `${texto}`;
   listaMensajes.appendChild(div);
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
-}
+};
 
 async function comprobarVictoria() {
   if (host) {
     if (lobos.length >= aliados.length) {
-      lobosTotales.forEach((lobo) => {
-        ganarPartida(id_partida, lobo.id_jugador);
-      });
-      aliadosTotales.forEach((aliado) => {
-        perderPartida(id_partida, aliado.id_jugador);
-      });
       finalizarPartida(id_partida, "lobos");
       console.log("Han ganado los lobos");
     }
     if (lobos.length === 0) {
-      lobosTotales.forEach((lobo) => {
-        perderPartida(id_partida, lobo.id_jugador);
-      });
-      aliadosTotales.forEach((aliado) => {
-        ganarPartida(id_partida, aliado.id_jugador);
-      });
-      console.log("Han ganado los aldeanos");
       finalizarPartida(id_partida, "aldeanos");
     }
+    console.log("Se ha comprobado la victoria?");
   }
-  console.log("Se ha comprobado la victoria?");
-
-  return false;
 }
 
 function mostrarFinPartida(texto: string) {
