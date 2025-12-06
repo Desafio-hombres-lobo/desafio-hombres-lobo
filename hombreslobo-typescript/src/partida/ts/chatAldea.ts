@@ -22,7 +22,10 @@ import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { cerrarVotacion, mostrarVotacion } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
 import { votarYHablarBot } from "../../providers/votos/obtenerVotoBot";
-import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
+import {
+  voltearCartaPersonaje,
+  voltearCartaPorVidente,
+} from "../../Personajes/ts/voltearCartaPersonaje";
 import { votarYHablarBotLobo } from "../../providers/votos/obtenerVotoBotsLobo";
 import { obtenerDatosJugadoresPartida } from "../../providers/obtenerDatosJugadores";
 import type { Jugador } from "./Jugador";
@@ -56,6 +59,7 @@ let ronda = 0;
 let rondaFinalizada = false;
 let votos = 0;
 let lobo = false;
+let jugadorVidente = false;
 
 export let lobos: Jugador[] = [];
 let aldeanos: Jugador[] = [];
@@ -140,6 +144,9 @@ const repartirCartasJugadores = async (
   numeroJugadoresPartida: number
 ): Promise<void> => {
   const miRolId = await obtenerRolPersonajeJugador();
+
+  if (miRolId === 3) jugadorVidente = true;
+
   actualizarListas();
   for (let i = 0; i < jugadores.length; i++) {
     const jugador = jugadores[i];
@@ -259,6 +266,24 @@ canal.bind("cambio-fase", async (data: any) => {
           votarYHablarBotLobo(id_partida, bot.id_jugador, ronda, dia);
         }, Math.random() * 3000 + 1000);
       }
+    }
+
+    if (jugadorVidente && !muerto) {
+      setTimeout(() => {
+        const enemigosPosibles = vivos.filter((j) => j.nickname !== miNickname);
+
+        if (enemigosPosibles.length > 0) {
+          const indiceAleatorio = Math.floor(
+            Math.random() * enemigosPosibles.length
+          );
+          const objetivo = enemigosPosibles[indiceAleatorio];
+
+          pintarMensajeSistema(
+            `Tu bola de cristal te revela la identidad de ${objetivo.nickname}...`
+          );
+          voltearCartaPorVidente(objetivo.nickname, objetivo.id_personaje);
+        }
+      }, 2000);
     }
   }
 

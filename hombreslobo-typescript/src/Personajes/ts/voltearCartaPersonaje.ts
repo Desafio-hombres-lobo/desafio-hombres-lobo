@@ -2,6 +2,7 @@ import {
   renderizarCartaAldeano,
   renderizarCartaLobo,
   renderizarCartaVidente,
+  renderizarReverso,
 } from "./crearCartaPersonaje";
 
 export const voltearCartaPersonaje = async (
@@ -46,9 +47,11 @@ export const voltearCartasLobo = async (
   }
 };
 
-export const voltearCartaPorVidente = async (nickname: string) => {
-  console.log("La vidente está actuando....");
-  const idPersonaje: number = Math.floor(Math.random() * 4) + 1;
+export const voltearCartaPorVidente = async (
+  nickname: string,
+  idPersonaje: number
+) => {
+  console.log(`👁 La vidente está viendo a ${nickname}... 👁`);
 
   const slotDiv = document.querySelector(
     `.jugador[data-jugador="${nickname}"]`
@@ -69,6 +72,11 @@ export const voltearCartaPorVidente = async (nickname: string) => {
   } else if (idPersonaje === 2) {
     await renderizarCartaLobo(slotDiv, nickname);
   }
-
   // else if para niña
+
+  setTimeout(() => {
+    slotDiv.innerHTML = "";
+    renderizarReverso(slotDiv, nickname);
+    console.log(`La visión sobre ${nickname} se ha desvanecido.`);
+  }, 4000);
 };
