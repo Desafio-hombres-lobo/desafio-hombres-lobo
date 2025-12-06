@@ -52,11 +52,6 @@ class PersonajeSeeder extends Seeder
             'descripcion' => 'Es una aldeana muy curiosa. Durante la fase de noche tiene la habilidad prohibida de espiar el chat de los Lobos, pero debe tener cuidado: si es descubierta, su vida correrá peligro.'
         ]);
 
-        //Bruja
-        $bruja = Personaje::create([
-            'nombre' => 'Bruja',
-            'descripcion' => 'Tiene dos pociones, una para eliminar a un jugador y otra para salvar a una víctima de los lobos'
-        ]);
         // VIDENTE
         $vidente = Personaje::create([
             'nombre' => 'Vidente',
@@ -66,6 +61,13 @@ class PersonajeSeeder extends Seeder
         // Vidente puede ver rol de otro jugador y votar
         $idsVidente = array_filter([$accionVer?->id, $accionVotar?->id]);
         $vidente->acciones()->attach($idsVidente);
+
+
+        //Bruja
+        $bruja = Personaje::create([
+            'nombre' => 'Bruja',
+            'descripcion' => 'Tiene dos pociones, una para eliminar a un jugador y otra para salvar a una víctima de los lobos'
+        ]);
 
     }
 }

@@ -3,9 +3,11 @@ import {
   ROL_LOBO,
   ROL_NINIA,
   ROL_VIDENTE,
+  ROL_BRUJA
 } from "./constantes_roles";
 import {
   renderizarCartaAldeano,
+  renderizarCartaBruja,
   renderizarCartaLobo,
   renderizarCartaNiña,
   renderizarCartaVidente
@@ -29,6 +31,8 @@ export const voltearCartaPersonaje = async (
     await renderizarCartaNiña(slotDiv, nickname);
   } else if (id === 3) {
     await renderizarCartaVidente(slotDiv, nickname);
+  } else if (id === ROL_BRUJA){
+    await renderizarCartaBruja(slotDiv, nickname)
   }
 
   slotDiv.classList.add("jugador-eliminado");

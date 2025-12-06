@@ -3,16 +3,19 @@ import "../css/styles.css";
 import loboImg from "../../imagenes/cartas/lobo.png";
 import niñaImg from "../../imagenes/cartas/niña.png";
 import aldeanoImg from "../../imagenes/cartas/aldeano.png";
+import brujaImg from "../../imagenes/cartas/bruja.png"
 import reversoCarta from "../../imagenes/cartas/reverso-carta.jpeg";
 import videnteImg from "../../imagenes/cartas/vidente.png";
 
 let ID_ALDEANO = 1;
 let ID_LOBO = 2;
 let ID_VIDENTE = 3;
+let ID_BRUJA=5;
 const IMG_HOMBRE_LOBO = loboImg;
 const IMG_ALDEANO = aldeanoImg;
 const IMG_NIÑA = niñaImg;
 const IMG_VIDENTE = videnteImg;
+const IMG_BRUJA = brujaImg;
 
 export const renderizarCartaLobo = async (
   contenedor: HTMLElement,
@@ -136,6 +139,35 @@ export const renderizarCartaNiña = async (
   carta.innerHTML = `
       <div class="carta-img-container">
           <img src="${IMG_NIÑA}" alt="${nombrePersonaje}">
+      </div>
+      <p class="carta-titulo">${nickname}</p>
+  `;
+
+  contenedor.appendChild(carta);
+};
+
+export const renderizarCartaBruja = async (
+  contenedor: HTMLElement,
+  nickname: string
+): Promise<void> => {
+  const datosAccionesPersonaje: any = await obtenerAccionesPersonaje(ID_BRUJA);
+
+  if (!datosAccionesPersonaje) {
+    contenedor.innerHTML = "<p>Error al cargar Lobo</p>";
+    return;
+  }
+
+  const listaAcciones = datosAccionesPersonaje.acciones;
+  const nombrePersonaje = listaAcciones[0]?.nombre_personaje || "Bruja";
+  // const idAccion = listaAcciones[0]?.id_accion;
+  // const idJugador = listaAcciones[0]?.id_jugador;
+  // const idPersonaje = listaAcciones[0]?.id_personaje;
+
+  const carta = document.createElement("div");
+  carta.classList.add("carta-rol", "carta-bruja");
+  carta.innerHTML = `
+      <div class="carta-img-container">
+          <img src="${IMG_BRUJA}" alt="${nombrePersonaje}">
       </div>
       <p class="carta-titulo">${nickname}</p>
   `;

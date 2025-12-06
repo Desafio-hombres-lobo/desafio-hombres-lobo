@@ -11,6 +11,7 @@ import {
   renderizarReverso,
   renderizarCartaNiña,
   renderizarCartaVidente,
+  renderizarCartaBruja,
 } from "../../Personajes/ts/crearCartaPersonaje";
 import { empezarPartida } from "../../providers/empezarPartida";
 import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
@@ -31,6 +32,7 @@ import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPart
 import { verChatLobos } from "./funcionNinia";
 import {
   ROL_ALDEANO,
+  ROL_BRUJA,
   ROL_LOBO,
   ROL_NINIA,
 } from "../../Personajes/ts/constantes_roles";
@@ -162,12 +164,12 @@ const repartirCartasJugadores = async (): Promise<void> => {
         await renderizarCartaNiña(slotDiv, miNickname);
       } else if (miRolId === 3) {
         await renderizarCartaVidente(slotDiv, miNickname);
-      } else {
+      } else if(miRolId === ROL_BRUJA){
+        await renderizarCartaBruja(slotDiv, miNickname)
+      }}else {
         renderizarReverso(slotDiv, nombreJugador);
       }
-    } else {
-      renderizarReverso(slotDiv, nombreJugador);
-    }
+    
 
     slotDiv.addEventListener("click", async () => {
       if (esMiUsuario) return;
