@@ -203,6 +203,9 @@ class PartidaController extends Controller
         $totalJugadores = $jugadores->count();
 
         $numLobos = floor($totalJugadores * 0.3);
+        $vidente = 1;
+        $numAldeanos = $totalJugadores - $numLobos - $vidente;
+
 
         // Mínimo un lobo siempre
         if ($numLobos < 1) {
@@ -228,6 +231,10 @@ class PartidaController extends Controller
         }
         while (count($mazo) < $totalJugadores) {
             $mazo[] = 1;
+        }
+
+        for($i = 0; $i < $vidente; $i++){
+            $mazo[] = 3;
         }
 
         shuffle($mazo);

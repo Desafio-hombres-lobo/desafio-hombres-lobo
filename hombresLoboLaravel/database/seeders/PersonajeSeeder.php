@@ -57,6 +57,15 @@ class PersonajeSeeder extends Seeder
             'nombre' => 'Bruja',
             'descripcion' => 'Tiene dos pociones, una para eliminar a un jugador y otra para salvar a una víctima de los lobos'
         ]);
+        // VIDENTE
+        $vidente = Personaje::create([
+            'nombre' => 'Vidente',
+            'descripcion' => 'El ojo que todo lo ve.'
+        ]);
+
+        // Vidente puede ver rol de otro jugador y votar
+        $idsVidente = array_filter([$accionVer?->id, $accionVotar?->id]);
+        $vidente->acciones()->attach($idsVidente);
 
     }
 }

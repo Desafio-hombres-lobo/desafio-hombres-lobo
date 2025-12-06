@@ -20,7 +20,7 @@ class AccionSeeder extends Seeder
         Accion::create(['nombre' => 'Matar']);
 
         // Acciones Vidente
-        // Accion::create(['nombre' => 'Ver Rol']);
+        Accion::create(['nombre' => 'Ver Rol']);
 
         // Acciones Bruja
         // Accion::create(['nombre' => 'Lanzar Poción de Vida']);
