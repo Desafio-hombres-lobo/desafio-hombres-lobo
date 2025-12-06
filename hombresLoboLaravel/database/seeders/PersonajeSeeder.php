@@ -52,5 +52,11 @@ class PersonajeSeeder extends Seeder
             'descripcion' => 'Es una aldeana muy curiosa. Durante la fase de noche tiene la habilidad prohibida de espiar el chat de los Lobos, pero debe tener cuidado: si es descubierta, su vida correrá peligro.'
         ]);
 
+        //Bruja
+        $bruja = Personaje::create([
+            'nombre' => 'Bruja',
+            'descripcion' => 'Tiene dos pociones, una para eliminar a un jugador y otra para salvar a una víctima de los lobos'
+        ]);
+
     }
 }
