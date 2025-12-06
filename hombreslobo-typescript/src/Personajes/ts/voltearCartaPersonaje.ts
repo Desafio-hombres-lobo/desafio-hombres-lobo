@@ -1,7 +1,7 @@
 import {
   renderizarCartaAldeano,
   renderizarCartaLobo,
-  renderizarCartaVidente
+  renderizarCartaVidente,
 } from "./crearCartaPersonaje";
 
 export const voltearCartaPersonaje = async (
@@ -44,4 +44,31 @@ export const voltearCartasLobo = async (
     await renderizarCartaLobo(slotDiv, nickname);
     console.log(`Carta de lobo volteada para ${nickname}`);
   }
+};
+
+export const voltearCartaPorVidente = async (nickname: string) => {
+  console.log("La vidente está actuando....");
+  const idPersonaje: number = Math.floor(Math.random() * 4) + 1;
+
+  const slotDiv = document.querySelector(
+    `.jugador[data-jugador="${nickname}"]`
+  ) as HTMLElement;
+
+  if (!slotDiv) {
+    console.warn(
+      `No se encontró la carta HTML para el jugador: "${nickname}". Tal vez aún no se ha renderizado.`
+    );
+    return;
+  }
+  slotDiv.innerHTML = "";
+
+  if (idPersonaje === 3) {
+    return;
+  } else if (idPersonaje === 1) {
+    await renderizarCartaAldeano(slotDiv, nickname);
+  } else if (idPersonaje === 2) {
+    await renderizarCartaLobo(slotDiv, nickname);
+  }
+
+  // else if para niña
 };

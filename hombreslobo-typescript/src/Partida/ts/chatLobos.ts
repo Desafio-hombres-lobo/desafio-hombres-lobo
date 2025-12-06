@@ -2,6 +2,7 @@ import { getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
 import { pintarMensaje } from "./chatAldea";
 import { voltearCartasLobo } from "../../Personajes/ts/voltearCartaPersonaje";
+import { voltearCartaPorVidente } from "../../Personajes/ts/voltearCartaPersonaje";
 
 const id_partida = getPartidaId()!;
 
@@ -36,6 +37,8 @@ const jugadoresLoboFaseNoche = async (jugadores: any[], lobos: any[]) => {
         const jugadorEncontrado = jugadores.find(
           (j: any) => j.id_jugador === datosLobo.id_jugador
         );
+
+        voltearCartaPorVidente(jugadorEncontrado.nickname);
 
         if (jugadorEncontrado) {
           voltearCartasLobo(jugadorEncontrado.nickname, 2);
