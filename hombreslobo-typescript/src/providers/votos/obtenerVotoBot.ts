@@ -27,27 +27,37 @@ export const votarYHablarBot = async (
     await esperar(3500);
 
     const cantidadMensajes = Math.floor(Math.random() * 3);
-    const mensajesBot = [
-      "Creo que ya sé quién es...",
-      "Tengo mis sospechas de",
-      "No me fío nada de",
-      "Creo que estamos en peligro por",
-      "No sé, pero alguien no me cuadra:",
+    const plantillasMensajes = [
+        "Creo que {nombre} es sospechoso.",
+        "Definitivamente hay que votar a {nombre}",
+        "Es que {nombre} es muy sospechoso las cosas que dice",
+        
+        "Sí, votamos a {nombre}, .",
+        "{nombre} está muy callado, me parece raro.",
+        "Yo digo que eliminemos a {nombre}.",
+        
+        "Voto a {nombre}.",
+        "Definitivamente {nombre}.",
+        "¿Qué os parece {nombre}?",
+        "Me da mala espina {nombre}",
+        
+        "No sé... {nombre} parece aldeano parecía aldeano, pero sus votos son raros.",
+        "Venga, acepto {nombre}, pero creo que nos estamos equivocando.",
+        "¿Seguro que {nombre}? Bueno, me fío de vosotros."
     ];
 
     for (let i = 0; i < cantidadMensajes; i++) {
-      const mensajeRandom =
-        mensajesBot[Math.floor(Math.random() * mensajesBot.length)];
+        const plantilla = plantillasMensajes[Math.floor(Math.random() * plantillasMensajes.length)];
 
-      const mensajeFinal = `${mensajeRandom} ${nicknameObjetivo}`;
+        const mensajeFinal = plantilla.replace("{nombre}", nicknameObjetivo);
 
-      await esperar(Math.random() * 6000 + 1000);
+        await esperar(Math.random() * 4000 + 1500);
 
-      await enviarMensajeBot({
-        message: mensajeFinal,
-        id_partida: idPartida.toString(),
-        bot: idBot
-      });
+        await enviarMensajeBot({
+            message: mensajeFinal,
+            id_partida: idPartida.toString(),
+            bot: idBot
+        });
     }
 
     await fetch(construirApi(`/partida/${idPartida}/votar/${ronda}`), {

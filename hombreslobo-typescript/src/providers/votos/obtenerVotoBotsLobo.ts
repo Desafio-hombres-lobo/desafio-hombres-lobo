@@ -26,30 +26,39 @@ export const votarYHablarBotLobo = async (
 
     await esperar(3500);
 
-    const cantidadMensajes = Math.floor(Math.random() * 3);
-    const mensajesBot = [
-      "Creo que sospecha",
-      "Tenemos que acabar con",
-      "A ver, por descarte para que no sospechen, yo digo que matemos a",
-      "No sé, por decir a alguien digo",
-      "Yo creo que la niña es",
-      "Iba a por mí",
-    ];
+      const cantidadMensajes = Math.floor(Math.random() * 3);
+      const plantillasMensajes = [
+      "Creo que {nombre} sospecha demasiado de nosotros.",
+      "Tenemos que acabar con {nombre} antes de que hable.",
+      "Por descarte, yo iría a por {nombre} esta noche.",
+      
+      "Si matamos a {nombre}, creo que nadie sospechará.",
+      "{nombre} está muy callado, quizás tiene un rol importante.",
+      "Yo digo que eliminemos a {nombre}.",
+      
+      "Voto a {nombre}.",
+      "Definitivamente {nombre}.",
+      "¿Qué os parece {nombre}?",
+      "Me da mala espina {nombre}, vamos a por él/ella.",
+      
+      "No sé... {nombre} parece aldeano simple, pero vale.",
+      "Venga, acepto {nombre}, pero mañana cuidado.",
+      "¿Seguro que {nombre}? Bueno, me fío de vosotros."
+  ];
 
-    for (let i = 0; i < cantidadMensajes; i++) {
-      const mensajeRandom =
-        mensajesBot[Math.floor(Math.random() * mensajesBot.length)];
+  for (let i = 0; i < cantidadMensajes; i++) {
+      const plantilla = plantillasMensajes[Math.floor(Math.random() * plantillasMensajes.length)];
 
-      const mensajeFinal = `${mensajeRandom} ${nicknameObjetivo}`;
+      const mensajeFinal = plantilla.replace("{nombre}", nicknameObjetivo);
 
-      await esperar(Math.random() * 4000 + 1000);
+      await esperar(Math.random() * 4000 + 1500);
 
       await enviarMensajeBotLobo({
-        message: mensajeFinal,
-        id_partida: idPartida.toString(),
-        bot: idBot
+          message: mensajeFinal,
+          id_partida: idPartida.toString(),
+          bot: idBot
       });
-    }
+  }
 
     await fetch(construirApi(`/partida/${idPartida}/votar/${ronda}`), {
       method: "POST",
