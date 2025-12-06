@@ -49,6 +49,7 @@ const id_partida = getPartidaId()!;
 const textoEspera = document.getElementById("texto-espera")!;
 const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 
+let niñaEscuchando = false;
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
@@ -202,7 +203,11 @@ function actualizarFaseVisual() {
   } else {
     if (miRolId === ROL_NINIA && !muerto) {
       btnNiña.classList.remove("oculto");
-      verChatLobos(btnNiña, listaMensajes);
+
+      if (!niñaEscuchando) {
+        verChatLobos(btnNiña, listaMensajes); // se puede agregar al boton un .onclick que sobreescribe lo anterior, por si acaso voy con lo que sabemos hacer// btnNiña.onclick = function()
+        niñaEscuchando = true;
+      }
     }
     spanFase.innerHTML = "FASE: NOCHE";
     headerChat.innerHTML = "CHAT DE LOS LOBOS";
