@@ -24,8 +24,6 @@ import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje
 import { votarYHablarBotLobo } from "../../providers/votos/obtenerVotoBotsLobo";
 import { obtenerDatosJugadoresPartida } from "../../providers/obtenerDatosJugadores";
 import type { Jugador } from "./Jugador";
-import { ganarPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
-import { perderPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
 import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPartidaFinalizada";
 import { verChatLobos } from "./funcionNinia";
 import {
@@ -34,7 +32,6 @@ import {
   ROL_NINIA,
 } from "../../Personajes/ts/constantes_roles";
 
-const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
 export const formChat = document.getElementById("form-chat") as HTMLFormElement;
 export const inputMensaje = document.getElementById(
@@ -49,7 +46,6 @@ const id_partida = getPartidaId()!;
 const textoEspera = document.getElementById("texto-espera")!;
 const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 
-let niñaEscuchando = false;
 let temporizador: number | null = null;
 let dia: boolean = true;
 let host = false;
@@ -203,11 +199,9 @@ function actualizarFaseVisual() {
   } else {
     if (miRolId === ROL_NINIA && !muerto) {
       btnNiña.classList.remove("oculto");
-
-      if (!niñaEscuchando) {
-        verChatLobos(btnNiña, listaMensajes); // se puede agregar al boton un .onclick que sobreescribe lo anterior, por si acaso voy con lo que sabemos hacer// btnNiña.onclick = function()
-        niñaEscuchando = true;
-      }
+      btnNiña.onclick = function () {
+        verChatLobos(btnNiña, listaMensajes);
+      };
     }
     spanFase.innerHTML = "FASE: NOCHE";
     headerChat.innerHTML = "CHAT DE LOS LOBOS";
