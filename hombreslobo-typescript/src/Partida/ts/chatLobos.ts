@@ -19,6 +19,9 @@ export const conectarLobos = () => {
 };
 
 export const configurarBind = (canal: any) => {
+  canal.unbind("nuevo-mensaje-lobos");
+  canal.unbind("ninia-habilidad");
+
   canal.bind("nuevo-mensaje-lobos", (data: any) => {
     pintarMensaje(data.usuario, data.mensaje);
   });
@@ -67,5 +70,12 @@ const pintarVotoLobo = (votante: string, votado: string) => {
 };
 
 export const desconectarChatLobos = () => {
+  const nombreCanal = "lobos" + id_partida;
+
+  const canal = pusher.channel(nombreCanal);
+
+  if (canal) {
+    canal.unbind_all();
+  }
   pusher.unsubscribe("lobos" + id_partida);
 };
