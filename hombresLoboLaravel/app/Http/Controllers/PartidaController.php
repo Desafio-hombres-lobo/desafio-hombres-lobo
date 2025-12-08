@@ -306,7 +306,7 @@ class PartidaController extends Controller
         $partida = Partida::findOrFail($idPartida);
 
         $numJugadores = $request->input('numJugadores', 0);
-        $minJugadores = 5;
+        $minJugadores = 15;
 
         $faltantes = $minJugadores - $numJugadores;
 
