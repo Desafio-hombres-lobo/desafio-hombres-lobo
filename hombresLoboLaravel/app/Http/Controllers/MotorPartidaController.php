@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\CambiarFase;
+use App\Events\VerLobos;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Partida;
@@ -45,5 +46,15 @@ class MotorPartidaController extends Controller
         $esHost = $partida->creador_id === $miJugador->id;
 
         return response()->json(['esHost' => $esHost]);
+    }
+    public function verLobos(Request $request, $idPartida)
+    {
+        $partida = Partida::findOrFail($idPartida);
+
+        event(new VerLobos($idPartida));
+
+        return response()->json([
+            'mensaje' => 'ok',
+        ]);
     }
 }

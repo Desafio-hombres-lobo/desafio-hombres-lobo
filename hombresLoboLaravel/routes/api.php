@@ -114,6 +114,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/partida/{idPartida}/finalizar-partida', [PartidaController::class, 'finalizarPartida']);
 
+        //Habilidades personaje
+        Route::post('/partidas/{idPartida}/ninia', [MotorPartidaController::class, 'verLobos']);
+
     });
 });
 

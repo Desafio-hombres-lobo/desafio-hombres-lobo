@@ -33,7 +33,8 @@ class PersonajeSeeder extends Seeder
         ]);
 
         // El aldeano solo puede votar
-        if($accionVotar) $aldeano->acciones()->attach($accionVotar->id);
+        if ($accionVotar)
+            $aldeano->acciones()->attach($accionVotar->id);
 
 
         // HOMBRE LOBO
@@ -45,6 +46,11 @@ class PersonajeSeeder extends Seeder
         // El lobo puede votar de día y Mmatar de noche
         $idsLobo = array_filter([$accionVotar?->id, $accionMatar?->id]);
         $lobo->acciones()->attach($idsLobo);
+
+        $niña = Personaje::create([
+            'nombre' => 'Niña',
+            'descripcion' => 'Es una aldeana muy curiosa. Durante la fase de noche tiene la habilidad prohibida de espiar el chat de los Lobos, pero debe tener cuidado: si es descubierta, su vida correrá peligro.'
+        ]);
 
     }
 }
