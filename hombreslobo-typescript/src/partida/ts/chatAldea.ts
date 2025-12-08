@@ -39,6 +39,7 @@ import {
 } from "../../Personajes/ts/constantes_roles";
 import { eliminarJugador } from "../../providers/RolBruja/enviarDatosEliminar";
 import { revivirJugador } from "../../providers/RolBruja/enviarDatosRevivir";
+import { cambiarTemporizador } from "../../providers/RolBruja/cambiarTemporizador";
 
 const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -84,6 +85,7 @@ let pocionEliminar = true;
 let pocionRevivir = true;
 
 let brujaResolvio = false;
+let brujaRevivio = false;
 
 async function actualizarListas() {
   jugadores = await obtenerDatosJugadoresPartida(id_partida);
@@ -216,14 +218,13 @@ function actualizarFaseVisual() {
     centroInfo.classList.remove("fase-noche");
     centroInfo.classList.add("fase-dia");
     listaMensajes.classList.remove("chat-noche");
-    btnNiña.classList.add("oculto");
+    // btnNiña.classList.add("oculto");
     if (!muerto) {
       inputMensaje.disabled = false;
       inputMensaje.placeholder = "Escribe en la aldea...";
     }
   } else {
     if (miRolId === ROL_NINIA && !muerto) {
-      btnNiña.classList.remove("oculto");
 
       if (!niñaEscuchando) {
         verChatLobos(btnNiña, listaMensajes); // se puede agregar al boton un .onclick que sobreescribe lo anterior, por si acaso voy con lo que sabemos hacer// btnNiña.onclick = function()
@@ -260,10 +261,13 @@ canal.bind("nuevo-mensaje", (data: any) => {
 canal.bind("cambio-fase", async (data: any) => {
   await actualizarListas();
   repartirCartasJugadores(jugadores);
+
+  brujaResolvio = false; 
+  
   if (data.fase === "dia") {
     dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
-    if (host) {
+      if (host) {
       for (const bot of bots) {
         setTimeout(() => {
           votarYHablarBot(id_partida, bot.id_jugador, ronda, dia);
@@ -273,7 +277,7 @@ canal.bind("cambio-fase", async (data: any) => {
   } else {
     dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
-    if (host) {
+        if (host) {
       for (const bot of botsLobo) {
         setTimeout(() => {
           votarYHablarBotLobo(id_partida, bot.id_jugador, ronda, dia);
@@ -282,11 +286,18 @@ canal.bind("cambio-fase", async (data: any) => {
     }
   }
 
-  if (textoEspera) {
-    textoEspera.classList.add("oculto");
-  }
+  if (textoEspera) textoEspera.classList.add("oculto");
   actualizarFaseVisual();
-  iniciarCuentaAtras(data.tiempoFin);
+
+  let tiempoFin = data.tiempoFin;
+  const tiempoRestante = new Date(tiempoFin).getTime() - Date.now();
+
+  if (tiempoRestante <= 0) {
+      console.warn("Recibido tiempo caducado del servidor. Forzando tiempo local.");
+      tiempoFin = new Date(Date.now() + 120000).toISOString();
+  }
+
+  iniciarCuentaAtras(tiempoFin);
 });
 canal.bind("voto", (data: any) => {
   if (!dia) return;
@@ -296,10 +307,11 @@ canal.bind("voto", (data: any) => {
 
 canal.bind("votacion-terminada", async (data: any) => {
   brujaViva = vivos.some((j) => j.id_personaje === ROL_BRUJA && !j.bot);
-
-  console.log("Hemos llegado a este punto, brujaViva=", brujaViva);
-  console.log(dia);
   if (brujaViva && !dia) {
+    if (temporizador) clearInterval(temporizador);
+    iniciarCuentaAtras(new Date(Date.now() + 20000).toISOString()); 
+    cambiarTemporizador(id_partida,20)
+
     const cartaVictima = document.querySelector(
       `[data-id="${data.idEliminado}"]`
     ) as HTMLElement | null;
@@ -314,47 +326,48 @@ canal.bind("votacion-terminada", async (data: any) => {
 
     if (res.accion === "revivir") {
       brujaResolvio = true;
-
       mostrarVotacion(`¡La Bruja ha revivido a ${data.eliminado}!`);
-
       setTimeout(async () => {
         cerrarVotacion();
-        if (host) {
-          await cambiarFasePartida(id_partida, !dia);
-        }
+        if (host) await cambiarFasePartida(id_partida, !dia);
       }, 3000);
-
       return;
     }
+
     if (res.accion === "matar") {
       brujaResolvio = true;
-
       if (data.resultado === "eliminado") {
         mostrarVotacion(`¡${data.eliminado} ha sido eliminado por los Lobos!`);
       } else {
         mostrarVotacion("¡Empate! Nadie ha sido eliminado por los Lobos.");
       }
+      
       if (res.nombre) {
         await new Promise((r) => setTimeout(r, 600));
         mostrarVotacion(`¡${res.nombre} ha sido eliminado por la Bruja!`);
       }
-
       await comprobarVictoria();
-
       setTimeout(async () => {
         cerrarVotacion();
-        if (host) {
-          await cambiarFasePartida(id_partida, !dia);
-        }
+        if (host) await cambiarFasePartida(id_partida, !dia);
       }, 3000);
-
       return;
     }
-  } else if (data.resultado === "eliminado") {
-    mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-    await actualizarListas();
-  } else if (data.resultado === "empate") {
-    mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
+
+    if (data.resultado === "eliminado") {
+      mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+      await actualizarListas(); 
+    } else if (data.resultado === "empate" || brujaRevivio) {
+      mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
+    }
+    
+  } else {
+    if (data.resultado === "eliminado") {
+        mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+        await actualizarListas();
+    } else if (data.resultado === "empate") {
+        mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
+    }
   }
 
   await comprobarVictoria();
@@ -372,7 +385,8 @@ canal.bind("bruja-elimina", async (data: any) => {
 
   mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
   await actualizarListas();
-
+  iniciarCuentaAtras(new Date(Date.now() + 1).toISOString()); 
+  cambiarTemporizador(id_partida, 1)
   await comprobarVictoria();
 
   setTimeout(() => {
@@ -382,9 +396,12 @@ canal.bind("bruja-elimina", async (data: any) => {
 
 canal.bind("bruja-revive", async (data: any) => {
   brujaResolvio = true;
+  brujaRevivio = true;
 
   mostrarVotacion(`¡Nadie ha sido eliminado esta noche!`);
-
+      if (temporizador) clearInterval(temporizador);
+    iniciarCuentaAtras(new Date(Date.now() + 1).toISOString()); 
+    cambiarTemporizador(id_partida, 1)
   await actualizarListas();
   setTimeout(() => {
     cerrarVotacion();
@@ -418,6 +435,11 @@ canal.bind("fin-partida", async (data: any) => {
     window.location.href = "/";
   }, 5000);
 });
+
+canal.bind("cambio-temporizador", async (data:any) =>{
+      if (temporizador) clearInterval(temporizador);
+    iniciarCuentaAtras(new Date(Date.now() + data.segundos).toISOString()); 
+})
 
 const iniciarCuentaAtras = (fechaFinIso: string) => {
   if (temporizador) {
@@ -563,6 +585,7 @@ function mostrarOpcionesBruja(
       return;
     }
     if (victimaLobos && pocionRevivir) {
+      brujaRevivio= false;
       if (nombreVictimaLobos === nicknameEliminado) {
         if (!cartaVictima?.querySelector(".btn-bruja-revivir")) {
           const btnRev = document.createElement("button");

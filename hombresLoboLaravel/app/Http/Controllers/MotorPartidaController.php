@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\BrujaElimina;
 use App\Events\BrujaRevivir;
 use App\Events\CambiarFase;
+use App\Events\CambiarTemporizador;
 use App\Events\VerLobos;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -59,6 +60,10 @@ class MotorPartidaController extends Controller
         return response()->json([
             'mensaje' => 'ok',
         ]);
+    }
+
+    public function cambiarTemporizador(Request $request, $idPartida){
+        event(new CambiarTemporizador($request->segundos, $idPartida));
     }
 
 

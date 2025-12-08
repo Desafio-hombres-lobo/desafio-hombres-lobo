@@ -120,6 +120,7 @@ Route::middleware('auth:sanctum')->group(function () {
         //Acciones de la bruja
         Route::post('/partidas/bruja-revivir', [MotorPartidaController::class, 'revivir']);
         Route::post('/partidas/bruja-eliminar', [MotorPartidaController::class, 'eliminar']);
+        Route::get('/partidas/{idPartida}/cambiarTemporizador', [MotorPartidaController::class, 'cambiarTemporizador']);
 
     });
 });
