@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\JugadorRequest;
 use App\Models\Jugador;
+use App\Models\Partida;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;

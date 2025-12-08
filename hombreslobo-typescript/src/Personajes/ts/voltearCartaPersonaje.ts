@@ -14,7 +14,7 @@ import {
 } from "./crearCartaPersonaje";
 
 export const voltearCartaPersonaje = async (
-  nickname: string,
+  nickname: string ,
   idPersonaje: number
 ) => {
   const slotDiv = document.querySelector(

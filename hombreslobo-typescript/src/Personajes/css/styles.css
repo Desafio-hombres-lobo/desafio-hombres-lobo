@@ -1,5 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap");
-
+:root {
+  --marron: #b89778;
+  --beige: #f3f2d5;
+  --negro: #2c222d;
+  --morado: #ab6fa0;
+  --rosa-claro: #d183d4;
+  --verde: #86926e;
+  --amarillo: #e1c87b;
+  --error: #ff7675;
+  --texto-suave: #d6c7e0;
+  --fuente-titulo: "Bahiana", cursive;
+  --fuente-texto: "Inter", sans-serif;
+  --borde-espiral: #af8f3f;
+  --bruja: #f36237;
+}
 /* ESTILOS COMUNES CARTAS */
 .carta-rol {
   border: 3px solid #1a1a1a;
@@ -104,5 +118,48 @@
 }
 
 .carta-bruja{
-  background-color: #f36237;
+  background-color: var(--bruja);
+}
+
+.btn-bruja-revivir,
+.btn-bruja-matar {
+  padding: 8px 16px;
+  margin: 5px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-bruja-revivir {
+  background-color:lightgreen;
+  color: white;
+  font-family: var(--fuente-titulo);
+  font-size: 1.2rem;
+  font-weight:bolder;
+  letter-spacing:2.5px;
+  z-index:100;
+}
+
+.btn-bruja-revivir:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-bruja-matar {
+  background-color:var(--bruja);
+  color: white;
+  font-family: var(--fuente-titulo);
+  font-size: 1.2rem;
+  font-weight:bolder;
+  letter-spacing:2.5px;
+  z-index:100;
+}
+
+.btn-bruja-matar:hover {
+  background-color: #d32f2f;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }

@@ -117,6 +117,10 @@ Route::middleware('auth:sanctum')->group(function () {
         //Habilidades personaje
         Route::post('/partidas/{idPartida}/ninia', [MotorPartidaController::class, 'verLobos']);
 
+        //Acciones de la bruja
+        Route::post('/partidas/bruja-revivir', [MotorPartidaController::class, 'revivir']);
+        Route::post('/partidas/bruja-eliminar', [MotorPartidaController::class, 'eliminar']);
+
     });
 });
 

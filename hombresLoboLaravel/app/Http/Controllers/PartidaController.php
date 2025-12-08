@@ -215,7 +215,7 @@ class PartidaController extends Controller
 
 
         $rolesEspeciales[] = 3; //aqui agregamos los que queramos, por ejemplo el 3 es la niña asique agregamos un 3
-        //$rolesEspeciales[] = 4; vidente...
+        $rolesEspeciales[] = 4; 
         $rolesEspeciales[] = 5; //bruja
 
         // Crear mazo con ID´s
@@ -231,10 +231,6 @@ class PartidaController extends Controller
         }
         while (count($mazo) < $totalJugadores) {
             $mazo[] = 1;
-        }
-
-        for($i = 0; $i < $vidente; $i++){
-            $mazo[] = 3;
         }
 
         shuffle($mazo);
