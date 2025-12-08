@@ -211,6 +211,7 @@ class PartidaController extends Controller
         if ($numLobos < 1) {
             $numLobos = 1;
         }
+        $rolesEspeciales = [];
 
 
         // Crear mazo con ID´s
@@ -219,7 +220,12 @@ class PartidaController extends Controller
             $mazo[] = 2;
         }
 
-        for ($i = 0; $i < $numAldeanos; $i++) {
+        foreach ($rolesEspeciales as $rolId) {
+            if (count($mazo) < $totalJugadores) {
+                $mazo[] = $rolId;
+            }
+        }
+        while (count($mazo) < $totalJugadores) {
             $mazo[] = 1;
         }
 
@@ -303,7 +309,7 @@ class PartidaController extends Controller
         $partida = Partida::findOrFail($idPartida);
 
         $numJugadores = $request->input('numJugadores', 0);
-        $minJugadores = 15;
+        $minJugadores = 5;
 
         $faltantes = $minJugadores - $numJugadores;
 

@@ -10,6 +10,7 @@ import {
   renderizarCartaAldeano,
   renderizarReverso,
   renderizarCartaVidente,
+  renderizarCartaNiña,
 } from "../../Personajes/ts/crearCartaPersonaje";
 import { empezarPartida } from "../../providers/empezarPartida";
 import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
@@ -27,11 +28,14 @@ import {
 import { votarYHablarBotLobo } from "../../providers/votos/obtenerVotoBotsLobo";
 import { obtenerDatosJugadoresPartida } from "../../providers/obtenerDatosJugadores";
 import type { Jugador } from "./Jugador";
-import { ganarPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
-import { perderPartida } from "../../providers/finalPartida/enviarDatosFinalPartida";
 import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPartidaFinalizada";
+import { verChatLobos } from "./funcionNinia";
+import {
+  ROL_ALDEANO,
+  ROL_LOBO,
+  ROL_NINIA,
+} from "../../Personajes/ts/constantes_roles";
 
-const btnEnviar = document.getElementById("btn-enviar")! as HTMLButtonElement;
 const listaMensajes = document.getElementById("lista-mensajes")!;
 export const formChat = document.getElementById("form-chat") as HTMLFormElement;
 export const inputMensaje = document.getElementById(
@@ -59,6 +63,7 @@ let votos = 0;
 let lobo = false;
 let jugadorVidente = false;
 
+let miRolId: any = null;
 let lobos: Jugador[] = [];
 let aldeanos: Jugador[] = [];
 let vivos: Jugador[] = [];
@@ -76,16 +81,16 @@ async function actualizarListas() {
   vivos = jugadores.filter((j) => j.estado !== 0);
   muertos = jugadores.filter((j) => j.estado === 0);
 
-  lobos = vivos.filter((j) => j.id_personaje === 2);
-  aldeanos = vivos.filter((j) => j.id_personaje === 1);
-  vidente = vivos.filter((j) => j.id_personaje === 3);
+  lobos = vivos.filter((j) => j.id_personaje === ROL_LOBO);
+  aldeanos = vivos.filter((j) => j.id_personaje === ROL_ALDEANO);
+  vidente = vivos.filter((j) => j.id_personaje === ROL_VIDENTE);
 
   bots = vivos.filter((j) => j.bot);
   humanos = vivos.filter((j) => !j.bot);
 
-  botsLobo = bots.filter((j) => j.id_personaje === 2);
+  botsLobo = bots.filter((j) => j.id_personaje === ROL_LOBO);
 
-  aliados = vivos.filter((j) => j.id_personaje !== 2);
+  aliados = vivos.filter((j) => j.id_personaje !== ROL_LOBO);
   if (muertos.some((j) => j.nickname === miNickname)) {
     muerto = true;
     if (!chatLobosInicializado) {
@@ -94,8 +99,8 @@ async function actualizarListas() {
     }
   }
 
-  aliadosTotales = jugadores.filter((j) => j.id_personaje !== 2);
-  lobosTotales = jugadores.filter((j) => j.id_personaje == 2);
+  aliadosTotales = jugadores.filter((j) => j.id_personaje !== ROL_LOBO);
+  lobosTotales = jugadores.filter((j) => j.id_personaje == ROL_LOBO);
   console.log(
     "vivos",
     vivos,
@@ -131,7 +136,7 @@ if (host) {
 const repartirCartasJugadores = async (): Promise<void> => {
   const miRolId = await obtenerRolPersonajeJugador();
 
-  if (miRolId === 3) jugadorVidente = true;
+  if (miRolId === ROL_VIDENTE) jugadorVidente = true;
 
   actualizarListas();
   await actualizarListas();
@@ -150,16 +155,18 @@ const repartirCartasJugadores = async (): Promise<void> => {
 
     if (esMiUsuario) {
       slotDiv.classList.add("mi-jugador");
-      if (miRolId == 2) {
+      if (miRolId == ROL_LOBO) {
         lobo = true;
         await renderizarCartaLobo(slotDiv, miNickname);
         await chatLobos(lobos);
-      } else if (miRolId === 1) {
+      } else if (miRolId === ROL_ALDEANO) {
         await renderizarCartaAldeano(slotDiv, miNickname);
-      } else if (miRolId === 3) {
+      } else if (miRolId === ROL_VIDENTE) {
         await renderizarCartaVidente(slotDiv, miNickname);
       } else {
         renderizarReverso(slotDiv, nombreJugador);
+      } else if (miRolId === ROL_NINIA) {
+        await renderizarCartaNiña(slotDiv, miNickname);
       }
     } else {
       renderizarReverso(slotDiv, nombreJugador);
@@ -191,6 +198,7 @@ const repartirCartasJugadores = async (): Promise<void> => {
 };
 
 function actualizarFaseVisual() {
+  const btnNiña = document.getElementById("btn-niña")! as HTMLInputElement;
   if (muerto) {
     inputMensaje.disabled = true;
     inputMensaje.placeholder = "No puedes hablar, estás muerto.";
@@ -201,11 +209,18 @@ function actualizarFaseVisual() {
     centroInfo.classList.remove("fase-noche");
     centroInfo.classList.add("fase-dia");
     listaMensajes.classList.remove("chat-noche");
+    btnNiña.classList.add("oculto");
     if (!muerto) {
       inputMensaje.disabled = false;
       inputMensaje.placeholder = "Escribe en la aldea...";
     }
   } else {
+    if (miRolId === ROL_NINIA && !muerto) {
+      btnNiña.classList.remove("oculto");
+      btnNiña.onclick = function () {
+        verChatLobos(btnNiña, listaMensajes);
+      };
+    }
     spanFase.innerHTML = "FASE: NOCHE";
     headerChat.innerHTML = "CHAT DE LOS LOBOS";
     centroInfo.classList.remove("fase-dia");
@@ -435,13 +450,13 @@ export function pintarMensaje(usuario: string, texto: string) {
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 }
 
-function pintarMensajeSistema(texto: string) {
+export const pintarMensajeSistema = (texto: string) => {
   const div = document.createElement("div");
   div.classList.add("msg", "sistema");
   div.innerHTML = `${texto}`;
   listaMensajes.appendChild(div);
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
-}
+};
 
 async function comprobarVictoria() {
   if (host) {

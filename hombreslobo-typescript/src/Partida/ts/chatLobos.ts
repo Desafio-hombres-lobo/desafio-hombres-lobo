@@ -1,6 +1,6 @@
 import { getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
-import { pintarMensaje } from "./chatAldea";
+import { pintarMensaje, pintarMensajeSistema } from "./chatAldea";
 import { voltearCartasLobo } from "../../Personajes/ts/voltearCartaPersonaje";
 import type { Jugador } from "./Jugador";
 
@@ -14,13 +14,22 @@ export const chatLobos = async (lobos: Jugador[]) => {
   configurarVotos(canal);
 };
 
-const conectarLobos = () => {
+export const conectarLobos = () => {
   return pusher.subscribe("lobos" + id_partida);
 };
 
-const configurarBind = (canal: any) => {
+export const configurarBind = (canal: any) => {
+  canal.unbind("nuevo-mensaje-lobos");
+  canal.unbind("ninia-habilidad");
+
   canal.bind("nuevo-mensaje-lobos", (data: any) => {
     pintarMensaje(data.usuario, data.mensaje);
+  });
+  canal.bind("ninia-habilidad", () => {
+    pintarMensajeSistema("La niña abre los ojos");
+    setTimeout(() => {
+      pintarMensajeSistema("La niña cierra los ojos");
+    }, 5000);
   });
 };
 
@@ -58,4 +67,15 @@ const pintarVotoLobo = (votante: string, votado: string) => {
     listaMensajes.appendChild(div);
     listaMensajes.scrollTop = listaMensajes.scrollHeight;
   }
+};
+
+export const desconectarChatLobos = () => {
+  const nombreCanal = "lobos" + id_partida;
+
+  const canal = pusher.channel(nombreCanal);
+
+  if (canal) {
+    canal.unbind_all();
+  }
+  pusher.unsubscribe("lobos" + id_partida);
 };
