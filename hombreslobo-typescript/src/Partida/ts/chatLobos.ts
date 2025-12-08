@@ -2,13 +2,14 @@ import { getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
 import { pintarMensaje } from "./chatAldea";
 import { voltearCartasLobo } from "../../Personajes/ts/voltearCartaPersonaje";
+import type { Jugador } from "./Jugador";
 
 const id_partida = getPartidaId()!;
 
-export const chatLobos = async (jugadores: any[], lobos: any[]) => {
+export const chatLobos = async (lobos: Jugador[]) => {
   const canal = conectarLobos();
 
-  jugadoresLoboFaseNoche(jugadores, lobos);
+  jugadoresLoboFaseNoche(lobos);
   configurarBind(canal);
   configurarVotos(canal);
 };
@@ -29,21 +30,11 @@ const configurarVotos = (canal: any) => {
   });
 };
 
-const jugadoresLoboFaseNoche = async (jugadores: any[], lobos: any[]) => {
+export const jugadoresLoboFaseNoche = async (lobos: Jugador[]) => {
   setTimeout(() => {
-    lobos.forEach((datosLobo: any) => {
-      if (datosLobo && datosLobo.id_personaje === 2) {
-        const jugadorEncontrado = jugadores.find(
-          (j: any) => j.id_jugador === datosLobo.id_jugador
-        );
-
-        if (jugadorEncontrado) {
-          voltearCartasLobo(jugadorEncontrado.nickname, 2);
-        } else {
-          console.warn(
-            `No encontré el nombre para el ID ${datosLobo.id_jugador}`
-          );
-        }
+    lobos.forEach((lobo: Jugador) => {
+      if (lobo.id_personaje) {
+        voltearCartasLobo(lobo.nickname, lobo.id_personaje);
       }
     });
   }, 1000);
