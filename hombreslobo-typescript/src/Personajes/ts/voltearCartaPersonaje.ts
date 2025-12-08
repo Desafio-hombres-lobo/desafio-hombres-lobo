@@ -3,23 +3,24 @@ import {
   ROL_LOBO,
   ROL_NINIA,
   ROL_VIDENTE,
-  ROL_BRUJA
+  ROL_BRUJA,
 } from "./constantes_roles";
 import {
   renderizarCartaAldeano,
   renderizarCartaBruja,
   renderizarCartaLobo,
   renderizarCartaNiña,
-  renderizarCartaVidente
+  renderizarCartaVidente,
 } from "./crearCartaPersonaje";
 
 export const voltearCartaPersonaje = async (
-  nickname: string ,
-  idPersonaje: number
+  nickname: string,
+  idPersonaje: number,
+  slotDiv: HTMLElement
 ) => {
-  const slotDiv = document.querySelector(
-    `.jugador[data-jugador="${nickname}"]`
-  ) as HTMLElement;
+  // const slotDiv = document.querySelector(
+  //   `.jugador[data-jugador="${nickname}"]`
+  // ) as HTMLElement;
   slotDiv.innerHTML = "";
   const id = Number(idPersonaje);
 
@@ -29,10 +30,10 @@ export const voltearCartaPersonaje = async (
     await renderizarCartaLobo(slotDiv, nickname);
   } else if (id === ROL_NINIA) {
     await renderizarCartaNiña(slotDiv, nickname);
-  } else if (id === 3) {
+  } else if (id === ROL_VIDENTE) {
     await renderizarCartaVidente(slotDiv, nickname);
-  } else if (id === ROL_BRUJA){
-    await renderizarCartaBruja(slotDiv, nickname)
+  } else if (id === ROL_BRUJA) {
+    await renderizarCartaBruja(slotDiv, nickname);
   }
 
   slotDiv.classList.add("jugador-eliminado");

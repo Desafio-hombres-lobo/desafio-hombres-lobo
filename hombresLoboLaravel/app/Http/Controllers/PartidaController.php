@@ -215,7 +215,7 @@ class PartidaController extends Controller
 
 
         $rolesEspeciales[] = 3; //aqui agregamos los que queramos, por ejemplo el 3 es la niña asique agregamos un 3
-        $rolesEspeciales[] = 4; 
+        $rolesEspeciales[] = 4;
         $rolesEspeciales[] = 5; //bruja
 
         // Crear mazo con ID´s
@@ -309,7 +309,7 @@ class PartidaController extends Controller
         $partida = Partida::findOrFail($idPartida);
 
         $numJugadores = $request->input('numJugadores', 0);
-        $minJugadores = 5;
+        $minJugadores = 15;
 
         $faltantes = $minJugadores - $numJugadores;
 
