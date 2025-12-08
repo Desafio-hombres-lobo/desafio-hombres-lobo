@@ -47,10 +47,22 @@ class PersonajeSeeder extends Seeder
         $idsLobo = array_filter([$accionVotar?->id, $accionMatar?->id]);
         $lobo->acciones()->attach($idsLobo);
 
+        
+
         $niña = Personaje::create([
             'nombre' => 'Niña',
             'descripcion' => 'Es una aldeana muy curiosa. Durante la fase de noche tiene la habilidad prohibida de espiar el chat de los Lobos, pero debe tener cuidado: si es descubierta, su vida correrá peligro.'
         ]);
+      
+      // VIDENTE
+        $vidente = Personaje::create([
+            'nombre' => 'Vidente',
+            'descripcion' => 'El ojo que todo lo ve.'
+        ]);
+
+        // Vidente puede ver rol de otro jugador y votar
+        $idsVidente = array_filter([$accionVer?->id, $accionVotar?->id]);
+        $vidente->acciones()->attach($idsVidente);
 
     }
 }

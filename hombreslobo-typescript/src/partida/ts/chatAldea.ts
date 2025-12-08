@@ -9,6 +9,7 @@ import {
   renderizarCartaLobo,
   renderizarCartaAldeano,
   renderizarReverso,
+  renderizarCartaVidente,
   renderizarCartaNiña,
 } from "../../Personajes/ts/crearCartaPersonaje";
 import { empezarPartida } from "../../providers/empezarPartida";
@@ -20,7 +21,10 @@ import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { cerrarVotacion, mostrarVotacion } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
 import { votarYHablarBot } from "../../providers/votos/obtenerVotoBot";
-import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
+import {
+  voltearCartaPersonaje,
+  voltearCartaPorVidente,
+} from "../../Personajes/ts/voltearCartaPersonaje";
 import { votarYHablarBotLobo } from "../../providers/votos/obtenerVotoBotsLobo";
 import { obtenerDatosJugadoresPartida } from "../../providers/obtenerDatosJugadores";
 import type { Jugador } from "./Jugador";
@@ -57,6 +61,8 @@ let ronda = 0;
 let rondaFinalizada = false;
 let votos = 0;
 let lobo = false;
+let jugadorVidente = false;
+
 let miRolId: any = null;
 let lobos: Jugador[] = [];
 let aldeanos: Jugador[] = [];
@@ -68,6 +74,7 @@ let botsLobo: Jugador[] = [];
 let aliados: Jugador[] = [];
 let aliadosTotales: Jugador[] = [];
 let lobosTotales: Jugador[] = [];
+let vidente: Jugador[] = [];
 
 async function actualizarListas() {
   jugadores = await obtenerDatosJugadoresPartida(id_partida);
@@ -76,6 +83,7 @@ async function actualizarListas() {
 
   lobos = vivos.filter((j) => j.id_personaje === ROL_LOBO);
   aldeanos = vivos.filter((j) => j.id_personaje === ROL_ALDEANO);
+  vidente = vivos.filter((j) => j.id_personaje === ROL_VIDENTE);
 
   bots = vivos.filter((j) => j.bot);
   humanos = vivos.filter((j) => !j.bot);
@@ -102,6 +110,8 @@ async function actualizarListas() {
     lobos,
     "aldeanos",
     aldeanos,
+    "vidente",
+    vidente,
     "bots",
     bots,
     "humanos",
@@ -124,7 +134,11 @@ if (host) {
 }
 
 const repartirCartasJugadores = async (): Promise<void> => {
-  miRolId = await obtenerRolPersonajeJugador();
+  const miRolId = await obtenerRolPersonajeJugador();
+
+  if (miRolId === ROL_VIDENTE) jugadorVidente = true;
+
+  actualizarListas();
   await actualizarListas();
   for (let i = 0; i < jugadores.length; i++) {
     const jugador = jugadores[i];
@@ -147,6 +161,10 @@ const repartirCartasJugadores = async (): Promise<void> => {
         await chatLobos(lobos);
       } else if (miRolId === ROL_ALDEANO) {
         await renderizarCartaAldeano(slotDiv, miNickname);
+      } else if (miRolId === ROL_VIDENTE) {
+        await renderizarCartaVidente(slotDiv, miNickname);
+      } else {
+        renderizarReverso(slotDiv, nombreJugador);
       } else if (miRolId === ROL_NINIA) {
         await renderizarCartaNiña(slotDiv, miNickname);
       }
@@ -252,6 +270,24 @@ canal.bind("cambio-fase", async (data: any) => {
           votarYHablarBotLobo(id_partida, bot.id_jugador, ronda, dia);
         }, Math.random() * 3000 + 1000);
       }
+    }
+
+    if (jugadorVidente && !muerto) {
+      setTimeout(() => {
+        const enemigosPosibles = vivos.filter((j) => j.nickname !== miNickname);
+
+        if (enemigosPosibles.length > 0) {
+          const indiceAleatorio = Math.floor(
+            Math.random() * enemigosPosibles.length
+          );
+          const objetivo = enemigosPosibles[indiceAleatorio];
+
+          pintarMensajeSistema(
+            `Tu bola de cristal te revela la identidad de ${objetivo.nickname}...`
+          );
+          voltearCartaPorVidente(objetivo.nickname, objetivo.id_personaje);
+        }
+      }, 2000);
     }
   }
 

@@ -88,6 +88,10 @@
 .txt-aldeano:hover {
   background-color: #ffcf8f;
 }
+
+.carta-vidente {
+  background-color: #b941ff;
+}
 /* ESTILOS CARTA NIÑA */
 .carta-niña {
   background-color: #ff85a2;

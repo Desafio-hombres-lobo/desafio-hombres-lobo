@@ -203,6 +203,9 @@ class PartidaController extends Controller
         $totalJugadores = $jugadores->count();
 
         $numLobos = floor($totalJugadores * 0.3);
+        $vidente = 1;
+        $numAldeanos = $totalJugadores - $numLobos - $vidente;
+
 
         // Mínimo un lobo siempre
         if ($numLobos < 1) {
@@ -210,10 +213,6 @@ class PartidaController extends Controller
         }
         $rolesEspeciales = [];
 
-
-        $rolesEspeciales[] = 3; //aqui agregamos los que queramos, por ejemplo el 3 es la niña asique agregamos un 3
-        //$rolesEspeciales[] = 4; vidente...
-        //$rolesEspeciales[] = 5; cazador... etc
 
         // Crear mazo con ID´s
         $mazo = [];
@@ -228,6 +227,10 @@ class PartidaController extends Controller
         }
         while (count($mazo) < $totalJugadores) {
             $mazo[] = 1;
+        }
+
+        for($i = 0; $i < $vidente; $i++){
+            $mazo[] = 3;
         }
 
         shuffle($mazo);
