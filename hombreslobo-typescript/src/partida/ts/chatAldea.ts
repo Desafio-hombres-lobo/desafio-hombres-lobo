@@ -34,6 +34,7 @@ import {
   ROL_ALDEANO,
   ROL_LOBO,
   ROL_NINIA,
+  ROL_VIDENTE,
 } from "../../Personajes/ts/constantes_roles";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
@@ -134,7 +135,7 @@ if (host) {
 }
 
 const repartirCartasJugadores = async (): Promise<void> => {
-  const miRolId = await obtenerRolPersonajeJugador();
+  miRolId = await obtenerRolPersonajeJugador();
 
   if (miRolId === ROL_VIDENTE) jugadorVidente = true;
 
@@ -163,10 +164,10 @@ const repartirCartasJugadores = async (): Promise<void> => {
         await renderizarCartaAldeano(slotDiv, miNickname);
       } else if (miRolId === ROL_VIDENTE) {
         await renderizarCartaVidente(slotDiv, miNickname);
-      } else {
-        renderizarReverso(slotDiv, nombreJugador);
       } else if (miRolId === ROL_NINIA) {
         await renderizarCartaNiña(slotDiv, miNickname);
+      } else {
+        renderizarReverso(slotDiv, nombreJugador);
       }
     } else {
       renderizarReverso(slotDiv, nombreJugador);
