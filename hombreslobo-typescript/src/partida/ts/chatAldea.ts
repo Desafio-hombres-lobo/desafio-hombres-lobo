@@ -1,5 +1,6 @@
 import { estadoJuego } from "./estadoJuego";
 import { interfazJuego } from "./interfazJuego";
+import { logicaJuego } from "./logicaJuego";
 import { getJugador, getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
@@ -40,6 +41,8 @@ import {
 } from "../../Personajes/ts/constantes_roles";
 
 let temporizador: number | null = null;
+//logica
+export const logica = new logicaJuego();
 //Interfaz
 export const ui = new interfazJuego();
 //Estado
@@ -170,58 +173,37 @@ canal.bind("cambio-fase", async (data: any) => {
   if (data.fase === "dia") {
     estado.dia = true;
     ui.pintarMensajeSistema("La aldea despierta, es hora de debatir.");
-    if (host) {
-      for (const bot of estado.bots) {
-        setTimeout(() => {
-          votarYHablarBot(id_partida, bot.id_jugador, estado.ronda, estado.dia);
-        }, Math.random() * 3000 + 1000);
-      }
-    }
   } else {
     estado.dia = false;
     ui.pintarMensajeSistema("Los aldeanos se duermen...");
-    if (host) {
-      for (const bot of estado.botsLobo) {
-        setTimeout(() => {
-          votarYHablarBotLobo(
-            id_partida,
-            bot.id_jugador,
-            estado.ronda,
-            estado.dia
-          );
-        }, Math.random() * 3000 + 1000);
-      }
-    }
 
-    if (estado.soyVidente && !estado.estoyMuerto) {
-      setTimeout(() => {
-        const enemigosPosibles = estado.vivos.filter(
-          (j) => j.nickname !== miNickname
-        );
-
-        if (enemigosPosibles.length > 0) {
-          const indiceAleatorio = Math.floor(
-            Math.random() * enemigosPosibles.length
-          );
-          const objetivo = enemigosPosibles[indiceAleatorio];
-
-          ui.pintarMensajeSistema(
-            `Tu bola de cristal te revela la identidad de ${objetivo.nickname}...`
-          );
-          voltearCartaPorVidente(objetivo.nickname, objetivo.id_personaje);
-        }
-      }, 2000);
-    }
+    logica.ejecutarVidente(
+      estado.soyVidente,
+      estado.estoyMuerto,
+      estado.vivos,
+      estado.miNickname,
+      (msg) => ui.pintarMensajeSistema(msg) //este callback es del que te cuento, no lo entiendo del todo
+    );
   }
+
+  logica.gestionarBots(
+    host,
+    estado.bots,
+    estado.botsLobo,
+    id_partida,
+    estado.ronda,
+    estado.dia
+  );
 
   ui.ocultarTextoEspera();
   actualizarFaseVisual();
   iniciarCuentaAtras(data.tiempoFin);
 });
+
 canal.bind("voto", (data: any) => {
-  if (!estado.dia) return;
-  ui.pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
-  estado.votos++;
+  if (estado.dia) {
+    ui.pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
+  }
 });
 
 canal.bind("votacion-terminada", async (data: any) => {
@@ -236,7 +218,12 @@ canal.bind("votacion-terminada", async (data: any) => {
     mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
   }
 
-  await comprobarVictoria();
+  await logica.comprobarVictoria(
+    host,
+    estado.lobos,
+    estado.aliados,
+    id_partida
+  );
 
   setTimeout(async () => {
     cerrarVotacion();
@@ -340,14 +327,3 @@ canal.bind("iniciar-partida", async () => {
     await cambiarFasePartida(id_partida, !estado.dia);
   }
 });
-
-async function comprobarVictoria() {
-  if (host) {
-    if (estado.lobos.length >= estado.aliados.length) {
-      finalizarPartida(id_partida, "lobos");
-    }
-    if (estado.lobos.length === 0) {
-      finalizarPartida(id_partida, "aldeanos");
-    }
-  }
-}
