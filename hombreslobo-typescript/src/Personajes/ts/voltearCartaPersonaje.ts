@@ -74,12 +74,14 @@ export const voltearCartaPorVidente = async (
   }
   slotDiv.innerHTML = "";
 
-  if (idPersonaje === 3) {
+  if (idPersonaje === ROL_VIDENTE) {
     return;
-  } else if (idPersonaje === 1) {
+  } else if (idPersonaje === ROL_ALDEANO) {
     await renderizarCartaAldeano(slotDiv, nickname);
-  } else if (idPersonaje === 2) {
+  } else if (idPersonaje === ROL_LOBO) {
     await renderizarCartaLobo(slotDiv, nickname);
+  } else if (idPersonaje === ROL_NINIA) {
+    await renderizarCartaNiña(slotDiv, nickname);
   }
   // else if para niña
 
