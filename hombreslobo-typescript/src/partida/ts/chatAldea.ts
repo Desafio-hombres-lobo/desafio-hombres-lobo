@@ -1,3 +1,4 @@
+import { estadoJuego } from "./estadoJuego";
 import { getJugador, getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
@@ -52,62 +53,24 @@ const textoEspera = document.getElementById("texto-espera")!;
 const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
 
 let temporizador: number | null = null;
-let dia: boolean = true;
+
+let yaHasVotado = false;
 let host = false;
 let chatLobosInicializado = false;
-let jugadores: Jugador[] = [];
-let yaHasVotado = false;
-let muerto = false;
 let ronda = 0;
 let rondaFinalizada = false;
 let votos = 0;
-let lobo = false;
 let jugadorVidente = false;
 
 let miRolId: any = null;
-let lobos: Jugador[] = [];
-let aldeanos: Jugador[] = [];
-let vivos: Jugador[] = [];
-let muertos: Jugador[] = [];
-let bots: Jugador[] = [];
-let humanos: Jugador[] = [];
-let botsLobo: Jugador[] = [];
-let aliados: Jugador[] = [];
-let aliadosTotales: Jugador[] = [];
-let lobosTotales: Jugador[] = [];
-let vidente: Jugador[] = [];
 
-async function actualizarListas() {
-  jugadores = await obtenerDatosJugadoresPartida(id_partida);
-  vivos = jugadores.filter((j) => j.estado !== 0);
-  muertos = jugadores.filter((j) => j.estado === 0);
-
-  lobos = vivos.filter((j) => j.id_personaje === ROL_LOBO);
-  aldeanos = vivos.filter((j) => j.id_personaje === ROL_ALDEANO);
-  vidente = vivos.filter((j) => j.id_personaje === ROL_VIDENTE);
-
-  bots = vivos.filter((j) => j.bot);
-  humanos = vivos.filter((j) => !j.bot);
-
-  botsLobo = bots.filter((j) => j.id_personaje === ROL_LOBO);
-
-  aliados = vivos.filter((j) => j.id_personaje !== ROL_LOBO);
-  if (muertos.some((j) => j.nickname === miNickname)) {
-    muerto = true;
-    if (!chatLobosInicializado) {
-      chatLobos(lobos);
-      chatLobosInicializado = true;
-    }
-  }
-
-  aliadosTotales = jugadores.filter((j) => j.id_personaje !== ROL_LOBO);
-  lobosTotales = jugadores.filter((j) => j.id_personaje == ROL_LOBO);
-}
 const miNickname = getJugador()!;
+export const estado = new estadoJuego(id_partida, miNickname);
+
 const jugadorActual = await obtenerJugadorActual();
 const idJugador = jugadorActual.datos?.id;
-
-actualizarListas();
+const datosServidor = await obtenerDatosJugadoresPartida(id_partida);
+estado.setJugadores(datosServidor);
 
 host = await verificarHost(id_partida);
 if (host) {
@@ -119,10 +82,8 @@ const repartirCartasJugadores = async (): Promise<void> => {
 
   if (miRolId === ROL_VIDENTE) jugadorVidente = true;
 
-  actualizarListas();
-  await actualizarListas();
-  for (let i = 0; i < jugadores.length; i++) {
-    const jugador = jugadores[i];
+  for (let i = 0; i < estado.jugadores.length; i++) {
+    const jugador = estado.jugadores[i];
     const nombreJugador = String(jugador.nickname).trim();
     const numSlot = i + 1;
     const idJugadorCarta = jugador.id_jugador;
@@ -137,9 +98,8 @@ const repartirCartasJugadores = async (): Promise<void> => {
     if (esMiUsuario) {
       slotDiv.classList.add("mi-jugador");
       if (miRolId == ROL_LOBO) {
-        lobo = true;
         await renderizarCartaLobo(slotDiv, miNickname);
-        await chatLobos(lobos);
+        await chatLobos(estado.lobos);
       } else if (miRolId === ROL_ALDEANO) {
         await renderizarCartaAldeano(slotDiv, miNickname);
       } else if (miRolId === ROL_VIDENTE) {
@@ -156,15 +116,15 @@ const repartirCartasJugadores = async (): Promise<void> => {
     slotDiv.addEventListener("click", async () => {
       if (esMiUsuario) return;
       // Votar si es de día, o si es de noche y soy lobo
-      if (!dia && !lobo) return;
+      if (!estado.dia && !estado.soyLobo) return;
       if (yaHasVotado) return;
-      if (muerto) return;
+      if (estado.estoyMuerto) return;
       const idVotado = parseInt(slotDiv.dataset.id!);
       const payload = {
         id_jugador: idJugador,
         id_jugador_votado: idVotado,
         ronda,
-        dia: dia,
+        dia: estado.dia,
         idPersonaje: miRolId,
       };
 
@@ -180,23 +140,23 @@ const repartirCartasJugadores = async (): Promise<void> => {
 
 function actualizarFaseVisual() {
   const btnNiña = document.getElementById("btn-niña")! as HTMLInputElement;
-  if (muerto) {
+  if (estado.estoyMuerto) {
     inputMensaje.disabled = true;
     inputMensaje.placeholder = "No puedes hablar, estás muerto.";
   }
-  if (dia) {
+  if (estado.dia) {
     spanFase.innerHTML = "FASE: DÍA";
     headerChat.innerHTML = "CHAT DE LA ALDEA";
     centroInfo.classList.remove("fase-noche");
     centroInfo.classList.add("fase-dia");
     listaMensajes.classList.remove("chat-noche");
     btnNiña.classList.add("oculto");
-    if (!muerto) {
+    if (!estado.estoyMuerto) {
       inputMensaje.disabled = false;
       inputMensaje.placeholder = "Escribe en la aldea...";
     }
   } else {
-    if (miRolId === ROL_NINIA && !muerto) {
+    if (miRolId === ROL_NINIA && !estado.estoyMuerto) {
       btnNiña.classList.remove("oculto");
       btnNiña.onclick = function () {
         verChatLobos(btnNiña, listaMensajes);
@@ -206,14 +166,14 @@ function actualizarFaseVisual() {
     headerChat.innerHTML = "CHAT DE LOS LOBOS";
     centroInfo.classList.remove("fase-dia");
     centroInfo.classList.add("fase-noche");
-    if (!lobo && !muerto) {
+    if (!estado.soyLobo && !estado.soyLobo) {
       listaMensajes.classList.add("chat-noche");
       inputMensaje.disabled = true;
       inputMensaje.placeholder = "Solo los lobos pueden hablar de noche.";
     } else {
       listaMensajes.classList.remove("chat-noche");
     }
-    if (lobo && !muerto) {
+    if (estado.soyLobo && !estado.estoyMuerto) {
       inputMensaje.disabled = false;
       inputMensaje.placeholder = "Habla con los lobos...";
     }
@@ -230,32 +190,34 @@ canal.bind("nuevo-mensaje", (data: any) => {
 });
 
 canal.bind("cambio-fase", async (data: any) => {
-  actualizarListas();
+  estado.setJugadores(datosServidor);
 
   if (data.fase === "dia") {
-    dia = true;
+    estado.dia = true;
     pintarMensajeSistema("La aldea despierta, es hora de debatir.");
     if (host) {
-      for (const bot of bots) {
+      for (const bot of estado.bots) {
         setTimeout(() => {
-          votarYHablarBot(id_partida, bot.id_jugador, ronda, dia);
+          votarYHablarBot(id_partida, bot.id_jugador, ronda, estado.dia);
         }, Math.random() * 3000 + 1000);
       }
     }
   } else {
-    dia = false;
+    estado.dia = false;
     pintarMensajeSistema("Los aldeanos se duermen...");
     if (host) {
-      for (const bot of botsLobo) {
+      for (const bot of estado.botsLobo) {
         setTimeout(() => {
-          votarYHablarBotLobo(id_partida, bot.id_jugador, ronda, dia);
+          votarYHablarBotLobo(id_partida, bot.id_jugador, ronda, estado.dia);
         }, Math.random() * 3000 + 1000);
       }
     }
 
-    if (jugadorVidente && !muerto) {
+    if (jugadorVidente && !estado.estoyMuerto) {
       setTimeout(() => {
-        const enemigosPosibles = vivos.filter((j) => j.nickname !== miNickname);
+        const enemigosPosibles = estado.vivos.filter(
+          (j) => j.nickname !== miNickname
+        );
 
         if (enemigosPosibles.length > 0) {
           const indiceAleatorio = Math.floor(
@@ -279,7 +241,7 @@ canal.bind("cambio-fase", async (data: any) => {
   iniciarCuentaAtras(data.tiempoFin);
 });
 canal.bind("voto", (data: any) => {
-  if (!dia) return;
+  if (!estado.dia) return;
   pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
   votos++;
 });
@@ -287,7 +249,7 @@ canal.bind("voto", (data: any) => {
 canal.bind("votacion-terminada", async (data: any) => {
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-    await actualizarListas();
+    estado.setJugadores(datosServidor);
 
     if (data.idPersonaje) {
       await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
@@ -301,7 +263,7 @@ canal.bind("votacion-terminada", async (data: any) => {
   setTimeout(async () => {
     cerrarVotacion();
     if (host) {
-      await cambiarFasePartida(id_partida, !dia);
+      await cambiarFasePartida(id_partida, !estado.dia);
     }
   }, 3000);
 });
@@ -377,7 +339,7 @@ formChat.addEventListener("submit", async (e) => {
     if (host) {
       try {
         await finalizarVotacion(id_partida, ronda);
-        await cambiarFasePartida(id_partida, !dia);
+        await cambiarFasePartida(id_partida, !estado.dia);
         ronda++;
         return;
       } catch (e) {
@@ -386,20 +348,19 @@ formChat.addEventListener("submit", async (e) => {
     }
   }
   try {
-    if (!dia && lobo && !muerto) {
+    if (!estado.dia && estado.soyLobo && estado.estoyMuerto) {
       await enviarMensajeLobos(mensaje, id_partida);
     } else {
-      if (!muerto) await enviarMensaje(mensaje, id_partida);
+      if (!estado.estoyMuerto) await enviarMensaje(mensaje, id_partida);
     }
   } catch (error) {
     console.error(error);
   }
 });
 canal.bind("iniciar-partida", async () => {
-  await actualizarListas();
   await repartirCartasJugadores();
   if (host) {
-    await cambiarFasePartida(id_partida, !dia);
+    await cambiarFasePartida(id_partida, !estado.dia);
   }
 });
 
@@ -441,10 +402,10 @@ export const pintarMensajeSistema = (texto: string) => {
 
 async function comprobarVictoria() {
   if (host) {
-    if (lobos.length >= aliados.length) {
+    if (estado.lobos.length >= estado.aliados.length) {
       finalizarPartida(id_partida, "lobos");
     }
-    if (lobos.length === 0) {
+    if (estado.lobos.length === 0) {
       finalizarPartida(id_partida, "aldeanos");
     }
   }

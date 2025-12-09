@@ -6,7 +6,7 @@ import {
   ROL_VIDENTE,
 } from "../../Personajes/ts/constantes_roles";
 
-export class GameState {
+export class estadoJuego {
   public idPartida: string;
   public miNickname: string;
 
