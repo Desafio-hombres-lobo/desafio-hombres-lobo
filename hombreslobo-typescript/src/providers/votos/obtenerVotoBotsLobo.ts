@@ -1,7 +1,6 @@
 import { getJSONHeaders } from "../../autenticacion/ts/header";
 import { construirApi } from "../../autenticacion/ts/apiFetch";
 import { enviarMensajeBotLobo } from "../enviarMensaje";
-import { pintarMensaje } from "../../Partida/ts/chatAldea";
 
 const esperar = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
@@ -47,7 +46,7 @@ export const votarYHablarBotLobo = async (
       await enviarMensajeBotLobo({
         message: mensajeFinal,
         id_partida: idPartida.toString(),
-        bot: idBot
+        bot: idBot,
       });
     }
 
@@ -58,7 +57,7 @@ export const votarYHablarBotLobo = async (
         voto_bot: objetivo,
         id_bot: idBot,
         ronda: ronda,
-        dia: dia
+        dia: dia,
       }),
     });
 

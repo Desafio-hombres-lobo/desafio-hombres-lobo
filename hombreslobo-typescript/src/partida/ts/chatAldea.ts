@@ -40,7 +40,6 @@ import {
 } from "../../Personajes/ts/constantes_roles";
 
 let temporizador: number | null = null;
-let host = false;
 //Interfaz
 export const ui = new interfazJuego();
 //Estado
@@ -53,9 +52,17 @@ const idJugador = jugadorActual.datos?.id;
 const datosServidor = await obtenerDatosJugadoresPartida(id_partida);
 estado.setJugadores(datosServidor);
 
-host = await verificarHost(id_partida);
+let host = await verificarHost(id_partida);
 if (host) {
-  ui.toggleBtnIniciar;
+  ui.toggleBtnIniciar(true, "Iniciar partida");
+}
+
+if (ui.btnIniciarElement) {
+  ui.btnIniciarElement.addEventListener("click", async () => {
+    ui.deshabilitarBtnIniciar("Iniciando...");
+    await empezarPartida(id_partida);
+    ui.toggleBtnIniciar(false);
+  });
 }
 
 const repartirCartasJugadores = async (): Promise<void> => {
@@ -207,9 +214,7 @@ canal.bind("cambio-fase", async (data: any) => {
     }
   }
 
-  if (textoEspera) {
-    textoEspera.classList.add("oculto");
-  }
+  ui.ocultarTextoEspera();
   actualizarFaseVisual();
   iniciarCuentaAtras(data.tiempoFin);
 });
@@ -244,8 +249,7 @@ canal.bind("votacion-terminada", async (data: any) => {
 canal.bind("fin-partida", async (data: any) => {
   const miRol = await obtenerRolPersonajeJugador();
   const textoTitulo = `¡HAN GANADO LOS ${data.equipo.toUpperCase()}!`;
-  mostrarFinPartida(textoTitulo);
-  let divFinal = document.getElementById("contenedor-final");
+  let divFinal = ui.mostrarFinPartida(textoTitulo, null);
   let h2 = document.createElement("h2");
 
   if (miRol === 2) {
@@ -282,7 +286,7 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
       if (temporizador) {
         window.clearInterval(temporizador);
         temporizador = null;
-        reloj.innerHTML = '<i class="fas fa-clock"></i> 00:00';
+        ui.actualizarReloj('<i class="fas fa-clock"></i> 00:00');
         estado.rondaFinalizada = true;
         if (host) {
           try {
@@ -298,15 +302,15 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
     const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
     const minStr = minutos < 10 ? "0" + minutos : minutos;
     const segStr = segundos < 10 ? "0" + segundos : segundos;
-    reloj.innerHTML = `<i class="fas fa-clock"></i> ${minStr}:${segStr}`;
+    ui.actualizarReloj(`<i class="fas fa-clock"></i> ${minStr}:${segStr}`);
   }, 1000);
 };
 
-formChat.addEventListener("submit", async (e) => {
+ui.formChat.addEventListener("submit", async (e) => {
   e.preventDefault();
   const mensaje = ui.mensajeInput;
   if (!mensaje) return;
-  ui.limpiarInput;
+  ui.limpiarInput();
 
   if (mensaje === "/cambiar") {
     if (host) {
@@ -337,17 +341,6 @@ canal.bind("iniciar-partida", async () => {
   }
 });
 
-if (btnIniciar) {
-  btnIniciar.addEventListener("click", async () => {
-    btnIniciar.disabled = true;
-    btnIniciar.innerText = "Iniciando...";
-    await empezarPartida(id_partida);
-    //await repartirCartasJugadores();
-    //await cambiarFasePartida(id_partida, !dia);
-    btnIniciar.classList.add("oculto");
-  });
-}
-
 async function comprobarVictoria() {
   if (host) {
     if (estado.lobos.length >= estado.aliados.length) {
@@ -357,15 +350,4 @@ async function comprobarVictoria() {
       finalizarPartida(id_partida, "aldeanos");
     }
   }
-}
-
-function mostrarFinPartida(texto: string) {
-  const overlay = document.createElement("div");
-  overlay.classList.add("fin-overlay");
-  overlay.innerHTML = `
-    <div class="fin-contenedor" id="contenedor-final">
-      <h1>${texto}</h1>
-    </div>
-  `;
-  document.body.appendChild(overlay);
 }
