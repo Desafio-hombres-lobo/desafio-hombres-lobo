@@ -7,7 +7,6 @@ export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
   const token = getToken();
 
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return false;
   }
 
@@ -28,7 +27,6 @@ export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
       const errorDatos = data.errors
         ? JSON.stringify(data.errors)
         : data.message;
-      alert("Error al cambiar el nickname" + JSON.stringify(errorDatos));
       return false;
     }
 

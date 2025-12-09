@@ -5,7 +5,6 @@ import { getJSONHeaders } from "../autenticacion/ts/header";
 export const obtenerJugadorActual = async () => {
   const token = getToken();
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return { ok: false, error: "No autenticado" };
   }
 
@@ -25,10 +24,8 @@ export const obtenerJugadorActual = async () => {
 
     const datos = await res.json();
     return { ok: true, datos };
-
   } catch (error) {
     console.error("Error obteniendo jugador actual:", error);
     return { ok: false, error };
   }
 };
-

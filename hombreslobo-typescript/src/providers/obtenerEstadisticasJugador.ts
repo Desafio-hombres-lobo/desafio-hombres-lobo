@@ -8,7 +8,6 @@ export const obtenerEstadisticasJugador = async () => {
   const token = getToken();
 
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return false;
   }
 
@@ -25,7 +24,6 @@ export const obtenerEstadisticasJugador = async () => {
 
     if (!response.ok) {
       const errorDatos = data.message || "Error desconocido";
-      alert("Error al mostrar las estadísticas: " + errorDatos);
       return null;
     }
 

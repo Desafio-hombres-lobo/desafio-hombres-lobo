@@ -6,7 +6,6 @@ export const obtenerNuevaPassword = async () => {
   const token = getToken();
 
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return false;
   }
 
@@ -23,7 +22,6 @@ export const obtenerNuevaPassword = async () => {
 
     if (!response.ok) {
       const errorDatos = data.message || "Error desconodido";
-      alert("Error al cambiar la contraseña del usuario: " + errorDatos);
       return null;
     }
 

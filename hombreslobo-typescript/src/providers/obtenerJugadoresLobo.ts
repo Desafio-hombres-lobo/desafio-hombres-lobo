@@ -8,7 +8,6 @@ export const obtenerJugadoresLobos = async (): Promise<any[]> => {
   const id_partida = getPartidaId();
 
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return [];
   }
 
@@ -32,6 +31,6 @@ export const obtenerJugadoresLobos = async (): Promise<any[]> => {
     return jugadoresLobo || [];
   } catch (error) {
     console.error(error);
-    return[]
+    return [];
   }
 };

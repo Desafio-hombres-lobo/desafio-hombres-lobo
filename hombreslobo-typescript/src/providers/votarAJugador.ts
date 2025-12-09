@@ -10,7 +10,6 @@ export const votarAJugador = async (
   const token = getToken();
 
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return false;
   }
 
@@ -35,7 +34,7 @@ export const votarAJugador = async (
     const jugadorVotado = data;
 
     // BORRAR
-    console.log(jugadorVotado)
+    console.log(jugadorVotado);
 
     return jugadorVotado;
   } catch (error) {

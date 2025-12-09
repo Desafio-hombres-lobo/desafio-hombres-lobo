@@ -6,7 +6,6 @@ export const obtenerJugadorMasVotado = async (idPartida: number) => {
   const token = getToken();
 
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return false;
   }
 

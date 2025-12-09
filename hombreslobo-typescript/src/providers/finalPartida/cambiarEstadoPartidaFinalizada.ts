@@ -5,12 +5,10 @@ import { getJSONHeaders } from "../../autenticacion/ts/header";
 export const finalizarPartida = async (partidaId: string, equipo: string) => {
   const token = getToken();
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return { ok: false, error: "No autenticado" };
   }
 
   try {
-
     const headers = getJSONHeaders();
 
     const endpoint = `/partida/${partidaId}/finalizar-partida`;
@@ -19,7 +17,7 @@ export const finalizarPartida = async (partidaId: string, equipo: string) => {
       method: "POST",
       headers: headers,
       body: JSON.stringify({
-        equipo:equipo
+        equipo: equipo,
       }),
     });
 
@@ -28,7 +26,6 @@ export const finalizarPartida = async (partidaId: string, equipo: string) => {
     if (!res.ok) {
       return { ok: false, error: datos };
     }
-
 
     return { ok: true, datos };
   } catch (error) {

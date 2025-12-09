@@ -2,11 +2,9 @@ import { construirApi } from "../autenticacion/ts/apiFetch";
 import { getToken } from "../autenticacion/ts/auth";
 import { getJSONHeaders } from "../autenticacion/ts/header";
 
-
 export const obtenerCreadorPartida = async (idPartida: string | number) => {
   const token = getToken();
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return { ok: false, error: "No autenticado" };
   }
 
