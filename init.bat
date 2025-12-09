@@ -8,7 +8,17 @@ set EXEC_COMMAND=php artisan reverb:start --host=0.0.0.0 --port=8080
 
 echo Iniciando docker compose...
 docker compose down
-docker compose up -d --build
+
+:: Verificamos si existe el archivo "build.lock"
+IF EXIST "build.lock" (
+    echo Detectada instalacion previa. Iniciando sin reconstruir...
+    docker compose up -d
+) ELSE (
+    echo Primera ejecucion detectada. Construyendo imagenes...
+    docker compose up -d --build
+    :: Creamos el archivo vacio para recordar que ya construimos
+    type NUL > build.lock
+)
 
 echo.
 echo ============================
