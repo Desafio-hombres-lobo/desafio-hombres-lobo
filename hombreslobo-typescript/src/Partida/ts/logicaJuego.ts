@@ -5,8 +5,7 @@ import { voltearCartaPorVidente } from "../../Personajes/ts/voltearCartaPersonaj
 import type { Jugador } from "./Jugador";
 
 export class logicaJuego {
-  // --- LÓGICA DE BOTS ---
-
+  private rondaGestionada: number = -1;
   public async gestionarBots(
     host: boolean,
     bots: Jugador[],
@@ -16,7 +15,12 @@ export class logicaJuego {
     esDia: boolean
   ) {
     if (!host) return;
+    if (this.rondaGestionada === ronda) {
+      console.warn("⚠️ Bots ya gestionados para la ronda " + ronda);
+      return;
+    }
 
+    this.rondaGestionada = ronda;
     if (esDia) {
       for (const bot of bots) {
         setTimeout(() => {

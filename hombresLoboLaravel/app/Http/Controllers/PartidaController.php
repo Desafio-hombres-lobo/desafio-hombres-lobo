@@ -270,6 +270,7 @@ class PartidaController extends Controller
 
     public function empezarPartida($idPartida)
     {
+        Voto::where('id_partida', $idPartida)->delete();
         event(new EmpezarPartida($idPartida));
         return response()->json([
             'message' => 'Partida iniciada correctamente',

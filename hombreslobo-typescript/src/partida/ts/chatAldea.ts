@@ -170,6 +170,17 @@ canal.bind("nuevo-mensaje", (data: any) => {
 canal.bind("cambio-fase", async (data: any) => {
   estado.setJugadores(await obtenerDatosJugadoresPartida(id_partida));
 
+  // --- 🔍 LOG DE DEPURACIÓN ---
+  console.group("🕵️ DEBUG FASE " + (data.fase || ""));
+  console.log("Total Jugadores:", estado.jugadores.length);
+  console.log("Total VIVOS:", estado.vivos.length);
+  console.log(
+    "Lista Vivos:",
+    estado.vivos.map((j) => j.nickname)
+  ); // <--- Aquí verás si estás tú
+  console.log("¿Estoy muerto según el sistema?:", estado.estoyMuerto);
+  console.groupEnd();
+  // -----------------------------
   if (data.fase === "dia") {
     estado.dia = true;
     ui.pintarMensajeSistema("La aldea despierta, es hora de debatir.");
