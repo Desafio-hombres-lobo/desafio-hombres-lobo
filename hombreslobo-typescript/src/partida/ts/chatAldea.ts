@@ -11,6 +11,7 @@ import {
   renderizarReverso,
   renderizarCartaVidente,
   renderizarCartaNiña,
+  renderizarCartaBruja,
 } from "../../Personajes/ts/crearCartaPersonaje";
 import { empezarPartida } from "../../providers/empezarPartida";
 import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
@@ -32,10 +33,14 @@ import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPart
 import { verChatLobos } from "./funcionNinia";
 import {
   ROL_ALDEANO,
+  ROL_BRUJA,
   ROL_LOBO,
   ROL_NINIA,
   ROL_VIDENTE,
 } from "../../Personajes/ts/constantes_roles";
+import { revivirJugador } from "../../providers/Bruja/revivirJugador";
+import { eliminarJugador } from "../../providers/Bruja/eliminarJugador";
+import { cambiarTemporizador } from "../../providers/Bruja/cambiarTemporizador";
 
 const listaMensajes = document.getElementById("lista-mensajes")!;
 export const formChat = document.getElementById("form-chat") as HTMLFormElement;
@@ -76,6 +81,16 @@ let aliados: Jugador[] = [];
 let aliadosTotales: Jugador[] = [];
 let lobosTotales: Jugador[] = [];
 let vidente: Jugador[] = [];
+let bruja: Jugador[] =[]
+
+
+let brujaResolvio= false;
+let pocionEliminar = true;
+let pocionRevivir= true;
+let brujaRevivio = false;
+let brujaViva:boolean;
+
+
 
 async function actualizarListas() {
   jugadores = await obtenerDatosJugadoresPartida(id_partida);
@@ -85,6 +100,7 @@ async function actualizarListas() {
   lobos = vivos.filter((j) => j.id_personaje === ROL_LOBO);
   aldeanos = vivos.filter((j) => j.id_personaje === ROL_ALDEANO);
   vidente = vivos.filter((j) => j.id_personaje === ROL_VIDENTE);
+  bruja = vivos.filter((j) => j.id_personaje === ROL_BRUJA);
 
   bots = vivos.filter((j) => j.bot);
   humanos = vivos.filter((j) => !j.bot);
@@ -166,7 +182,9 @@ const repartirCartasJugadores = async (): Promise<void> => {
         await renderizarCartaVidente(slotDiv, miNickname);
       } else if (miRolId === ROL_NINIA) {
         await renderizarCartaNiña(slotDiv, miNickname);
-      } else {
+      }  else if (miRolId === ROL_BRUJA) {
+        await renderizarCartaBruja(slotDiv, miNickname);
+      }else {
         renderizarReverso(slotDiv, nombreJugador);
       }
     } else {
@@ -305,15 +323,85 @@ canal.bind("voto", (data: any) => {
 });
 
 canal.bind("votacion-terminada", async (data: any) => {
-  if (data.resultado === "eliminado") {
-    mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-    await actualizarListas();
+  brujaViva = vivos.some((j) => j.id_personaje === ROL_BRUJA && !j.bot);
+  
+  // 1. Si hay bruja viva y es de noche, esperamos su acción
+  if (brujaViva && !dia) {
+    if (temporizador) clearInterval(temporizador);
+    iniciarCuentaAtras(new Date(Date.now() + 20000).toISOString()); 
+    cambiarTemporizador(id_partida, 20);
 
-    if (data.idPersonaje) {
-      await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
+    const cartaVictima = document.querySelector(
+      `[data-id="${data.idEliminado}"]`
+    ) as HTMLElement | null;
+
+    pintarMensajeSistema("La bruja está mezclando sus pociones");
+
+    // Esperamos a la bruja (o simulamos espera si no lo somos)
+    const res = await mostrarOpcionesBruja(
+      data.idEliminado,
+      data.eliminado,
+      cartaVictima
+    );
+
+    // --- SI SOY LA BRUJA Y HE ACTUADO ---
+    if (res.accion === "revivir") {
+      brujaResolvio = true;
+      mostrarVotacion(`¡La Bruja ha revivido a ${data.eliminado}!`);
+      setTimeout(async () => {
+        cerrarVotacion();
+        if (host) await cambiarFasePartida(id_partida, !dia);
+      }, 3000);
+      return;
     }
+
+    if (res.accion === "matar") {
+      brujaResolvio = true;
+      // Mostrar primero resultado lobos
+      if (data.resultado === "eliminado") {
+        mostrarVotacion(`¡${data.eliminado} ha sido eliminado por los Lobos!`);
+      } else {
+        mostrarVotacion("¡Empate! Nadie ha sido eliminado por los Lobos.");
+      }
+      
+      // Mostrar después resultado bruja
+      if (res.nombre) {
+        await new Promise((r) => setTimeout(r, 600));
+        mostrarVotacion(`¡${res.nombre} ha sido eliminado por la Bruja!`);
+      }
+      await comprobarVictoria();
+      setTimeout(async () => {
+        cerrarVotacion();
+        if (host) await cambiarFasePartida(id_partida, !dia);
+      }, 3000);
+      return;
+    }
+
+    // --- SI NO SOY LA BRUJA (o la bruja no hizo nada) ---
+    // AQUÍ ESTABA EL ERROR: Comprobamos si alguien revivió durante la espera
+    
+    if (brujaRevivio) {
+        // Si la bruja revivió (evento recibido por pusher mientras esperábamos),
+        // NO mostramos mensaje de eliminado. El evento 'bruja-revive' ya lo mostró.
+        // Simplemente dejamos pasar el código hacia comprobarVictoria/cambiarFase.
+    } else {
+        // Lógica estándar si no hubo resurrección
+        if (data.resultado === "eliminado") {
+            mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+            await actualizarListas(); 
+        } else if (data.resultado === "empate") {
+            mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
+        }
+    }
+    
   } else {
-    mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
+    // 2. Si NO hay bruja o no es de noche (lógica antigua)
+    if (data.resultado === "eliminado" && !brujaRevivio) {
+        mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+        await actualizarListas();
+    } else if (data.resultado === "empate") {
+        mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
+    }
   }
 
   await comprobarVictoria();
@@ -323,6 +411,34 @@ canal.bind("votacion-terminada", async (data: any) => {
     if (host) {
       await cambiarFasePartida(id_partida, !dia);
     }
+  }, 3000);
+});
+
+canal.bind("bruja-elimina", async (data: any) => {
+  brujaResolvio = true;
+
+  mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
+  await actualizarListas();
+  iniciarCuentaAtras(new Date(Date.now() + 1).toISOString()); 
+  cambiarTemporizador(id_partida, 1)
+  await comprobarVictoria();
+
+  setTimeout(() => {
+    cerrarVotacion();
+  }, 3000);
+});
+
+canal.bind("bruja-revive", async (data: any) => {
+  brujaResolvio = true;
+  brujaRevivio = true;
+
+  mostrarVotacion(`¡Nadie ha sido eliminado esta noche!`);
+      if (temporizador) clearInterval(temporizador);
+    iniciarCuentaAtras(new Date(Date.now() + 1).toISOString()); 
+    cambiarTemporizador(id_partida, 1)
+  await actualizarListas();
+  setTimeout(() => {
+    cerrarVotacion();
   }, 3000);
 });
 
@@ -458,6 +574,134 @@ export const pintarMensajeSistema = (texto: string) => {
   listaMensajes.appendChild(div);
   listaMensajes.scrollTop = listaMensajes.scrollHeight;
 };
+
+
+type BrujaAccion = {
+  accion: "revivir" | "matar" | "nada";
+  nombre?: string;
+  id?: number;
+  idPersonaje?: number;
+};
+
+function mostrarOpcionesBruja(
+  victimaLobos: number,
+  nicknameEliminado: string,
+  cartaVictima: HTMLElement | null 
+): Promise<BrujaAccion> {
+  return new Promise(async (resolve) => {
+    cerrarOpcionesBruja(); 
+
+   
+    if (!cartaVictima) {
+      await new Promise((r) => setTimeout(r, 50));
+    }
+    
+    // Si NO soy la bruja, esperamos el tiempo y retornamos nada
+    if (miRolId !== ROL_BRUJA) {
+      const timeoutMs = 20000;
+      window.setTimeout(() => {
+        resolve({ accion: "nada" });
+      }, timeoutMs);
+      return;
+    }
+
+    brujaResolvio = true;
+
+    // --- LÓGICA DE REVIVIR ---
+    if (victimaLobos && pocionRevivir) {
+      // Buscamos el div principal del jugador (creado en repartirCartasJugadores)
+      const slotVictima = document.querySelector(`.jugador[data-id="${victimaLobos}"]`);
+      
+      // Verificamos que sea la víctima correcta
+      if (slotVictima) {
+        const nombreVictima = slotVictima.getAttribute("data-jugador");
+
+        // Solo mostramos revivir si coincide con quien murió (seguridad extra)
+        if (nombreVictima === nicknameEliminado) {
+            const btnRev = document.createElement("button");
+            btnRev.className = "btn-bruja-accion btn-bruja-revivir"; // Clase genérica + específica
+            btnRev.textContent = "REVIVIR";
+            btnRev.style.zIndex = "100"; // Asegurar que esté encima de la carta
+
+            btnRev.onclick = async (e) => {
+              e.stopPropagation(); // Evitar que el click voltee la carta o haga otras cosas
+              try {
+                brujaResolvio = true;
+                await revivirJugador(id_partida, victimaLobos);
+                pocionRevivir = false;
+                mostrarVotacion("Nadie ha sido eliminado");
+                cerrarOpcionesBruja();
+                resolve({ accion: "revivir" });
+              } catch (e) {
+                console.error(e);
+                cerrarOpcionesBruja();
+                resolve({ accion: "nada" });
+              }
+            };
+            slotVictima.appendChild(btnRev);
+        }
+      }
+    }
+
+    if (pocionEliminar) {
+      const brujaJugador = vivos.find((j) => j.id_personaje === ROL_BRUJA);
+      const todosLosSlots = document.querySelectorAll(".jugador");
+
+      todosLosSlots.forEach((slot) => {
+        const idTarget = Number(slot.getAttribute("data-id"));
+        
+        if (!idTarget) return;
+        if (brujaJugador && idTarget === brujaJugador.id_jugador) return;
+        if (idTarget === victimaLobos) return;
+        const estaVivo = vivos.some(v => v.id_jugador === idTarget);
+        if (!estaVivo) return;
+
+
+        const btnKill = document.createElement("button");
+        btnKill.className = "btn-bruja-accion btn-bruja-matar";
+        btnKill.textContent = "ELIMINAR";
+        btnKill.style.zIndex = "100";
+
+        btnKill.onclick = async (e) => {
+          e.stopPropagation();
+          try {
+            brujaResolvio = true;
+            await eliminarJugador(id_partida, idTarget);
+            pocionEliminar = false;
+            await actualizarListas();
+            
+            const victima = vivos.find((j) => j.id_jugador === idTarget); 
+            const nombreVictima = victima ? victima.nickname : slot.getAttribute("data-jugador");
+            const idPersonajeVictima = victima ? victima.id_personaje : undefined;
+
+            cerrarOpcionesBruja();
+            resolve({
+              accion: "matar",
+              nombre: String(nombreVictima),
+              id: idTarget,
+              idPersonaje: idPersonajeVictima,
+            });
+          } catch (e) {
+            console.error(e);
+            cerrarOpcionesBruja();
+            resolve({ accion: "nada" });
+          }
+        };
+
+        slot.appendChild(btnKill);
+      });
+    }
+    const timeoutMs = 20000;
+    window.setTimeout(() => {
+      cerrarOpcionesBruja();
+      resolve({ accion: "nada" });
+    }, timeoutMs);
+  });
+}
+
+function cerrarOpcionesBruja() {
+  document.querySelectorAll(".btn-bruja-accion").forEach((btn) => btn.remove());
+}
 
 async function comprobarVictoria() {
   if (host) {

@@ -577,3 +577,41 @@ body {
     pointer-events: auto;
   }
 }
+
+
+.btn-bruja-accion {
+    position: absolute;
+    bottom: 5px; /* Un poco más arriba del borde inferior */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    /* ESTÉTICA */
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    border: 2px solid white;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    
+    /* CRÍTICO: Para que se vea encima de la carta */
+    z-index: 9999 !important; 
+}
+
+.btn-bruja-revivir {
+    background-color: #2ecc71; /* Verde */
+    color: white;
+    top: 50%; /* En el centro absoluto para revivir */
+    bottom: auto;
+}
+
+.btn-bruja-matar {
+    background-color: #e74c3c; /* Rojo */
+    color: white;
+}
+
+.btn-bruja-accion:hover {
+    transform: translateX(-50%) scale(1.1);
+    background-color: #f1c40f; /* Amarillo al pasar ratón */
+    color: black;
+}

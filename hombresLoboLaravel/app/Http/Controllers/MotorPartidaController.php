@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\BrujaElimina;
+use App\Events\BrujaRevivir;
 use App\Events\CambiarFase;
+use App\Events\CambiarTemporizador;
 use App\Events\VerLobos;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Partida;
 use App\Models\Jugador;
+use App\Models\JugadorPartidaPersonaje;
 
 class MotorPartidaController extends Controller
 {
@@ -56,5 +60,67 @@ class MotorPartidaController extends Controller
         return response()->json([
             'mensaje' => 'ok',
         ]);
+    }
+
+    public function revivir(Request $request)
+    {
+        $idEliminado = $request->idEliminado;
+        $idPartida   = $request->idPartida;
+
+        $eliminado = Jugador::find($idEliminado);
+
+        $partida = Partida::find($idPartida);
+        $partida->jugadoresPartidaEstado()
+            ->updateExistingPivot($idEliminado, ['estado' => 1]);
+
+        $datos = JugadorPartidaPersonaje::query()
+            ->where('id_jugador', $idEliminado)
+            ->where('id_partida', $idPartida)
+            ->select('id_jugador', 'id_partida', 'id_personaje', 'estado')
+            ->first();
+
+        event(new BrujaRevivir(
+            $idPartida,
+            $eliminado->nickname,
+            $datos->id_personaje,
+            $idEliminado
+        ));
+
+        return response()->json([
+            'mensaje' => 'ok',
+        ]);
+    }
+
+    public function eliminar(Request $request)
+    {
+        $idEliminado = $request->idEliminado;
+        $idPartida   = $request->idPartida;
+
+        $eliminado = Jugador::find($idEliminado);
+
+        $partida = Partida::find($idPartida);
+        $partida->jugadoresPartidaEstado()
+            ->updateExistingPivot($idEliminado, ['estado' => 0]);
+
+        $datos = JugadorPartidaPersonaje::query()
+            ->where('id_jugador', $idEliminado)
+            ->where('id_partida', $idPartida)
+            ->select('id_jugador', 'id_partida', 'id_personaje', 'estado')
+            ->first();
+
+        event(new BrujaElimina(
+            $idPartida,
+            $eliminado->nickname,
+            $datos->id_personaje,
+            $idEliminado
+        ));
+
+        return response()->json([
+            'mensaje' => 'ok',
+        ]);
+    }
+
+    public function cambiarTemporizador(Request $request, $idPartida){
+        event(new CambiarTemporizador($request->segundos, $idPartida));
     }
 }
