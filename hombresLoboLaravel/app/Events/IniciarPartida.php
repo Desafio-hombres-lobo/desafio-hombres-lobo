@@ -23,7 +23,7 @@ class IniciarPartida implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new Channel('lobby.' . $this->partida);
+        return new Channel('lobby' . $this->partida);
     }
 
     public function broadcastAs()
