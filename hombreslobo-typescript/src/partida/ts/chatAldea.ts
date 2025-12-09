@@ -114,50 +114,37 @@ const repartirCartasJugadores = async (): Promise<void> => {
         console.log(resultado);
       }
     });
-    contenedorCarta.appendChild(slotDiv);
+    ui.contenedorTablero.appendChild(slotDiv);
   }
 };
 
 function actualizarFaseVisual() {
-  const btnNiña = document.getElementById("btn-niña")! as HTMLInputElement;
+  ui.actualizarFase(estado.dia);
+
   if (estado.estoyMuerto) {
-    inputMensaje.disabled = true;
-    inputMensaje.placeholder = "No puedes hablar, estás muerto.";
-  }
-  if (estado.dia) {
-    spanFase.innerHTML = "FASE: DÍA";
-    headerChat.innerHTML = "CHAT DE LA ALDEA";
-    centroInfo.classList.remove("fase-noche");
-    centroInfo.classList.add("fase-dia");
-    listaMensajes.classList.remove("chat-noche");
-    btnNiña.classList.add("oculto");
-    if (!estado.estoyMuerto) {
-      inputMensaje.disabled = false;
-      inputMensaje.placeholder = "Escribe en la aldea...";
-    }
+    ui.configurarInputChat(false, "No puedes hablar, estás muerto.");
+  } else if (estado.dia) {
+    ui.configurarInputChat(true, "Escribe en la aldea...");
   } else {
-    if (estado.soyNinia && !estado.estoyMuerto) {
-      btnNiña.classList.remove("oculto");
-      btnNiña.onclick = function () {
-        verChatLobos(btnNiña, listaMensajes);
-      };
-    }
-    spanFase.innerHTML = "FASE: NOCHE";
-    headerChat.innerHTML = "CHAT DE LOS LOBOS";
-    centroInfo.classList.remove("fase-dia");
-    centroInfo.classList.add("fase-noche");
-    if (!estado.soyLobo) {
-      listaMensajes.classList.add("chat-noche");
-      inputMensaje.disabled = true;
-      inputMensaje.placeholder = "Solo los lobos pueden hablar de noche.";
+    if (estado.soyLobo) {
+      ui.configurarInputChat(true, "Habla con los lobos...");
     } else {
-      listaMensajes.classList.remove("chat-noche");
-    }
-    if (estado.soyLobo && !estado.estoyMuerto) {
-      inputMensaje.disabled = false;
-      inputMensaje.placeholder = "Habla con los lobos...";
+      ui.configurarInputChat(false, "Solo los lobos pueden hablar de noche.");
     }
   }
+
+  const modoNocheActivo = !estado.dia && !estado.soyLobo;
+  ui.toggleModoChatNoche(modoNocheActivo);
+
+  if (estado.soyNinia && !estado.estoyMuerto && !estado.dia) {
+    ui.toggleBotonNinia(true, () => {
+      verChatLobos(ui.btnNiniaElement, ui.listaMensajesElement);
+    });
+  } else {
+    ui.toggleBotonNinia(false);
+  }
+
+  // Reset de estados lógicos
   estado.yaHasVotado = false;
   estado.rondaFinalizada = false;
   estado.ronda++;

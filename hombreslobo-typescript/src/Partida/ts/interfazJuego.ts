@@ -157,4 +157,7 @@ export class interfazJuego {
   public get btnNiniaElement(): HTMLButtonElement {
     return this.btnNinia;
   }
+  public get btnIniciarElement(): HTMLButtonElement {
+    return this.btnIniciar;
+  }
 }

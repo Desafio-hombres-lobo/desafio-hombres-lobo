@@ -1,6 +1,7 @@
 import { getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
-import { pintarMensaje, pintarMensajeSistema } from "./chatAldea";
+import { ui } from "./chatAldea";
+import { estado } from "./chatAldea";
 import { voltearCartasLobo } from "../../Personajes/ts/voltearCartaPersonaje";
 import type { Jugador } from "./Jugador";
 
@@ -23,12 +24,13 @@ export const configurarBind = (canal: any) => {
   canal.unbind("ninia-habilidad");
 
   canal.bind("nuevo-mensaje-lobos", (data: any) => {
-    pintarMensaje(data.usuario, data.mensaje);
+    const esMio = data.usuario === estado.miNickname;
+    ui.pintarMensaje(data.usuario, data.mensaje, esMio);
   });
   canal.bind("ninia-habilidad", () => {
-    pintarMensajeSistema("La niña abre los ojos");
+    ui.pintarMensajeSistema("La niña abre los ojos");
     setTimeout(() => {
-      pintarMensajeSistema("La niña cierra los ojos");
+      ui.pintarMensajeSistema("La niña cierra los ojos");
     }, 5000);
   });
 };
