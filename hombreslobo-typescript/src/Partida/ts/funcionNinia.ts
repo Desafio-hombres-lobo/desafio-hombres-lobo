@@ -5,7 +5,7 @@ import {
   desconectarChatLobos,
 } from "./chatLobos";
 import { getPartidaId } from "../../autenticacion/ts/auth";
-export const verChatLobos = (btn: HTMLInputElement, chat: HTMLElement) => {
+export const verChatLobos = (btn: HTMLButtonElement, chat: HTMLElement) => {
   const partida = getPartidaId()!;
   btn.classList.add("oculto");
   const canal = conectarLobos();

@@ -1,4 +1,5 @@
 import { estadoJuego } from "./estadoJuego";
+import { interfazJuego } from "./interfazJuego";
 import { getJugador, getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
 import { enviarMensaje } from "../../providers/envioDatosChat";
@@ -38,23 +39,12 @@ import {
   ROL_VIDENTE,
 } from "../../Personajes/ts/constantes_roles";
 
-const listaMensajes = document.getElementById("lista-mensajes")!;
-export const formChat = document.getElementById("form-chat") as HTMLFormElement;
-export const inputMensaje = document.getElementById(
-  "input-mensaje"
-) as HTMLInputElement;
-const centroInfo = document.querySelector(".centro-info") as HTMLElement;
-const spanFase = document.getElementById("fase-partida")!;
-const headerChat = document.getElementById("h3-chat")!;
-const reloj = document.getElementById("reloj-partida")!;
-const btnIniciar = document.getElementById("btn-iniciar")! as HTMLButtonElement;
-const id_partida = getPartidaId()!;
-const textoEspera = document.getElementById("texto-espera")!;
-const contenedorCarta = document.querySelector(".grid-tablero") as HTMLElement;
-
 let temporizador: number | null = null;
 let host = false;
-
+//Interfaz
+export const ui = new interfazJuego();
+//Estado
+const id_partida = getPartidaId()!;
 const miNickname = getJugador()!;
 export const estado = new estadoJuego(id_partida, miNickname);
 
@@ -65,7 +55,7 @@ estado.setJugadores(datosServidor);
 
 host = await verificarHost(id_partida);
 if (host) {
-  btnIniciar.classList.remove("oculto");
+  ui.toggleBtnIniciar;
 }
 
 const repartirCartasJugadores = async (): Promise<void> => {
@@ -176,7 +166,8 @@ function actualizarFaseVisual() {
 const canal = pusher.subscribe("aldea" + id_partida);
 
 canal.bind("nuevo-mensaje", (data: any) => {
-  pintarMensaje(data.usuario, data.mensaje);
+  const esMio = data.usuario === estado.miNickname;
+  ui.pintarMensaje(data.usuario, data.mensaje, esMio);
 });
 
 canal.bind("cambio-fase", async (data: any) => {
@@ -184,7 +175,7 @@ canal.bind("cambio-fase", async (data: any) => {
 
   if (data.fase === "dia") {
     estado.dia = true;
-    pintarMensajeSistema("La aldea despierta, es hora de debatir.");
+    ui.pintarMensajeSistema("La aldea despierta, es hora de debatir.");
     if (host) {
       for (const bot of estado.bots) {
         setTimeout(() => {
@@ -194,7 +185,7 @@ canal.bind("cambio-fase", async (data: any) => {
     }
   } else {
     estado.dia = false;
-    pintarMensajeSistema("Los aldeanos se duermen...");
+    ui.pintarMensajeSistema("Los aldeanos se duermen...");
     if (host) {
       for (const bot of estado.botsLobo) {
         setTimeout(() => {
@@ -220,7 +211,7 @@ canal.bind("cambio-fase", async (data: any) => {
           );
           const objetivo = enemigosPosibles[indiceAleatorio];
 
-          pintarMensajeSistema(
+          ui.pintarMensajeSistema(
             `Tu bola de cristal te revela la identidad de ${objetivo.nickname}...`
           );
           voltearCartaPorVidente(objetivo.nickname, objetivo.id_personaje);
@@ -237,7 +228,7 @@ canal.bind("cambio-fase", async (data: any) => {
 });
 canal.bind("voto", (data: any) => {
   if (!estado.dia) return;
-  pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
+  ui.pintarMensajeSistema(`${data.idVotante} ha votado a ${data.idVotado}`);
   estado.votos++;
 });
 
@@ -326,9 +317,9 @@ const iniciarCuentaAtras = (fechaFinIso: string) => {
 
 formChat.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const mensaje = inputMensaje.value.trim();
+  const mensaje = ui.mensajeInput;
   if (!mensaje) return;
-  inputMensaje.value = "";
+  ui.limpiarInput;
 
   if (mensaje === "/cambiar") {
     if (host) {
@@ -369,31 +360,6 @@ if (btnIniciar) {
     btnIniciar.classList.add("oculto");
   });
 }
-
-export function pintarMensaje(usuario: string, texto: string) {
-  const div = document.createElement("div");
-  const miUsuario = getJugador();
-  const yo = usuario === miUsuario;
-
-  div.classList.add("msg");
-  if (yo) {
-    div.classList.add("propio");
-    div.innerHTML = `<strong>Tú:</strong> ${texto}`;
-  } else {
-    div.innerHTML = `<strong>${usuario}:</strong> ${texto}`;
-  }
-
-  listaMensajes.appendChild(div);
-  listaMensajes.scrollTop = listaMensajes.scrollHeight;
-}
-
-export const pintarMensajeSistema = (texto: string) => {
-  const div = document.createElement("div");
-  div.classList.add("msg", "sistema");
-  div.innerHTML = `${texto}`;
-  listaMensajes.appendChild(div);
-  listaMensajes.scrollTop = listaMensajes.scrollHeight;
-};
 
 async function comprobarVictoria() {
   if (host) {
