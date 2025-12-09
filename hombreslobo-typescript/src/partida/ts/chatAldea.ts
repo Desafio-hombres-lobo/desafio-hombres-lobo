@@ -362,7 +362,7 @@ canal.bind("votacion-terminada", async (data: any) => {
     }
     
   } else {
-    if (data.resultado === "eliminado") {
+    if (data.resultado === "eliminado" && !brujaRevivio) {
         mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
         await actualizarListas();
     } else if (data.resultado === "empate") {
