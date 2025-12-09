@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Roles_administracion extends Model
 {
     protected $table = 'roles_administracion';
-
+    protected $fillable = ['nombre'];
     public function usuarios(): HasMany
     {
         return $this->hasMany(User::class, 'rol');

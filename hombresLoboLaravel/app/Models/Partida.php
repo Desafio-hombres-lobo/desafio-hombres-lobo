@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Partida extends Model
 {
+    use HasFactory;
     protected $table = 'partidas';
     protected $primaryKey = 'id';
     protected $fillable = ['creador_id', 'nombre', 'num_jugadores', 'codigo'];
