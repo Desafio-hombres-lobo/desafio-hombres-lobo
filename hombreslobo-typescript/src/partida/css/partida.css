@@ -258,6 +258,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  scroll-behavior: smooth;
 }
 
 .chat-mensajes::-webkit-scrollbar {
@@ -575,5 +576,141 @@ body {
   to {
     opacity: 1;
     pointer-events: auto;
+  }
+}
+
+@media (max-width: 1024px) {
+  body {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .cabecera {
+    position: relative;
+    flex-direction: column;
+    padding: 10px 5px;
+    gap: 5px;
+    height: auto;
+  }
+
+  .menu {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 100;
+  }
+
+  .boton-salir {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 5px;
+    border: 1px solid #d9534f;
+  }
+
+  .nav-logo-titulo,
+  .info-estado {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .info-estado {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px;
+    border-radius: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+
+  .nav-logo-titulo {
+    margin-bottom: 0;
+    transform: scale(0.9);
+  }
+
+  .info-estado {
+    width: 100%;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px;
+    border-radius: 8px;
+
+    margin-top: -5px;
+    margin-bottom: 15px;
+  }
+
+  .pantalla-juego {
+    flex-direction: column;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .contenedor-mesa {
+    padding: 10px;
+    flex: none;
+    width: 100%;
+  }
+
+  .grid-tablero {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    height: auto;
+
+    grid-template-columns: none;
+    grid-template-rows: none;
+  }
+
+  .centro-info {
+    order: -1;
+    width: 100%;
+    height: 150px;
+    margin-bottom: 15px;
+
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .centro-info h2 {
+    font-size: 2.5rem;
+  }
+
+  .jugador {
+    width: 80px;
+    height: 110px;
+    font-size: 0.8rem;
+
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  [class*="slot-"] {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  .nombre-jugador-etiqueta {
+    bottom: -15px;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+
+  .mi-jugador::before {
+    font-size: 0.8rem;
+    padding: 1px 4px;
+    top: -8px;
+  }
+
+  .contenedor-chat {
+    width: 100%;
+    height: 400px;
+    margin-top: 20px;
+  }
+
+  .chat-input-area {
+    padding: 10px;
   }
 }
