@@ -3,6 +3,7 @@ import "../css/registro.css";
 
 export const validarFormulario = (formulario: HTMLFormElement): void => {
   if (!formulario) return;
+
   const camposFormulario = {
     nombreUsuario: {
       input: formulario.querySelector<HTMLInputElement>(
@@ -60,7 +61,24 @@ export const validarFormulario = (formulario: HTMLFormElement): void => {
       mensajeError: "Debes confirmar tu contraseña.",
     },
   };
+  const configurarToggle = (idIcono: string, nombreInput: string) => {
+    const icono = formulario.querySelector<HTMLElement>(idIcono);
+    const input = formulario.querySelector<HTMLInputElement>(
+      `input[name="${nombreInput}"]`
+    );
 
+    if (icono && input) {
+      icono.addEventListener("click", () => {
+        const type =
+          input.getAttribute("type") === "password" ? "text" : "password";
+        input.setAttribute("type", type);
+        icono.classList.toggle("fa-eye");
+        icono.classList.toggle("fa-eye-slash");
+      });
+    }
+  };
+  configurarToggle("#togglePassword1", "password-usuario");
+  configurarToggle("#togglePassword2", "password-confirmar");
   const validarCamposFormulario = (e: SubmitEvent): void => {
     e.preventDefault();
 
