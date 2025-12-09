@@ -157,7 +157,6 @@ function actualizarFaseVisual() {
   // Reset de estados lógicos
   estado.yaHasVotado = false;
   estado.rondaFinalizada = false;
-  estado.ronda++;
 }
 
 const canal = pusher.subscribe("aldea" + id_partida);
@@ -169,7 +168,11 @@ canal.bind("nuevo-mensaje", (data: any) => {
 
 canal.bind("cambio-fase", async (data: any) => {
   estado.setJugadores(await obtenerDatosJugadoresPartida(id_partida));
-
+  if (data.ronda) {
+    estado.ronda = parseInt(data.ronda);
+  } else {
+    estado.ronda++; // Solo por si acaso el back falla
+  }
   // --- 🔍 LOG DE DEPURACIÓN ---
   console.group("🕵️ DEBUG FASE " + (data.fase || ""));
   console.log("Total Jugadores:", estado.jugadores.length);
