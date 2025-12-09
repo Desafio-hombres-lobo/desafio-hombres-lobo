@@ -24,13 +24,18 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $userRoleId = Roles_administracion::where('nombre', 'usuario')->firstOrFail()->id;
+        // CORRECCIÓN: Busca el rol 'usuario', si no existe (porque es un test), lo crea.
+        $rolUsuario = Roles_administracion::firstOrCreate(
+            ['nombre' => 'usuario']
+            // Si tu tabla requiere más campos obligatorios aparte del nombre, añádelos aquí.
+        );
+
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'nickname' => fake()->unique()->userName(),
-            'rol' => $userRoleId,
+            'rol' => $rolUsuario->id, // Usamos el ID del rol recuperado o creado
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
