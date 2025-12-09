@@ -1,5 +1,3 @@
-import { getJugador } from "../../autenticacion/ts/auth";
-
 export class interfazJuego {
   // Elementos del DOM
   private listaMensajes: HTMLElement;
@@ -122,10 +120,7 @@ export class interfazJuego {
     this.btnIniciar.innerText = textoCarga;
   }
 
-  public mostrarFinPartida(
-    textoTitulo: string,
-    divDestino: HTMLElement | null
-  ) {
+  public mostrarFinPartida(textoTitulo: string) {
     const overlay = document.createElement("div");
     overlay.classList.add("fin-overlay");
     overlay.innerHTML = `

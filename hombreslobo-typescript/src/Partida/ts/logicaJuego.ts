@@ -16,7 +16,6 @@ export class logicaJuego {
   ) {
     if (!host) return;
     if (this.rondaGestionada === ronda) {
-      console.warn("⚠️ Bots ya gestionados para la ronda " + ronda);
       return;
     }
 
@@ -67,14 +66,17 @@ export class logicaJuego {
     lobos: Jugador[],
     aliados: Jugador[],
     idPartida: string
-  ) {
-    if (!host) return;
+  ): Promise<boolean> {
+    if (!host) return false;
 
     if (lobos.length >= aliados.length) {
       await finalizarPartida(idPartida, "lobos");
+      return true;
     }
     if (lobos.length === 0) {
       await finalizarPartida(idPartida, "aldeanos");
+      return true;
     }
+    return false;
   }
 }

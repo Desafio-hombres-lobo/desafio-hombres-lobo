@@ -221,9 +221,11 @@ canal.bind("voto", (data: any) => {
 });
 
 canal.bind("votacion-terminada", async (data: any) => {
+  const jugadoresActualizados = await obtenerDatosJugadoresPartida(id_partida);
+  estado.setJugadores(jugadoresActualizados);
+
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-    estado.setJugadores(datosServidor);
 
     if (data.idPersonaje) {
       await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
@@ -232,28 +234,30 @@ canal.bind("votacion-terminada", async (data: any) => {
     mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
   }
 
-  await logica.comprobarVictoria(
+  const partidaTerminada = await logica.comprobarVictoria(
     host,
     estado.lobos,
     estado.aliados,
     id_partida
   );
 
-  setTimeout(async () => {
-    cerrarVotacion();
-    if (host) {
-      await cambiarFasePartida(id_partida, !estado.dia);
-    }
-  }, 3000);
+  if (!partidaTerminada) {
+    setTimeout(async () => {
+      cerrarVotacion();
+      if (host) {
+        await cambiarFasePartida(id_partida, !estado.dia);
+      }
+    }, 3000);
+  }
 });
 
 canal.bind("fin-partida", async (data: any) => {
   const miRol = await obtenerRolPersonajeJugador();
   const textoTitulo = `¡HAN GANADO LOS ${data.equipo.toUpperCase()}!`;
-  let divFinal = ui.mostrarFinPartida(textoTitulo, null);
+  let divFinal = ui.mostrarFinPartida(textoTitulo);
   let h2 = document.createElement("h2");
 
-  if (miRol === 2) {
+  if (miRol === ROL_LOBO) {
     if (data.equipo == "lobos") {
       h2.textContent = "¡Has ganado!";
     } else {
