@@ -18,7 +18,6 @@ export const obtenerNuevaPassword = async () => {
     });
 
     const data = await response.json();
-    console.log("Cambio contraseña: " + JSON.stringify(data));
 
     if (!response.ok) {
       const errorDatos = data.message || "Error desconodido";

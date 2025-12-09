@@ -48,7 +48,6 @@ btnEnviar.addEventListener("click", async () => {
   const resp = await enviarMensaje({ message: mensaje, id_partida: partidaId });
 
   if (resp.ok) {
-    console.log("Confirmación del servidor:", resp.data);
     txtMensaje.value = "";
   } else {
     console.error("Error al enviar:", resp.error);
@@ -67,7 +66,6 @@ txtMensaje.addEventListener("keydown", async (event) => {
     });
 
     if (resp.ok) {
-      console.log("Confirmación del servidor:", resp.data);
       txtMensaje.value = "";
     } else {
       console.error("Error al enviar:", resp.error);
