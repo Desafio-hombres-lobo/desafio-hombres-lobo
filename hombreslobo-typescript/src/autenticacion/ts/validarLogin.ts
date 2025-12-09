@@ -8,6 +8,23 @@ export const validarLogin = (formularioLogin: HTMLFormElement) => {
     formularioLogin.querySelector<HTMLInputElement>("#usuario")!;
   const inputPassword =
     formularioLogin.querySelector<HTMLInputElement>("#password")!;
+  const togglePassword =
+    formularioLogin.querySelector<HTMLElement>("#togglePassword");
+
+  // 2. Lógica para alternar visibilidad
+  if (togglePassword && inputPassword) {
+    togglePassword.addEventListener("click", () => {
+      // Alternar tipo de input
+      const type =
+        inputPassword.getAttribute("type") === "password" ? "text" : "password";
+      inputPassword.setAttribute("type", type);
+
+      // Alternar icono (ojo abierto / ojo tachado)
+      togglePassword.classList.toggle("fa-eye");
+      togglePassword.classList.toggle("fa-eye-slash");
+    });
+  }
+
   const inputRecordarme =
     formularioLogin.querySelector<HTMLInputElement>("#recordarme")!;
   const credencial = getCredenciales();

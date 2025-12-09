@@ -80,3 +80,26 @@
     transform: translateY(0);
   }
 }
+
+/* Asegura que el contenedor del input tenga posición relativa */
+.campo {
+  position: relative;
+}
+
+/* Estilo para el icono del ojo */
+.icono-password {
+  position: absolute;
+  right: 10px;
+  top: 50%; /* Ajusta esto según la altura de tu label/input */
+  transform: translateY(
+    15%
+  ); /* Ajuste fino para centrarlo verticalmente en el input */
+  cursor: pointer;
+  color: #666;
+  font-size: 1.2rem;
+  z-index: 10;
+}
+
+.icono-password:hover {
+  color: #333;
+}
