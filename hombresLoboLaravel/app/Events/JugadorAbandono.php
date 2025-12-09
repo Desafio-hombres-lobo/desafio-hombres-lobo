@@ -23,7 +23,7 @@ class JugadorAbandono implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new Channel('lobby.' . $this->partidaId);
+        return new Channel('lobby' . $this->partidaId);
     }
 
     public function broadcastAs()

@@ -102,26 +102,6 @@ async function actualizarListas() {
 
   aliadosTotales = jugadores.filter((j) => j.id_personaje !== ROL_LOBO);
   lobosTotales = jugadores.filter((j) => j.id_personaje == ROL_LOBO);
-  console.log(
-    "vivos",
-    vivos,
-    "muertos,",
-    muertos,
-    "lobos",
-    lobos,
-    "aldeanos",
-    aldeanos,
-    "vidente",
-    vidente,
-    "bots",
-    bots,
-    "humanos",
-    humanos,
-    "botsLobo",
-    botsLobo,
-    "aliados",
-    aliados
-  );
 }
 const miNickname = getJugador()!;
 const jugadorActual = await obtenerJugadorActual();
@@ -191,7 +171,7 @@ const repartirCartasJugadores = async (): Promise<void> => {
       const resultado = await votar(id_partida, payload);
       yaHasVotado = true;
       if (!resultado.ok) {
-        alert(`Error al votar: ${resultado.error}`);
+        console.log(resultado);
       }
     });
     contenedorCarta.appendChild(slotDiv);
@@ -411,8 +391,8 @@ formChat.addEventListener("submit", async (e) => {
     } else {
       if (!muerto) await enviarMensaje(mensaje, id_partida);
     }
-  } catch {
-    alert("Error");
+  } catch (error) {
+    console.error(error);
   }
 });
 canal.bind("iniciar-partida", async () => {
@@ -463,12 +443,10 @@ async function comprobarVictoria() {
   if (host) {
     if (lobos.length >= aliados.length) {
       finalizarPartida(id_partida, "lobos");
-      console.log("Han ganado los lobos");
     }
     if (lobos.length === 0) {
       finalizarPartida(id_partida, "aldeanos");
     }
-    console.log("Se ha comprobado la victoria?");
   }
 }
 

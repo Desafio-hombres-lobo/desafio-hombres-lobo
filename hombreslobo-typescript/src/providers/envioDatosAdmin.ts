@@ -1,11 +1,11 @@
 import { getJSONHeaders } from "../autenticacion/ts/header";
-
+import { host,port } from "../autenticacion/ts/apiFetch";
 export const cogerUsuarios = () => {};
 
 async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const headers = getJSONHeaders();
 
-  const response = await fetch(`http://127.0.0.1:8000/api${endpoint}`, {
+  const response = await fetch(`http://${host}:${port}/api${endpoint}`, {
     ...options,
     headers: headers,
   });

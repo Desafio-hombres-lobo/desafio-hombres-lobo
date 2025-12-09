@@ -49,7 +49,7 @@ export const initLobby = () => {
 
   let jugadoresArray: string[] = [];
 
-  const channel = pusher.subscribe("lobby." + partidaId);
+  const channel = pusher.subscribe("lobby" + partidaId);
 
   const actualizarContador = () => {
     contadorJugadores.textContent = `${jugadoresActuales}/${jugadoresMaximos}`;

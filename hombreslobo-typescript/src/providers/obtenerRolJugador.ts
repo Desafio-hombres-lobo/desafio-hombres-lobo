@@ -8,7 +8,6 @@ export const obtenerRolPersonajeJugador = async () => {
   const id_partida = getPartidaId();
 
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return false;
   }
 

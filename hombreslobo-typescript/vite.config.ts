@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   server: {
     // Escuchar en todas las IPs (necesario para Docker)
-    host: "0.0.0.0",
+    host: true,
     port: 5173,
     // Si el puerto está ocupado, falla en vez de cambiarlo (para no volverte loco)
     strictPort: true,

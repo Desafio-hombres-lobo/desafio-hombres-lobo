@@ -9,7 +9,6 @@ export const unirsePartida = async (payload: {
 }) => {
   const token = getToken();
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return { ok: false, error: "No autenticado" };
   }
 

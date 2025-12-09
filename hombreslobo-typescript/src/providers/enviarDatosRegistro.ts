@@ -17,7 +17,6 @@ export const enviarDatosBackend = async (datosUsuario: any) => {
     // Verificar respuesta
     if (!response.ok) {
       const errorDatos = await response.json();
-      alert("Error al registrar el usuario. " + JSON.stringify(errorDatos));
       return;
     }
 

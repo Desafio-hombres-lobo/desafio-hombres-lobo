@@ -5,7 +5,6 @@ import { getJSONHeaders } from "../autenticacion/ts/header";
 export const empezarPartida = async (partidaId: string) => {
   const token = getToken();
   if (!token) {
-    alert("Error: No estás autenticado. Por favor, inicia sesión.");
     return { ok: false, error: "No autenticado" };
   }
 
@@ -25,7 +24,6 @@ export const empezarPartida = async (partidaId: string) => {
       return { ok: false, error: datos };
     }
 
-    console.log(`Partida ${partidaId} iniciada`, datos);
     return { ok: true, datos };
   } catch (error) {
     console.error("Error iniciando partida:", error);

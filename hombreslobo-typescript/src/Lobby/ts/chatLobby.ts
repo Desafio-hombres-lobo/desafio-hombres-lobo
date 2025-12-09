@@ -1,5 +1,5 @@
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
-import { getPartidaId} from "../../autenticacion/ts/auth";
+import { getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "../../Partida/ts/reverb";
 import { enviarMensaje } from "../../providers/enviarMensaje";
 
@@ -23,7 +23,7 @@ if (!resJugador.ok) {
 }
 const jugador = resJugador.datos;
 
-const channel = pusher.subscribe("lobby." + partidaId);
+const channel = pusher.subscribe("lobby" + partidaId);
 
 channel.bind("message.sent", (data: { message: string; username: string }) => {
   const li = document.createElement("li");
@@ -48,7 +48,6 @@ btnEnviar.addEventListener("click", async () => {
   const resp = await enviarMensaje({ message: mensaje, id_partida: partidaId });
 
   if (resp.ok) {
-    console.log("Confirmación del servidor:", resp.data);
     txtMensaje.value = "";
   } else {
     console.error("Error al enviar:", resp.error);
@@ -57,19 +56,19 @@ btnEnviar.addEventListener("click", async () => {
 
 txtMensaje.addEventListener("keydown", async (event) => {
   if (event.key === "Enter") {
-    event.preventDefault(); 
+    event.preventDefault();
     const mensaje = txtMensaje.value.trim();
     if (!mensaje) return;
 
-    const resp = await enviarMensaje({ message: mensaje, id_partida: partidaId });
+    const resp = await enviarMensaje({
+      message: mensaje,
+      id_partida: partidaId,
+    });
 
     if (resp.ok) {
-      console.log("Confirmación del servidor:", resp.data);
       txtMensaje.value = "";
     } else {
       console.error("Error al enviar:", resp.error);
     }
   }
 });
-
-
