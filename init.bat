@@ -4,7 +4,7 @@ set CONTAINERS=mysql_db laravel_app ts_frontend adminer
 
 set TARGET_CONTAINER=laravel_app
 
-set EXEC_COMMAND=php artisan reverb:start
+set EXEC_COMMAND=php artisan reverb:start --host=0.0.0.0 --port=8080
 
 echo Iniciando docker compose...
 docker compose down
