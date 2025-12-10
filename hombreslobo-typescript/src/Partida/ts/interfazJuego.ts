@@ -88,9 +88,10 @@ export class interfazJuego {
       slots.forEach((slot) => {
         const id = parseInt((slot as HTMLElement).dataset.id!);
         const estaMuerto = slot.classList.contains("jugador-eliminado");
+        const soyYo = slot.classList.contains("mi-jugador");
 
         // No matamos al que ya está muerto por los lobos ni a los eliminados previos
-        if (id !== victimaId && !estaMuerto) {
+        if (id !== victimaId && !estaMuerto && !soyYo) {
           const btn = document.createElement("button");
           btn.className = "btn-accion-bruja matar";
           btn.innerText = "💀 Matar";
@@ -105,11 +106,6 @@ export class interfazJuego {
         }
       });
     }
-
-    // 3. Botón PASAR TURNO
-    // CORRECCIÓN CLAVE: Usamos callbacks.onPasar
-    //this.toggleBotonNinia(true, () => callbacks.onPasar());
-    // if (this.btnNinia) this.btnNinia.innerText = "Pasar Turno (Bruja)";
   }
 
   public limpiarOpcionesBruja() {

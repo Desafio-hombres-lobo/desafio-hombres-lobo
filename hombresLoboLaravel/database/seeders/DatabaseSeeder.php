@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             AccionSeeder::class,
             PersonajeSeeder::class,
             BotJugadorSeeder::class,
+            UsersTestSeeder::class,
         ]);
 
         User::factory()->create([
