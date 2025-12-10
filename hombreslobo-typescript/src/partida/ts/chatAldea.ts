@@ -23,15 +23,9 @@ import { votar } from "../../providers/votos/enviarDatosVoto";
 import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { cerrarVotacion, mostrarVotacion } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
-import { votarYHablarBot } from "../../providers/votos/obtenerVotoBot";
-import {
-  voltearCartaPersonaje,
-  voltearCartaPorVidente,
-} from "../../Personajes/ts/voltearCartaPersonaje";
-import { votarYHablarBotLobo } from "../../providers/votos/obtenerVotoBotsLobo";
+import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
+
 import { obtenerDatosJugadoresPartida } from "../../providers/obtenerDatosJugadores";
-import type { Jugador } from "./Jugador";
-import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPartidaFinalizada";
 import { verChatLobos } from "./funcionNinia";
 import {
   ROL_ALDEANO,
@@ -69,63 +63,77 @@ if (ui.btnIniciarElement) {
 }
 
 const repartirCartasJugadores = async (): Promise<void> => {
+  // ❌ BORRAR ESTA LÍNEA (El origen del mal)
+  // ui.contenedorTablero.innerHTML = '';
+
   const miRolId = await obtenerRolPersonajeJugador();
   estado.setRol(miRolId);
 
-  for (let i = 0; i < estado.jugadores.length; i++) {
-    const jugador = estado.jugadores[i];
+  // Usamos Promise.all para que todas las cartas se calculen en paralelo, del gpt
+  const promesasRenderizado = estado.jugadores.map(async (jugador, i) => {
     const nombreJugador = String(jugador.nickname).trim();
     const numSlot = i + 1;
-    const idJugadorCarta = jugador.id_jugador;
-
-    const slotDiv = document.createElement("div");
-    slotDiv.className = `jugador slot-${numSlot}`;
-    slotDiv.dataset.jugador = nombreJugador;
-    slotDiv.dataset.id = idJugadorCarta.toString();
-
     const esMiUsuario = nombreJugador === miNickname;
 
-    if (esMiUsuario) {
-      slotDiv.classList.add("mi-jugador");
-      if (miRolId == ROL_LOBO) {
-        await renderizarCartaLobo(slotDiv, miNickname);
-        await chatLobos(estado.lobos);
-      } else if (miRolId === ROL_ALDEANO) {
-        await renderizarCartaAldeano(slotDiv, miNickname);
-      } else if (miRolId === ROL_VIDENTE) {
-        await renderizarCartaVidente(slotDiv, miNickname);
-      } else if (miRolId === ROL_NINIA) {
-        await renderizarCartaNiña(slotDiv, miNickname);
-      } else {
-        renderizarReverso(slotDiv, nombreJugador);
+    let slotDiv = ui.contenedorTablero.querySelector(
+      `.slot-${numSlot}`
+    ) as HTMLElement;
+
+    if (!slotDiv) {
+      slotDiv = document.createElement("div");
+      slotDiv.className = `jugador slot-${numSlot}`;
+      ui.contenedorTablero.appendChild(slotDiv);
+
+      slotDiv.addEventListener("click", async () => {
+        if (esMiUsuario) return;
+        if (!estado.dia && !estado.soyLobo) return;
+        if (estado.yaHasVotado) return;
+        if (estado.estoyMuerto) return;
+
+        const idVotado = parseInt(slotDiv.dataset.id!);
+        const payload = {
+          id_jugador: idJugador,
+          id_jugador_votado: idVotado,
+          ronda: estado.ronda,
+          dia: estado.dia,
+          idPersonaje: miRolId,
+        };
+
+        const resultado = await votar(id_partida, payload);
+        estado.yaHasVotado = true;
+        if (!resultado.ok) {
+          console.log(resultado);
+          estado.yaHasVotado = false;
+        }
+      });
+    }
+
+    slotDiv.dataset.jugador = nombreJugador;
+    slotDiv.dataset.id = jugador.id_jugador.toString();
+
+    const jugadorEstaMuerto = jugador.estado === 0;
+    const esCompiLobo = estado.soyLobo && jugador.id_personaje === ROL_LOBO;
+    const deboVerCarta =
+      esMiUsuario || jugadorEstaMuerto || estado.estoyMuerto || esCompiLobo;
+
+    slotDiv.innerHTML = "";
+
+    if (esMiUsuario) slotDiv.classList.add("mi-jugador");
+
+    if (deboVerCarta && jugador.id_personaje) {
+      await renderizarCartaPorId(slotDiv, nombreJugador, jugador.id_personaje);
+
+      if (esMiUsuario && estado.soyLobo && !estado.chatLobosInicializado) {
+        chatLobos(estado.lobos).then(() => {
+          estado.chatLobosInicializado = true;
+        });
       }
     } else {
       renderizarReverso(slotDiv, nombreJugador);
     }
+  });
 
-    slotDiv.addEventListener("click", async () => {
-      if (esMiUsuario) return;
-      // Votar si es de día, o si es de noche y soy lobo
-      if (!estado.dia && !estado.soyLobo) return;
-      if (estado.yaHasVotado) return;
-      if (estado.estoyMuerto) return;
-      const idVotado = parseInt(slotDiv.dataset.id!);
-      const payload = {
-        id_jugador: idJugador,
-        id_jugador_votado: idVotado,
-        ronda: estado.ronda,
-        dia: estado.dia,
-        idPersonaje: miRolId,
-      };
-
-      const resultado = await votar(id_partida, payload);
-      estado.yaHasVotado = true;
-      if (!resultado.ok) {
-        console.log(resultado);
-      }
-    });
-    ui.contenedorTablero.appendChild(slotDiv);
-  }
+  await Promise.all(promesasRenderizado);
 };
 
 function actualizarFaseVisual() {
@@ -226,7 +234,12 @@ canal.bind("votacion-terminada", async (data: any) => {
 
   if (data.resultado === "eliminado") {
     mostrarVotacion(`¡${data.eliminado} ha sido eliminado!`);
-
+    if (data.eliminado === miNickname) {
+      await repartirCartasJugadores();
+      ui.pintarMensajeSistema(
+        "Has muerto. Ahora puedes ver la verdad de la aldea..."
+      );
+    }
     if (data.idPersonaje) {
       await voltearCartaPersonaje(data.eliminado, data.idPersonaje);
     }
@@ -345,3 +358,27 @@ canal.bind("iniciar-partida", async () => {
     await cambiarFasePartida(id_partida, !estado.dia);
   }
 });
+
+const renderizarCartaPorId = async (
+  div: HTMLElement,
+  nickname: string,
+  idPersonaje: number
+) => {
+  switch (idPersonaje) {
+    case ROL_LOBO:
+      await renderizarCartaLobo(div, nickname);
+      break;
+    case ROL_ALDEANO:
+      await renderizarCartaAldeano(div, nickname);
+      break;
+    case ROL_VIDENTE:
+      await renderizarCartaVidente(div, nickname);
+      break;
+    case ROL_NINIA:
+      await renderizarCartaNiña(div, nickname);
+      break;
+    default:
+      renderizarReverso(div, nickname);
+      break;
+  }
+};
