@@ -1,5 +1,6 @@
 import {
   ROL_ALDEANO,
+  ROL_BRUJA,
   ROL_LOBO,
   ROL_NINIA,
   ROL_VIDENTE,
@@ -10,6 +11,7 @@ import {
   renderizarCartaVidente,
   renderizarReverso,
   renderizarCartaNiña,
+  renderizarCartaBruja,
 } from "./crearCartaPersonaje";
 
 export const voltearCartaPersonaje = async (
@@ -30,6 +32,8 @@ export const voltearCartaPersonaje = async (
     await renderizarCartaVidente(slotDiv, nickname);
   } else if (id === ROL_NINIA) {
     await renderizarCartaNiña(slotDiv, nickname);
+  } else if (id === ROL_BRUJA) {
+    await renderizarCartaBruja(slotDiv, nickname);
   }
 
   slotDiv.classList.add("jugador-eliminado");
@@ -82,6 +86,8 @@ export const voltearCartaPorVidente = async (
     await renderizarCartaLobo(slotDiv, nickname);
   } else if (idPersonaje === ROL_NINIA) {
     await renderizarCartaNiña(slotDiv, nickname);
+  } else if (idPersonaje === ROL_BRUJA) {
+    await renderizarCartaBruja(slotDiv, nickname);
   }
   // else if para niña
 

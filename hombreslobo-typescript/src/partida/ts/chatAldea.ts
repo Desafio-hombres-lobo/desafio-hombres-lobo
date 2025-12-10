@@ -114,7 +114,11 @@ const repartirCartasJugadores = async (): Promise<void> => {
     const esCompiLobo = estado.soyLobo && jugador.id_personaje === ROL_LOBO;
     const deboVerCarta =
       esMiUsuario || jugadorEstaMuerto || estado.estoyMuerto || esCompiLobo;
-
+    if (jugadorEstaMuerto) {
+      slotDiv.classList.add("jugador-eliminado");
+    } else {
+      slotDiv.classList.remove("jugador-eliminado");
+    }
     slotDiv.innerHTML = "";
 
     if (esMiUsuario) slotDiv.classList.add("mi-jugador");
@@ -177,7 +181,7 @@ const iniciarJuego = async () => {
   await repartirCartasJugadores();
 };
 
-iniciarJuego();
+//iniciarJuego();
 
 const canal = pusher.subscribe("aldea" + id_partida);
 
@@ -305,57 +309,7 @@ canal.bind("votacion-terminada", async (data: any) => {
     }, 3000);
   }
 });
-canal.bind("bruja-accion", async (data: any) => {
-  // data trae: { tipoAccion: 'revivir'|'matar'|'nada', idObjetivo: number }
 
-  // 1. Limpieza de seguridad por si yo era la bruja
-  if (estado.soyBruja) {
-    ui.limpiarOpcionesBruja();
-    // Gastar pociones visualmente en mi estado local
-    if (data.tipoAccion === "revivir") estado.pocionRevivir = false;
-    if (data.tipoAccion === "matar") estado.pocionMatar = false;
-  }
-
-  // 2. Actualizar la realidad (para ver quién vive o muere)
-  const nuevosDatos = await obtenerDatosJugadoresPartida(id_partida);
-  estado.setJugadores(nuevosDatos);
-
-  // 3. Feedback Visual para todos
-  if (data.tipoAccion === "revivir") {
-    ui.pintarMensajeSistema(
-      "✨ ¡Milagro! La Bruja ha usado su magia para revivir a alguien."
-    );
-    // Importante: Repintar el tablero para que aparezca la carta del revivido
-    await repartirCartasJugadores();
-  } else if (data.tipoAccion === "matar") {
-    ui.pintarMensajeSistema(
-      "Se escucha un grito agónico... La Bruja ha cobrado una vida."
-    );
-    // Si quieres, voltea la carta de la nueva víctima
-    if (data.idObjetivo) {
-      await voltearCartaPersonaje("Víctima Bruja", data.idObjetivo);
-    }
-  } else {
-    ui.pintarMensajeSistema(
-      "La noche continúa en silencio. La Bruja no ha actuado."
-    );
-  }
-
-  // 4. Comprobar si la partida termina por esta acción
-  const partidaTerminada = await logica.comprobarVictoria(
-    host,
-    estado.lobos,
-    estado.aliados,
-    id_partida
-  );
-
-  // 5. SI LA PARTIDA SIGUE -> EL HOST CAMBIA A DÍA
-  if (!partidaTerminada && host) {
-    setTimeout(async () => {
-      await cambiarFasePartida(id_partida, !estado.dia);
-    }, 4000); // Damos 4 segundos de drama para leer el mensaje
-  }
-});
 canal.bind("fin-partida", async (data: any) => {
   const miRol = await obtenerRolPersonajeJugador();
   const textoTitulo = `¡HAN GANADO LOS ${data.equipo.toUpperCase()}!`;
@@ -477,3 +431,58 @@ const renderizarCartaPorId = async (
       break;
   }
 };
+
+canal.bind("bruja-accion", async (data: any) => {
+  console.log("🧙‍♀️ Acción de Bruja recibida:", data);
+
+  // 1. Limpieza de seguridad de la UI
+  if (estado.soyBruja) {
+    ui.limpiarOpcionesBruja();
+    // Gastar pociones visualmente
+    if (data.tipoAccion === "revivir") estado.pocionRevivir = false;
+    if (data.tipoAccion === "matar") estado.pocionMatar = false;
+  }
+
+  // 2. ACTUALIZACIÓN CRÍTICA DE DATOS
+  // Pedimos al servidor la lista OFICIAL de vivos/muertos tras la magia
+  const nuevosDatos = await obtenerDatosJugadoresPartida(id_partida);
+  estado.setJugadores(nuevosDatos);
+
+  // --- LOGS DE DEBUG (Míralos en consola para ver si las cuentas salen) ---
+  console.log(
+    "📊 Estado tras Bruja -> Lobos:",
+    estado.lobos.length,
+    "Aldeanos:",
+    estado.aliados.length
+  );
+
+  // 3. Feedback Visual
+  if (data.tipoAccion === "revivir") {
+    ui.pintarMensajeSistema(
+      "¡Milagro! La Bruja ha usado su magia para revivir a alguien."
+    );
+    // Repintamos para quitar el gris (gracias al fix del paso 1)
+    await repartirCartasJugadores();
+  } else if (data.tipoAccion === "matar") {
+    ui.pintarMensajeSistema(
+      "Se escucha un grito agónico... La Bruja ha cobrado una vida."
+    );
+    if (data.idObjetivo) {
+      const idVictima = parseInt(data.idObjetivo);
+      const victima = estado.jugadores.find((j) => j.id_jugador === idVictima);
+      if (victima?.id_personaje) {
+        await voltearCartaPersonaje(victima.nickname, data.idObjetivo);
+      }
+
+      // Marcamos visualmente al nuevo muerto sin recargar todo
+      const slotMuerto = ui.contenedorTablero.querySelector(
+        `[data-id="${idVictima}"]`
+      );
+      if (slotMuerto) slotMuerto.classList.add("jugador-eliminado");
+    }
+  } else {
+    ui.pintarMensajeSistema(
+      "🌙 La noche continúa en silencio. La Bruja no ha actuado."
+    );
+  }
+});
