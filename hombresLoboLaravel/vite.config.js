@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import laravel from "laravel-vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 
-const ip = "192.168.1.135";
+const ip = "192.168.206.38";
 export default defineConfig({
     plugins: [
         laravel({

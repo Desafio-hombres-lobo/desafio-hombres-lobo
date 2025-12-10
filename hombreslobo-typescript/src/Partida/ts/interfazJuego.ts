@@ -33,7 +33,7 @@ export class interfazJuego {
   }
 
   // --- MÉTODOS VISUALES ---
-
+  //ayuda extensa de IA para los callbacks, podriamos haberlo usado de otra manera pero quedaba muy eficiente
   public actualizarFase(esDia: boolean) {
     if (esDia) {
       this.spanFase.innerHTML = "FASE: DÍA";
@@ -60,7 +60,7 @@ export class interfazJuego {
       onPasar: () => void;
     }
   ) {
-    // 1. Botón REVIVIR (Sobre la víctima de los lobos)
+    // boton revivir
     if (tieneRevivir && victimaId) {
       // Usamos el selector por atributo data-id
       const slotVictima = this.contenedorCarta.querySelector(
@@ -72,7 +72,6 @@ export class interfazJuego {
         btn.className = "btn-accion-bruja revivir";
         btn.innerText = "❤️ Revivir";
 
-        // CORRECCIÓN CLAVE: Usamos callbacks.onRevivir
         btn.onclick = (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -82,7 +81,7 @@ export class interfazJuego {
       }
     }
 
-    // 2. Botón MATAR (Sobre todos los demás vivos, excepto la víctima)
+    // Botón MATAR (Sobre todos los demás vivos, excepto la víctima)
     if (tieneMatar) {
       const slots = this.contenedorCarta.querySelectorAll(".jugador");
       slots.forEach((slot) => {
@@ -90,13 +89,12 @@ export class interfazJuego {
         const estaMuerto = slot.classList.contains("jugador-eliminado");
         const soyYo = slot.classList.contains("mi-jugador");
 
-        // No matamos al que ya está muerto por los lobos ni a los eliminados previos
+        // No matamos al que ya esta muerto ni a nosotros
         if (id !== victimaId && !estaMuerto && !soyYo) {
           const btn = document.createElement("button");
           btn.className = "btn-accion-bruja matar";
           btn.innerText = "💀 Matar";
 
-          // CORRECCIÓN CLAVE: Usamos callbacks.onMatar
           btn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -111,7 +109,6 @@ export class interfazJuego {
   public limpiarOpcionesBruja() {
     const botones = document.querySelectorAll(".btn-accion-bruja");
     botones.forEach((b) => b.remove());
-    // Ocultar botón central de saltar si lo usaste
     //this.toggleBotonNinia(false);
   }
 

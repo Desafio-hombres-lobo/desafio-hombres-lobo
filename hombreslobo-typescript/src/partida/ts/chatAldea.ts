@@ -25,7 +25,7 @@ import { obtenerJugadorActual } from "../../providers/obtenerJugadorActual";
 import { cerrarVotacion, mostrarVotacion } from "./votacion";
 import { finalizarVotacion } from "../../providers/votos/finalizarVotacion";
 import { voltearCartaPersonaje } from "../../Personajes/ts/voltearCartaPersonaje";
-
+import { enviarAccionBruja } from "../../providers/enviarAccionBruja";
 import { obtenerDatosJugadoresPartida } from "../../providers/obtenerDatosJugadores";
 import { verChatLobos } from "./funcionNinia";
 import {
@@ -169,19 +169,19 @@ function actualizarFaseVisual() {
   estado.yaHasVotado = false;
   estado.rondaFinalizada = false;
 }
-const iniciarJuego = async () => {
-  const datosServidor = await obtenerDatosJugadoresPartida(id_partida);
-  estado.setJugadores(datosServidor);
+// const iniciarJuego = async () => {
+//   const datosServidor = await obtenerDatosJugadoresPartida(id_partida);
+//   estado.setJugadores(datosServidor);
 
-  const esHost = await verificarHost(id_partida);
-  if (esHost) {
-    ui.toggleBtnIniciar(true, "Iniciar partida");
-  }
+//   const esHost = await verificarHost(id_partida);
+//   if (esHost) {
+//     ui.toggleBtnIniciar(true, "Iniciar partida");
+//   }
 
-  await repartirCartasJugadores();
-};
+//   await repartirCartasJugadores();
+// };
 
-//iniciarJuego();
+//iniciarJuego(); no lo usamos porque a veces duplica cartas, aunque no deberia
 
 const canal = pusher.subscribe("aldea" + id_partida);
 
@@ -267,7 +267,8 @@ canal.bind("votacion-terminada", async (data: any) => {
     await new Promise((r) => setTimeout(r, 2000));
     cerrarVotacion();
     ui.pintarMensajeSistema("La Bruja está actuando...");
-
+    const bruja = estado.jugadores.find((j) => j.id_personaje === ROL_BRUJA);
+    const brujaViva = bruja && bruja.estado !== 0;
     if (estado.soyBruja && !estado.estoyMuerto) {
       const idVictima = data.idEliminado ? parseInt(data.idEliminado) : 0;
 
@@ -280,14 +281,31 @@ canal.bind("votacion-terminada", async (data: any) => {
         id_partida,
         ui
       );
+    } else if (host) {
+      // Si es Bot o no está viva, simplemente pasamos turno (acción: "nada")
+      if ((brujaViva && bruja?.bot) || !brujaViva) {
+        setTimeout(async () => {
+          await enviarAccionBruja(id_partida, "nada", null);
+        }, 2000);
+      }
     }
 
     if (host) {
       setTimeout(async () => {
         if (!estado.dia) {
+          const jugadoresActualizados = await obtenerDatosJugadoresPartida(
+            id_partida
+          );
+          estado.setJugadores(jugadoresActualizados);
+          await logica.comprobarVictoria(
+            host,
+            estado.lobos,
+            estado.aliados,
+            id_partida
+          );
           await cambiarFasePartida(id_partida, !estado.dia);
         }
-      }, 25000);
+      }, 10000);
     }
 
     return;

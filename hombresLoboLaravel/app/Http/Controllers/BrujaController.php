@@ -27,13 +27,10 @@ class BrujaController extends Controller
             $partida->jugadoresPartidaEstado()->updateExistingPivot($idObjetivo, ['estado' => 0]);
         }
 
-        // 2. AVISAR A TODOS (Feedback Visual)
         broadcast(new BrujaAccion($idPartida, $tipoAccion, $idObjetivo));
 
-        // 3. COMPROBAR VICTORIA (Lógica de Servidor)
         $jugadoresVivos = $partida->jugadoresPartidaEstado()->wherePivot('estado', 1)->get();
         $totalVivos = $jugadoresVivos->count();
-        // Contamos lobos (id_personaje = 2)
         $lobosVivos = $jugadoresVivos->filter(function ($j) {
             return $j->pivot->id_personaje == 2;
         })->count();
@@ -47,18 +44,13 @@ class BrujaController extends Controller
         }
 
         if ($ganador) {
-            // SI HAY GANADOR -> TERMINAR PARTIDA
-            $partida->estado = 3; // Finalizada
+            $partida->estado = 3;
             $partida->save();
             broadcast(new FinalizarPartida($idPartida, $ganador));
         } else {
-            // SI EL JUEGO SIGUE -> CAMBIAR A DÍA AUTOMÁTICAMENTE
+            sleep(2);//para dar tiempo a los mensajes
 
-            // Pequeña pausa para que dé tiempo a leer el mensaje de la bruja en el frontend
-            sleep(4);
-
-            // Lógica de cambio de fase (copiada de MotorPartidaController)
-            $partida->ronda = ($partida->ronda ?? 0) + 1; // No sumamos ronda aquí, o sí, según tu lógica (normalmente Día inicia ronda)
+            $partida->ronda = ($partida->ronda ?? 0) + 1;
             $partida->save();
 
             $duracionTurno = 1;
