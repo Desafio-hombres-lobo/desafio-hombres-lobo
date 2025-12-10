@@ -175,6 +175,7 @@ const iniciarJuego = async () => {
   await repartirCartasJugadores();
 };
 
+iniciarJuego();
 
 const canal = pusher.subscribe("aldea" + id_partida);
 
