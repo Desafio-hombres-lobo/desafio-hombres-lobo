@@ -61,7 +61,7 @@
 }
 .error-login {
   display: block;
-  margin-top: 0.4rem;
+  margin-top: 0.8rem;
   font-size: 0.85rem;
   color: var(--error);
   text-shadow: 0 0 3px rgba(255, 118, 117, 0.6);
