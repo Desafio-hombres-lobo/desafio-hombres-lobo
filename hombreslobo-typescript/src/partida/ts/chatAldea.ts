@@ -260,6 +260,8 @@ canal.bind("votacion-terminada", async (data: any) => {
   }
 
   if (!estado.dia) {
+    await new Promise((r) => setTimeout(r, 2000));
+    cerrarVotacion();
     ui.pintarMensajeSistema("La Bruja está actuando...");
 
     if (estado.soyBruja && !estado.estoyMuerto) {
