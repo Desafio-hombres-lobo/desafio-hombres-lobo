@@ -16,10 +16,21 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
+        $this->call([
+            RolesAdministracionSeeder::class,
+            AdminSeeder::class,
+            AccionSeeder::class,
+            PersonajeSeeder::class,
+            BotJugadorSeeder::class,
+            UsersTestSeeder::class,
+        ]);
 
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'nickname' => 'testuser',
         ]);
+
+
     }
 }

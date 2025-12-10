@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil del Jugador - Castronegro</title>
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bahiana&family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome (para iconos) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <style></style>
+  </head>
+  <body>
+    <!-- Cabecera  -->
+    <header class="cabecera">
+      <a href="index.html" class="titulo-sitio">Castronegro</a>
+    </header>
+
+    <!-- Contenido Principal del Perfil -->
+    <main class="perfil-contenedor">
+      <!-- Botón de Volver del Wireframe -->
+      <a href="/index.html" class="back-arrow" aria-label="Volver">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+
+      <h2 class="titulo-seccion">Perfil del Jugador</h2>
+
+      <div class="perfil-grid">
+        <aside class="stats-card"></aside>
+
+        <!-- Columna Derecha: Ajustes -->
+        <section class="settings-form">
+          <h3>Ajustes de la Cuenta</h3>
+
+          <!-- Formulario Cambiar Nickname -->
+          <form id="form-nickname">
+            <label for="nickname">Cambiar Nickname</label>
+            <div class="campo-con-boton">
+              <input
+                type="text"
+                id="nuevo-nickname"
+                name="nickname"
+                placeholder="Nuevo nickname"
+              />
+              <button type="submit" class="boton-secundario">Cambiar</button>
+            </div>
+          </form>
+
+          <!-- Formulario Solicitar Contraseña -->
+          <form id="form-password" style="margin-top: 1.5rem">
+            <label for="email-password">Solicitar Nueva Contraseña</label>
+            <div class="campo-con-boton">
+              <button type="submit" class="boton-secundario">Solicitar</button>
+            </div>
+          </form>
+
+          <br /><br />
+
+          <!-- Formulario Cambiar Nickname -->
+          <form id="form-cambiar-foto">
+            <label for="subir-foto">Cambiar Foto Perfil</label>
+            <div class="campo-con-boton" id="foto-perfil">
+              <input type="file" id="subir-foto" />
+              <button
+                id="cambiar-foto-perfil"
+                class="boton-secundario"
+                type="submit"
+              >
+                Cambiar foto de perfil
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <!-- Pie de Página -->
+    <footer class="pie">
+      <p>© 2025 Hombres Lobo Online. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- <script src="../ts/perfil.js"></script> -->
+
+    <script type="module" src="/src/perfil/ts/perfil.ts"></script>
+    <script
+      type="module"
+      src="/src/perfil/ts/mostrarEstadisticasJugador.ts"
+    ></script>
+  </body>
+</html>

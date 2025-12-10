@@ -1,24 +1,43 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import "./css/base.css";
+import "./css/index.css";
+import "./Partida/css/elegirPartida.css";
+import "./Personajes/css/styles.css";
+import "./Partida/css/elegirPartida.css";
+import "./Lobby/css/lobby.css";
+import "./Lobby/css/animacionesLobby.css";
+import { initModal } from "./Partida/ts/mostrarModal";
+import { validarFormulario } from "./autenticacion/ts/validarFormulario";
+import { validarLogin } from "./autenticacion/ts/validarLogin";
+import { actualizarHeader } from "./autenticacion/ts/actualizarHeader";
+import { initLobby } from "./Lobby/ts/lobby";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+  const hamburger = document.getElementById('hamburger');
+  const menu = document.getElementById('menu');
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+
+document.addEventListener("DOMContentLoaded", () => {
+    const hamburger = document.getElementById('hamburger');
+  const menu = document.getElementById('menu');
+
+  if (hamburger && menu) {
+    hamburger.addEventListener('click', () => {
+      menu.classList.toggle('activo');
+    });
+  }
+  initModal();
+
+  if (window.location.pathname.includes("lobby.html")) {
+    initLobby();
+  }
+  const formulario = document.querySelector<HTMLFormElement>("#formulario");
+  const formularioLogin =
+    document.querySelector<HTMLFormElement>("#formulario-login");
+  actualizarHeader();
+  if (formulario) {
+    validarFormulario(formulario);
+  }
+  if (formularioLogin) {
+    validarLogin(formularioLogin);
+  }
+  
+});

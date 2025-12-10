@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro – Castronegro</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bahiana&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/src/imagenes/logoLobo.png" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="cabecera">
+      <div class="nav-logo-titulo">
+        <a href="/index.html"
+          ><img
+            src="/src/imagenes/logoLobo.png"
+            class="logo"
+            alt="Logo Castronegro"
+        /></a>
+        <h1 class="titulo-sitio">Castronegro</h1>
+      </div>
+      <nav class="menu">
+        <a href="/index.html">Inicio</a>
+        <a href="reglas-hombres-lobo-castronegro.pdf" download>Reglas</a>
+        <a href="#">Comunidad</a>
+        <a href="/src/autenticacion/htmls/login.html">Iniciar Sesión</a>
+      </nav>
+    </header>
+
+    <section class="registro">
+      <div class="contenedor-form">
+        <h2>Únete a la Aldea</h2>
+        <p>
+          Crea tu cuenta y prepárate para descubrir quién es el verdadero lobo.
+        </p>
+
+        <form id="formulario">
+          <div class="campo">
+            <label for="nombre-usuario"
+              ><i class="fas fa-user"></i> Nombre completo</label
+            >
+            <input
+              type="text"
+              id="nombre-usuario"
+              name="nombre-usuario"
+              placeholder="Ej. María Fernández"
+              required
+            />
+          </div>
+
+          <div class="campo">
+            <label for="email-usuario"
+              ><i class="fas fa-envelope"></i> Correo electrónico</label
+            >
+            <input
+              type="email"
+              id="email-usuario"
+              name="email-usuario"
+              placeholder="tu@email.com"
+              required
+            />
+          </div>
+
+          <div class="campo">
+            <label for="nick-usuario"
+              ><i class="fas fa-hat-wizard"></i> Nombre de usuario</label
+            >
+            <input
+              type="text"
+              id="nick-usuario"
+              name="nick-usuario"
+              placeholder="Ej. LoboAstuto"
+              required
+            />
+          </div>
+
+          <div class="campo">
+            <label for="password-usuario"
+              ><i class="fas fa-lock"></i> Contraseña</label
+            >
+            <input
+              type="password"
+              id="password-usuario"
+              name="password-usuario"
+              placeholder="********"
+              required
+            />
+            <i class="far fa-eye icono-password" id="togglePassword1"></i>
+          </div>
+
+          <div class="campo">
+            <label for="password-confirmar">
+              <i class="fas fa-lock"></i> Confirmar Contraseña
+            </label>
+            <input
+              type="password"
+              id="password-confirmar"
+              name="password-confirmar"
+              placeholder="********"
+              required
+            />
+            <i class="far fa-eye icono-password" id="togglePassword2"></i>
+          </div>
+
+          <button type="submit" class="boton-registrar">Registrarse</button>
+          <p class="enlace-login">
+            ¿Ya tienes cuenta?
+            <a href="/src/autenticacion/htmls/login.html">Inicia sesión</a>
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>© 2025 Hombres Lobo Online. Todos los derechos reservados.</p>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,208 @@
+body {
+  margin: 0;
+  font-family: var(--fuente-texto);
+  color: var(--beige);
+  background: linear-gradient(135deg, #2c222d, #3b1f2f, #5e2f5e);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--negro);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.titulo-sitio {
+  font-family: var(--fuente-titulo);
+  font-size: 2rem;
+  letter-spacing: 3px;
+  font-weight: lighter;
+  color: var(--beige);
+  text-shadow: 1px 1px 5px var(--morado);
+}
+
+.registro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 150px);
+  padding: 2rem;
+  background: linear-gradient(
+    180deg,
+    rgba(28, 18, 33, 0.9),
+    rgba(40, 22, 50, 0.95)
+  );
+}
+
+.contenedor-form {
+  background: rgba(45, 25, 55, 0.9);
+  padding: 3rem 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(217, 143, 212, 0.3);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  animation: aparecer 1s ease;
+}
+
+.contenedor-form h2 {
+  font-family: var(--fuente-titulo);
+  font-weight: lighter;
+  letter-spacing: 2px;
+  font-size: 2.5rem;
+  color: var(--rosa-claro);
+  margin-bottom: 0.5rem;
+}
+
+.contenedor-form p {
+  color: var(--beige);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+#formulario .campo {
+  margin-bottom: 1.5rem;
+  text-align: left;
+  position: relative;
+}
+
+#formulario label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+  color: var(--beige);
+}
+
+#formulario input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #3d2a44;
+  border-radius: 10px;
+  background: #25182b;
+  color: #fff;
+  font-size: 1rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+#formulario input:focus {
+  outline: none;
+  border: 1px solid var(--rosa-claro);
+  box-shadow: 0 0 8px rgba(217, 143, 212, 0.4);
+}
+
+.error {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--error);
+  text-shadow: 0 0 3px rgba(255, 118, 117, 0.6);
+  animation: mostrarError 0.3s ease;
+}
+
+@keyframes mostrarError {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.exito {
+  color: lightgreen;
+  margin-top: 10px;
+}
+
+.boton-registrar {
+  background: linear-gradient(45deg, var(--morado), var(--rosa-claro));
+  color: var(--beige);
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(217, 143, 212, 0.4);
+  width: 100%;
+}
+
+.boton-principal:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(217, 143, 212, 0.6);
+}
+
+.enlace-login {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--beige);
+}
+
+.enlace-login a {
+  color: var(--rosa-claro);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.enlace-login a:hover {
+  text-decoration: underline;
+}
+
+footer {
+  background-color: var(--negro);
+  text-align: center;
+  padding: 2rem;
+  color: var(--beige);
+}
+
+footer a {
+  color: var(--morado);
+  margin: 0 0.5rem;
+  transition: 0.3s;
+}
+
+footer a:hover {
+  color: var(--rosa-claro);
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Asegura que el contenedor del input tenga posición relativa */
+.campo {
+  position: relative;
+}
+
+/* Estilo para el icono del ojo */
+.icono-password {
+  position: absolute;
+  right: 10px;
+  top: 50%; /* Ajusta esto según la altura de tu label/input */
+  transform: translateY(
+    15%
+  ); /* Ajuste fino para centrarlo verticalmente en el input */
+  cursor: pointer;
+  color: #666;
+  font-size: 1.2rem;
+  z-index: 10;
+}
+
+.icono-password:hover {
+  color: #333;
+}

@@ -1,0 +1,105 @@
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 150px);
+  padding: 2rem;
+  background: linear-gradient(
+    180deg,
+    rgba(28, 18, 33, 0.9),
+    rgba(40, 22, 50, 0.95)
+  );
+}
+.campo-opciones {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.recordar-label {
+  display: flex;
+  gap: 7px;
+  cursor: pointer;
+}
+
+.campo-opciones a {
+  color: var(--morado); /* Variable de base.css */
+  text-decoration: none;
+}
+.campo-opciones a:hover {
+  text-decoration: underline;
+}
+
+#formulario-login .campo {
+  margin-bottom: 1.5rem;
+  text-align: left;
+  position: relative;
+}
+
+#formulario-login label {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--beige);
+}
+
+#formulario-login input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #3d2a44;
+  border-radius: 10px;
+  background: #25182b;
+  color: #fff;
+  font-size: 1rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+#formulario-login input:focus {
+  outline: none;
+  border: 1px solid var(--rosa-claro);
+  box-shadow: 0 0 8px rgba(217, 143, 212, 0.4);
+}
+.error-login {
+  display: block;
+  margin-top: 0.8rem;
+  font-size: 0.85rem;
+  color: var(--error);
+  text-shadow: 0 0 3px rgba(255, 118, 117, 0.6);
+  animation: mostrarError 0.3s ease;
+}
+.error-login:empty {
+  display: none;
+}
+@keyframes mostrarError {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Asegura que el contenedor del input tenga posición relativa */
+.campo {
+  position: relative;
+}
+
+/* Estilo para el icono del ojo */
+.icono-password {
+  position: absolute;
+  right: 10px;
+  top: 50%; /* Ajusta esto según la altura de tu label/input */
+  transform: translateY(
+    15%
+  ); /* Ajuste fino para centrarlo verticalmente en el input */
+  cursor: pointer;
+  color: #666;
+  font-size: 1.2rem;
+  z-index: 10;
+}
+
+.icono-password:hover {
+  color: #333;
+}

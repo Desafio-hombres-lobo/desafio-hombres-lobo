@@ -1,0 +1,108 @@
+@import url("https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap");
+
+/* ESTILOS COMUNES CARTAS */
+.carta-rol {
+  border: 3px solid #1a1a1a;
+  border-radius: 15px;
+  padding: 10px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: "Patrick Hand", cursive;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.carta-img-container {
+  width: 100%;
+  flex: 1;
+  background-color: #000;
+  border: 3px solid #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carta-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carta-titulo {
+  font-family: "Bahiana", cursive;
+  font-size: 1.6rem;
+  color: #1a1a1a;
+  margin: 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+.carta-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 90%;
+}
+
+.carta-acciones p {
+  color: #1a1a1a;
+}
+
+.txt-accion {
+  border: 3px solid #1a1a1a;
+  border-radius: 12px;
+  padding: 8px;
+  font-family: "Patrick Hand", cursive;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #1a1a1a;
+  transition: transform 0.1s;
+}
+
+/* ESTILOS CARTA HOMBRE LOBO */
+.carta-lobo {
+  background-color: #e63935;
+}
+
+.txt-lobo {
+  background-color: #ffb85f;
+}
+.txt-lobo:hover {
+  background-color: #ffcf8f;
+}
+
+/* ESTILOS CARTA ALDEANO */
+.carta-aldeano {
+  background-color: #ffec99;
+}
+
+.txt-aldeano {
+  background-color: #ffb85f;
+}
+.txt-aldeano:hover {
+  background-color: #ffcf8f;
+}
+
+.carta-vidente {
+  background-color: #b941ff;
+}
+/* ESTILOS CARTA NIÑA */
+.carta-niña {
+  background-color: #ff85a2;
+
+  background: linear-gradient(135deg, #ff9eb5 0%, #ff7a9b 100%);
+
+  border-color: #3d0f1a;
+
+  transition: all 0.3s ease;
+}
+
+.carta-bruja {
+  background-color: rgb(238, 110, 18);
+}

@@ -1,0 +1,70 @@
+import { getPartidaId } from "../../autenticacion/ts/auth";
+import { pusher } from "./reverb";
+import { ui } from "./chatAldea";
+import { estado } from "./chatAldea";
+
+const id_partida = getPartidaId()!;
+
+export const chatLobos = async () => {
+  const canal = conectarLobos();
+
+  configurarBind(canal);
+  configurarVotos(canal);
+};
+
+export const conectarLobos = () => {
+  return pusher.subscribe("lobos" + id_partida);
+};
+
+export const configurarBind = (canal: any) => {
+  canal.unbind("nuevo-mensaje-lobos");
+  canal.unbind("ninia-habilidad");
+
+  canal.bind("nuevo-mensaje-lobos", (data: any) => {
+    const esMio = data.usuario === estado.miNickname;
+    ui.pintarMensaje(data.usuario, data.mensaje, esMio);
+  });
+  canal.bind("ninia-habilidad", () => {
+    ui.pintarMensajeSistema("La niña abre los ojos");
+    setTimeout(() => {
+      ui.pintarMensajeSistema("La niña cierra los ojos");
+    }, 5000);
+  });
+};
+
+const configurarVotos = (canal: any) => {
+  canal.bind("votos-lobos", (data: any) => {
+    pintarVotoLobo(data.idVotante, data.idVotado);
+  });
+};
+
+const pintarVotoLobo = (votante: string, votado: string) => {
+  const listaMensajes = document.getElementById("lista-mensajes");
+
+  if (listaMensajes) {
+    const div = document.createElement("div");
+
+    div.classList.add("msg", "sistema");
+    div.style.borderLeft = "3px solid #d9534f";
+    div.style.backgroundColor = "rgba(217, 83, 79, 0.1)";
+    div.style.color = "#d9534f";
+    div.style.padding = "5px";
+    div.style.marginBottom = "5px";
+
+    div.innerHTML = `<strong>${votante}</strong> ha votado a <strong>${votado}</strong>`;
+
+    listaMensajes.appendChild(div);
+    listaMensajes.scrollTop = listaMensajes.scrollHeight;
+  }
+};
+
+export const desconectarChatLobos = () => {
+  const nombreCanal = "lobos" + id_partida;
+
+  const canal = pusher.channel(nombreCanal);
+
+  if (canal) {
+    canal.unbind_all();
+  }
+  pusher.unsubscribe("lobos" + id_partida);
+};

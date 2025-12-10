@@ -1,0 +1,20 @@
+#!/bin/sh
+echo "Ejecutando tests de Laravel antes del commit..."
+
+
+cd hombresLoboLaravel || exit 1
+
+
+php artisan test
+RESULT=$?
+
+
+cd -
+
+if [ $RESULT -ne 0 ]; then
+  echo "Tests fallidos. Commit cancelado."
+  exit 1
+fi
+
+echo "Tests pasados. Puedes commitear."
+exit 0

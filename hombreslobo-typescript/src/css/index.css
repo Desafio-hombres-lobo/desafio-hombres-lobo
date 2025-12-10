@@ -1,0 +1,210 @@
+.contenedor-principal {
+  position: relative;
+  text-align: center;
+  padding: 6rem 2rem;
+  background: url("../imagenes/fondos/bosque-fondo.jpg") center/cover no-repeat;
+}
+
+.contenedor-principal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 15, 27, 0.93); 
+  z-index: 0;
+}
+
+
+.descripcion {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.descripcion h2 {
+  font-family: var(--fuente-titulo);
+  font-size: 3rem;
+  letter-spacing: 3px;
+  font-weight: lighter;
+  text-shadow: 2px 2px 12px var(--morado);
+  margin-bottom: 1rem;
+}
+
+.descripcion p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.descripcion img {
+  display: block;
+  max-width: 70%;
+  height: auto;
+  margin: 2rem auto 0;
+  animation: girarCartas 40s linear infinite;
+  transform-origin: center; 
+}
+
+@keyframes girarCartas {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+.contenedor-secundario {
+  padding: 4rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.contenedor-secundario h2 {
+  margin-bottom: 1rem;
+}
+
+.contenedor-secundario p {
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tarjetas-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+}
+
+.tarjeta-item {
+  background: var(--negro);
+  border: 2px solid var(--morado);
+  border-radius: 12px;
+  padding: 2.5rem;
+  text-align: center;
+  color: var(--beige);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  transition: 0.3s all;
+  position: relative;
+  overflow: hidden;
+}
+
+.tarjeta-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px var(--morado);
+  border-color: var(--rosa-claro);
+}
+
+.tarjeta-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.03)
+}
+
+.tarjeta-item i {
+  font-size: 2.5rem;
+  color: var(--morado);
+  margin-bottom: 1rem;
+  position: relative
+}
+
+.tarjeta-item h3 {
+  font-family: var(--fuente-titulo);
+  font-weight: lighter;
+  letter-spacing: 3px;
+  font-size: 1.5rem;
+  color: var(--rosa-claro);
+  text-shadow: 1px 1px 5px var(--morado);
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.tarjeta-item p {
+  position: relative;
+}
+
+.contenedor-final {
+  text-align: center;
+  margin: 4rem 0;
+}
+
+.contenedor-final h2 {
+  font-size: 2.5rem;
+  font-family: var(--fuente-titulo);
+  text-shadow: 2px 2px 8px var(--morado);
+  margin-bottom: 1rem;
+  letter-spacing: 3px;
+  font-weight: lighter;
+}
+
+.contenedor-final p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+#boton-crear-cuenta {
+  text-decoration: none;
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.profile-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  z-index: 999;
+}
+
+.menu {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+
+  .hamburger {
+    display: block;
+  }
+
+  .menu {
+    display: none;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.9);
+    position: absolute;
+    top: 70px;
+    right: 0;
+    width: 100%;
+    padding: 1.5rem 0;
+    text-align: center;
+  }
+
+  .menu.activo {
+    display: flex;
+  }
+}
+
