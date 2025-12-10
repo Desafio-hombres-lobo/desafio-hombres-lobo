@@ -63,9 +63,6 @@ if (ui.btnIniciarElement) {
 }
 
 const repartirCartasJugadores = async (): Promise<void> => {
-  // ❌ BORRAR ESTA LÍNEA (El origen del mal)
-  // ui.contenedorTablero.innerHTML = '';
-
   const miRolId = await obtenerRolPersonajeJugador();
   estado.setRol(miRolId);
 
@@ -166,6 +163,18 @@ function actualizarFaseVisual() {
   estado.yaHasVotado = false;
   estado.rondaFinalizada = false;
 }
+const iniciarJuego = async () => {
+  const datosServidor = await obtenerDatosJugadoresPartida(id_partida);
+  estado.setJugadores(datosServidor);
+
+  const esHost = await verificarHost(id_partida);
+  if (esHost) {
+    ui.toggleBtnIniciar(true, "Iniciar partida");
+  }
+
+  await repartirCartasJugadores();
+};
+
 
 const canal = pusher.subscribe("aldea" + id_partida);
 
