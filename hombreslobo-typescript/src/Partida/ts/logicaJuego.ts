@@ -71,11 +71,13 @@ export class logicaJuego {
     idPartida: string,
     ui: any
   ): Promise<void> {
+    // Si no soy la bruja activa, no hago nada (el código esperará el evento)
     if (!soyBruja || !estaViva) return;
 
     return new Promise((resolve) => {
       let decidido = false;
 
+      // Función que se ejecuta al pulsar cualquier botón
       const finalizarTurno = async (
         accion: "revivir" | "matar" | "nada",
         objetivo: number | null
@@ -83,20 +85,29 @@ export class logicaJuego {
         if (decidido) return;
         decidido = true;
 
+        // 1. Limpieza visual inmediata
         ui.limpiarOpcionesBruja();
         ui.pintarMensajeSistema("Has tomado una decisión...");
 
+        // 2. Llamada al Backend
         await enviarAccionBruja(idPartida, accion, objetivo);
 
         resolve();
       };
 
+      // Mostramos los botones en la interfaz
       ui.mostrarOpcionesBruja(idVictimaLobos, pocionRevivir, pocionMatar, {
+        // Callback REVIVIR: Revive a la víctima de los lobos
         onRevivir: () => finalizarTurno("revivir", idVictimaLobos),
+
+        // Callback MATAR: Mata al jugador seleccionado (id)
         onMatar: (id: number) => finalizarTurno("matar", id),
+
+        // Callback PASAR: No hace nada
         onPasar: () => finalizarTurno("nada", null),
       });
 
+      // Temporizador de seguridad (20s) por si la bruja se duerme
       setTimeout(() => {
         if (!decidido) finalizarTurno("nada", null);
       }, 20000);

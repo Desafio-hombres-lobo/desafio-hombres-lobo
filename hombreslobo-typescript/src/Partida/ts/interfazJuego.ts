@@ -52,49 +52,64 @@ export class interfazJuego {
 
   public mostrarOpcionesBruja(
     victimaId: number,
-    tienePocionRevivir: boolean,
-    tienePocionMatar: boolean,
-    onRevivir: () => void,
-    onMatar: (id: number) => void,
-    onSaltar: () => void
+    tieneRevivir: boolean,
+    tieneMatar: boolean,
+    callbacks: {
+      onRevivir: () => void;
+      onMatar: (id: number) => void;
+      onPasar: () => void;
+    }
   ) {
     // 1. Botón REVIVIR (Sobre la víctima de los lobos)
-    if (tienePocionRevivir && victimaId) {
+    if (tieneRevivir && victimaId) {
+      // Usamos el selector por atributo data-id
       const slotVictima = this.contenedorCarta.querySelector(
         `[data-id="${victimaId}"]`
       );
+
       if (slotVictima) {
         const btn = document.createElement("button");
         btn.className = "btn-accion-bruja revivir";
-        btn.innerText = "Revivir";
+        btn.innerText = "❤️ Revivir";
+
+        // CORRECCIÓN CLAVE: Usamos callbacks.onRevivir
         btn.onclick = (e) => {
+          e.preventDefault();
           e.stopPropagation();
-          onRevivir();
+          callbacks.onRevivir();
         };
         slotVictima.appendChild(btn);
       }
     }
 
-    // 2. Botones MATAR (Sobre todos los demás vivos, excepto la víctima)
-    if (tienePocionMatar) {
+    // 2. Botón MATAR (Sobre todos los demás vivos, excepto la víctima)
+    if (tieneMatar) {
       const slots = this.contenedorCarta.querySelectorAll(".jugador");
       slots.forEach((slot) => {
         const id = parseInt((slot as HTMLElement).dataset.id!);
-        if (id !== victimaId) {
+        const estaMuerto = slot.classList.contains("jugador-eliminado");
+
+        // No matamos al que ya está muerto por los lobos ni a los eliminados previos
+        if (id !== victimaId && !estaMuerto) {
           const btn = document.createElement("button");
           btn.className = "btn-accion-bruja matar";
           btn.innerText = "💀 Matar";
+
+          // CORRECCIÓN CLAVE: Usamos callbacks.onMatar
           btn.onclick = (e) => {
+            e.preventDefault();
             e.stopPropagation();
-            onMatar(id);
+            callbacks.onMatar(id);
           };
           slot.appendChild(btn);
         }
       });
     }
 
-    // 3. Botón SALTAR (En el centro, para no hacer nada)
-    //this.toggleBotonNinia(true, "Pasar turno", onSaltar); // Reutilizamos lógica de botones centrales si quieres, o creamos uno nuevo
+    // 3. Botón PASAR TURNO
+    // CORRECCIÓN CLAVE: Usamos callbacks.onPasar
+    //this.toggleBotonNinia(true, () => callbacks.onPasar());
+    // if (this.btnNinia) this.btnNinia.innerText = "Pasar Turno (Bruja)";
   }
 
   public limpiarOpcionesBruja() {

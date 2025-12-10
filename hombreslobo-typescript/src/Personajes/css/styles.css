@@ -102,3 +102,7 @@
 
   transition: all 0.3s ease;
 }
+
+.carta-bruja {
+  background-color: rgb(238, 110, 18);
+}
