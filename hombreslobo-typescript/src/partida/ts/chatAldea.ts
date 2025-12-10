@@ -14,6 +14,7 @@ import {
   renderizarReverso,
   renderizarCartaVidente,
   renderizarCartaNiña,
+  renderizarCartaBruja,
 } from "../../Personajes/ts/crearCartaPersonaje";
 import { empezarPartida } from "../../providers/empezarPartida";
 import { obtenerRolPersonajeJugador } from "../../providers/obtenerRolJugador";
@@ -29,6 +30,7 @@ import { obtenerDatosJugadoresPartida } from "../../providers/obtenerDatosJugado
 import { verChatLobos } from "./funcionNinia";
 import {
   ROL_ALDEANO,
+  ROL_BRUJA,
   ROL_LOBO,
   ROL_NINIA,
   ROL_VIDENTE,
@@ -257,6 +259,34 @@ canal.bind("votacion-terminada", async (data: any) => {
     mostrarVotacion("¡Empate! Nadie ha sido eliminado.");
   }
 
+  if (!estado.dia) {
+    ui.pintarMensajeSistema("La Bruja está actuando...");
+
+    if (estado.soyBruja && !estado.estoyMuerto) {
+      const idVictima = data.idEliminado ? parseInt(data.idEliminado) : 0;
+
+      await logica.gestionarTurnoBruja(
+        true,
+        true,
+        estado.pocionRevivir,
+        estado.pocionMatar,
+        idVictima,
+        id_partida,
+        ui
+      );
+    }
+
+    if (host) {
+      setTimeout(async () => {
+        if (!estado.dia) {
+          await cambiarFasePartida(id_partida, !estado.dia);
+        }
+      }, 25000);
+    }
+
+    return;
+  }
+
   const partidaTerminada = await logica.comprobarVictoria(
     host,
     estado.lobos,
@@ -386,6 +416,9 @@ const renderizarCartaPorId = async (
       break;
     case ROL_NINIA:
       await renderizarCartaNiña(div, nickname);
+      break;
+    case ROL_BRUJA:
+      await renderizarCartaBruja(div, nickname);
       break;
     default:
       renderizarReverso(div, nickname);

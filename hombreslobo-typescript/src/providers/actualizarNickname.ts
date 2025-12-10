@@ -24,9 +24,7 @@ export const enviarNicknameActualizado = async (datosNuevoNickname: any) => {
     // Verificar respuesta
     if (!response.ok) {
       //const errorDatos = await response.json();
-      const errorDatos = data.errors
-        ? JSON.stringify(data.errors)
-        : data.message;
+
       return false;
     }
 

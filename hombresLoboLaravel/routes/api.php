@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BrujaController;
 use App\Http\Controllers\ChatPartidaController;
 use App\Http\Controllers\JugadorController;
 use App\Http\Controllers\PersonajeController;
@@ -116,6 +117,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         //Habilidades personaje
         Route::post('/partidas/{idPartida}/ninia', [MotorPartidaController::class, 'verLobos']);
+        Route::post('/partidas/{idPartida}/bruja', [BrujaController::class, 'accion']);
 
     });
 });

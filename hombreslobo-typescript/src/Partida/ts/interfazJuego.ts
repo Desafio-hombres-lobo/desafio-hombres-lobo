@@ -50,6 +50,60 @@ export class interfazJuego {
     }
   }
 
+  public mostrarOpcionesBruja(
+    victimaId: number,
+    tienePocionRevivir: boolean,
+    tienePocionMatar: boolean,
+    onRevivir: () => void,
+    onMatar: (id: number) => void,
+    onSaltar: () => void
+  ) {
+    // 1. Botón REVIVIR (Sobre la víctima de los lobos)
+    if (tienePocionRevivir && victimaId) {
+      const slotVictima = this.contenedorCarta.querySelector(
+        `[data-id="${victimaId}"]`
+      );
+      if (slotVictima) {
+        const btn = document.createElement("button");
+        btn.className = "btn-accion-bruja revivir";
+        btn.innerText = "Revivir";
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          onRevivir();
+        };
+        slotVictima.appendChild(btn);
+      }
+    }
+
+    // 2. Botones MATAR (Sobre todos los demás vivos, excepto la víctima)
+    if (tienePocionMatar) {
+      const slots = this.contenedorCarta.querySelectorAll(".jugador");
+      slots.forEach((slot) => {
+        const id = parseInt((slot as HTMLElement).dataset.id!);
+        if (id !== victimaId) {
+          const btn = document.createElement("button");
+          btn.className = "btn-accion-bruja matar";
+          btn.innerText = "💀 Matar";
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            onMatar(id);
+          };
+          slot.appendChild(btn);
+        }
+      });
+    }
+
+    // 3. Botón SALTAR (En el centro, para no hacer nada)
+    //this.toggleBotonNinia(true, "Pasar turno", onSaltar); // Reutilizamos lógica de botones centrales si quieres, o creamos uno nuevo
+  }
+
+  public limpiarOpcionesBruja() {
+    const botones = document.querySelectorAll(".btn-accion-bruja");
+    botones.forEach((b) => b.remove());
+    // Ocultar botón central de saltar si lo usaste
+    //this.toggleBotonNinia(false);
+  }
+
   public configurarInputChat(habilitado: boolean, placeholder: string) {
     this.inputMensaje.disabled = !habilitado;
     this.inputMensaje.placeholder = placeholder;

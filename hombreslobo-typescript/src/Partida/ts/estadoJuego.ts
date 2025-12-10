@@ -4,6 +4,7 @@ import {
   ROL_LOBO,
   ROL_NINIA,
   ROL_VIDENTE,
+  ROL_BRUJA,
 } from "../../Personajes/ts/constantes_roles";
 
 export class estadoJuego {
@@ -18,6 +19,8 @@ export class estadoJuego {
   public chatLobosInicializado: boolean = false;
   public yaHasVotado: boolean = false;
   public rondaFinalizada: boolean = false;
+  public pocionRevivir: boolean = true;
+  public pocionMatar: boolean = true;
 
   private _jugadores: Jugador[] = [];
 
@@ -87,6 +90,9 @@ export class estadoJuego {
 
   get soyNinia(): boolean {
     return this.miRolId === ROL_NINIA;
+  }
+  get soyBruja(): boolean {
+    return this.miRolId === ROL_BRUJA;
   }
 
   get puedoHablar(): boolean {

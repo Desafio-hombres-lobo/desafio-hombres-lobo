@@ -3,6 +3,7 @@ import { votarYHablarBotLobo } from "../../providers/votos/obtenerVotoBotsLobo";
 import { finalizarPartida } from "../../providers/finalPartida/cambiarEstadoPartidaFinalizada";
 import { voltearCartaPorVidente } from "../../Personajes/ts/voltearCartaPersonaje";
 import type { Jugador } from "./Jugador";
+import { enviarAccionBruja } from "../../providers/enviarAccionBruja";
 
 export class logicaJuego {
   private rondaGestionada: number = -1;
@@ -59,6 +60,47 @@ export class logicaJuego {
         }
       }, 4000);
     }
+  }
+
+  public async gestionarTurnoBruja(
+    soyBruja: boolean,
+    estaViva: boolean,
+    pocionRevivir: boolean,
+    pocionMatar: boolean,
+    idVictimaLobos: number,
+    idPartida: string,
+    ui: any
+  ): Promise<void> {
+    if (!soyBruja || !estaViva) return;
+
+    return new Promise((resolve) => {
+      let decidido = false;
+
+      const finalizarTurno = async (
+        accion: "revivir" | "matar" | "nada",
+        objetivo: number | null
+      ) => {
+        if (decidido) return;
+        decidido = true;
+
+        ui.limpiarOpcionesBruja();
+        ui.pintarMensajeSistema("Has tomado una decisión...");
+
+        await enviarAccionBruja(idPartida, accion, objetivo);
+
+        resolve();
+      };
+
+      ui.mostrarOpcionesBruja(idVictimaLobos, pocionRevivir, pocionMatar, {
+        onRevivir: () => finalizarTurno("revivir", idVictimaLobos),
+        onMatar: (id: number) => finalizarTurno("matar", id),
+        onPasar: () => finalizarTurno("nada", null),
+      });
+
+      setTimeout(() => {
+        if (!decidido) finalizarTurno("nada", null);
+      }, 20000);
+    });
   }
 
   public async comprobarVictoria(
