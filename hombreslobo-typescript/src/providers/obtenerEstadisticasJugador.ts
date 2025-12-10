@@ -23,7 +23,6 @@ export const obtenerEstadisticasJugador = async () => {
     datosEstadisticas = data;
 
     if (!response.ok) {
-      const errorDatos = data.message || "Error desconocido";
       return null;
     }
 

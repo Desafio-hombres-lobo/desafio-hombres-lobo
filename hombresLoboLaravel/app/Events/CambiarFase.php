@@ -17,12 +17,14 @@ class CambiarFase implements ShouldBroadcast
     public $fase;
     public $partidaId;
     public $tiempoFin;
+    public $ronda;
 
-    public function __construct($partidaId, $fase, $tiempoFin)
+    public function __construct($partidaId, $fase, $tiempoFin, $ronda)
     {
         $this->partidaId = $partidaId;
         $this->tiempoFin = $tiempoFin;
         $this->fase = $fase;
+        $this->ronda = $ronda;
 
     }
 

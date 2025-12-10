@@ -210,11 +210,12 @@ class PartidaController extends Controller
         if ($numLobos < 1) {
             $numLobos = 1;
         }
+        // Crear mazo con ID´s
         $rolesEspeciales = [];
-
         $rolesEspeciales[] = 3;
         $rolesEspeciales[] = 4;
-        // Crear mazo con ID´s
+        $rolesEspeciales[] = 5;
+
         $mazo = [];
         for ($i = 0; $i < $numLobos; $i++) {
             $mazo[] = 2;
@@ -270,6 +271,7 @@ class PartidaController extends Controller
 
     public function empezarPartida($idPartida)
     {
+        Voto::where('id_partida', $idPartida)->delete();
         event(new EmpezarPartida($idPartida));
         return response()->json([
             'message' => 'Partida iniciada correctamente',

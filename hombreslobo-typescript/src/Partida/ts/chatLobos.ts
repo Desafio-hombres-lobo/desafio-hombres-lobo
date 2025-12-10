@@ -1,15 +1,13 @@
 import { getPartidaId } from "../../autenticacion/ts/auth";
 import { pusher } from "./reverb";
-import { pintarMensaje, pintarMensajeSistema } from "./chatAldea";
-import { voltearCartasLobo } from "../../Personajes/ts/voltearCartaPersonaje";
-import type { Jugador } from "./Jugador";
+import { ui } from "./chatAldea";
+import { estado } from "./chatAldea";
 
 const id_partida = getPartidaId()!;
 
-export const chatLobos = async (lobos: Jugador[]) => {
+export const chatLobos = async () => {
   const canal = conectarLobos();
 
-  jugadoresLoboFaseNoche(lobos);
   configurarBind(canal);
   configurarVotos(canal);
 };
@@ -23,12 +21,13 @@ export const configurarBind = (canal: any) => {
   canal.unbind("ninia-habilidad");
 
   canal.bind("nuevo-mensaje-lobos", (data: any) => {
-    pintarMensaje(data.usuario, data.mensaje);
+    const esMio = data.usuario === estado.miNickname;
+    ui.pintarMensaje(data.usuario, data.mensaje, esMio);
   });
   canal.bind("ninia-habilidad", () => {
-    pintarMensajeSistema("La niña abre los ojos");
+    ui.pintarMensajeSistema("La niña abre los ojos");
     setTimeout(() => {
-      pintarMensajeSistema("La niña cierra los ojos");
+      ui.pintarMensajeSistema("La niña cierra los ojos");
     }, 5000);
   });
 };
@@ -37,16 +36,6 @@ const configurarVotos = (canal: any) => {
   canal.bind("votos-lobos", (data: any) => {
     pintarVotoLobo(data.idVotante, data.idVotado);
   });
-};
-
-export const jugadoresLoboFaseNoche = async (lobos: Jugador[]) => {
-  setTimeout(() => {
-    lobos.forEach((lobo: Jugador) => {
-      if (lobo.id_personaje) {
-        voltearCartasLobo(lobo.nickname, lobo.id_personaje);
-      }
-    });
-  }, 1000);
 };
 
 const pintarVotoLobo = (votante: string, votado: string) => {

@@ -15,6 +15,9 @@ class MotorPartidaController extends Controller
     {
         $id_partida = $request->input('id_partida');
         $fase = $request->input('fase');
+        $partida = Partida::findOrFail($id_partida);
+        $partida->ronda = ($partida->ronda ?? 0) + 1;
+        $partida->save();
 
         $duracionTurno = 1; //Duracion en minutos del turno
 
@@ -22,7 +25,8 @@ class MotorPartidaController extends Controller
         event(new CambiarFase(
             $id_partida,
             $fase,
-            $final->toIso8601String()
+            $final->toIso8601String(),
+            $partida->ronda,
         ));
 
         return response()->json([

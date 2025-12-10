@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->foreignId('creador_id')->constrained('jugadores');
             $table->integer('estado')->default(0);
             $table->integer('num_jugadores');
+            $table->integer('ronda')->default(0);
         });
     }
 
