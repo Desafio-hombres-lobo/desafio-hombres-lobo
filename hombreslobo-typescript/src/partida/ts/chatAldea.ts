@@ -124,7 +124,7 @@ const repartirCartasJugadores = async (): Promise<void> => {
       await renderizarCartaPorId(slotDiv, nombreJugador, jugador.id_personaje);
 
       if (esMiUsuario && estado.soyLobo && !estado.chatLobosInicializado) {
-        chatLobos(estado.lobos).then(() => {
+        chatLobos().then(() => {
           estado.chatLobosInicializado = true;
         });
       }
